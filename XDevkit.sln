@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDevkit", "XDevkit.csproj", "{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B7A8EF7-7AEB-41DF-9A42-158D40B8E210}
+	EndGlobalSection
+EndGlobal

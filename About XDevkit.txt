@@ -1,0 +1,44 @@
+﻿//////////////////////////////////////////////
+//Learning How XDevkit Actually Works 3/1/20//
+//////////////////////////////////////////////
+
+___________________________________________________________________________________________________________________________________________________
+INFO:
+Project Started Around 2017-2018
+Goal Is To Emulate The Xdevkit And Add All Of It's Features and Turn It Into TCPClient Class
+
+Learned:
+classes call on other classes so they can be called withing that class like so console.debug.endconsole
+this is useful for and easy to learn to use i also got around learning how interfaces work they are kinda useless in some areas but there
+easy to understand once you get the hang of them
+___________________________________________________________________________________________________________________________________________________
+
+Known Bugs:
+No Known Bugs As Of Now -- 3/1/20
+
+
+
+Changes:  (Added + Removed -)
+
+
+
+
+
+things todo: (Done ==)(Working On *)(Almost Finished -=)
+1.Finish The Get Set Memory 
+2.fix the connection system (Main Porarity)
+3.implement all possible features xdevkit has and make them into one class once finished
+4.work on the find console feature
+5.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
+6.work on the debugging and memory dumping so it can be used for a future cheat finder tool on pc and andriod aka cheat engine
+7.add new features XDevkit Is Missing..
+
+
+Progress Road:
+Getting Closer To Building A Proper XDevkit Emulation Dll -- 3/1/20
+
+
+
+how nb works 
+nb gets the existing consoles then display's them consoles you have saved and made as defualt to emmulate that 
+we have to attempt to get a defualt console ip address and name...
