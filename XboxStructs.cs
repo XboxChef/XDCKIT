@@ -128,4 +128,19 @@
 
         public string ProgramName;
     }
+    public struct XBOX_Hardware_Info
+    {
+        public uint Flags;
+        public byte NumberOfProcessors, PCIBridgeRevisionID;
+        public byte[] ReservedBytes;
+        public ushort BldrMagic, BldrFlags;
+    }
+    public struct XBOX_Vector2
+    {
+        public float x, y;
+    }
+    public struct XBOX_Vector3
+    {
+        public float x, y, z;
+    }
 }

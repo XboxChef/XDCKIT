@@ -11,14 +11,14 @@ namespace XDevkit
 {
     partial class XboxConsoleClass : TcpClient, IXboxConsole, IDisposable
     {
-        public static  string IP;
+        public static string IP;
         public static string DefaultXboxName = new XboxManager().DefaultConsole;
         public IXboxConsole ActiveXboxConsole { get; set; }
 
         public XboxConsoleClass(string XboxNameOrIP)
         {
-            
-            if(XboxNameOrIP == "default")//add 
+
+            if (XboxNameOrIP == "default")//add 
             {
 
                 DefaultXboxName = XboxNameOrIP;
@@ -50,34 +50,38 @@ namespace XDevkit
 
         public void DeleteFile(string Filename)
         {
-
+            string[] lines = Filename.Split("\\".ToCharArray());
+            string Directory = "";
+            for (int i = 0; i < (lines.Length - 1); i++)
+                Directory += lines[i] + "\\";
+            SendTextCommand("delete title=\"" + Filename + "\" dir=\"" + Directory + "\"");
         }
 
         public IXboxFiles DirectoryFiles(string Directory)
         {
 
-            return null; 
+            return null;
         }
 
         public void FindConsole(uint Retries, uint RetryDelay)// Todo: Add a Max And Minimal retry system.
         {
 
-                Retries = 0;
-                do
+            Retries = 0;
+            do
+            {
+                try
                 {
-                    try
-                    {
-                        Retries++;
+                    Retries++;
                     ConsoleFinder();
-                        break; // Sucess! Lets exit the loop!
-                    }
-                    catch (Exception)
-                    {
+                    break; // Sucess! Lets exit the loop!
+                }
+                catch (Exception)
+                {
 
-                        Task.Delay(4).Wait();
-                    }
-                } while (true);
-            
+                    Task.Delay(4).Wait();
+                }
+            } while (true);
+
         }
 
         private void ConsoleFinder()
@@ -112,7 +116,10 @@ namespace XDevkit
 
         public void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
         {
-            object[] Reboot = new object[] { "magicboot title=\"" };//todo
+            string[] lines = Name.Split("\\".ToCharArray());
+            for (int i = 0; i < lines.Length - 1; i++)
+                MediaDirectory += lines[i] + "\\";
+            object[] Reboot = new object[] { "magicboot title=\"" + Name + "\" directory=\"" + MediaDirectory + "\"" };//todo
             SendTextCommand(string.Concat(Reboot));
         }
 
@@ -123,7 +130,7 @@ namespace XDevkit
 
             Thread.Sleep(0);
 
-           Stopwatch.StartNew();
+            Stopwatch.StartNew();
             while (true)
             {
                 int avail = Xbox.xboxName.Available;   // only get once
@@ -158,7 +165,11 @@ namespace XDevkit
 
         public void RenameFile(string OldName, string NewName)
         {
-
+            string[] lines = OldName.Split("\\".ToCharArray());
+            string Directory = "";
+            for (int i = 0; i < (lines.Length - 1); i++)
+                Directory += lines[i] + "\\";
+            SendTextCommand("Rename title=\"" + OldName + "\" dir=\"" + Directory + "\"");
         }
 
         public void ScreenShot(string Filename)
@@ -193,21 +204,21 @@ namespace XDevkit
 
         public void SendBinary(uint connectionId, byte[] callData, uint length)
         {
-            throw new NotImplementedException();
+
         }
 
         public void ReceiveBinary(uint connectionId, byte[] numArray, uint length, out uint bytesReceived)
         {
-            throw new NotImplementedException();
+            bytesReceived = 0;
         }
 
-        public uint ConnectTimeout { get => Convert.ToUInt32(Xbox.xboxName.ReceiveTimeout); set => Xbox.xboxName.Client.SendTimeout = (int)value;}
+        public uint ConnectTimeout { get => Convert.ToUInt32(Xbox.xboxName.ReceiveTimeout); set => Xbox.xboxName.Client.SendTimeout = (int)value; }
 
 
         public uint ConversationTimeout { get => Convert.ToUInt32(Xbox.xboxName.ReceiveTimeout); set => Xbox.xboxName.SendTimeout = (int)value; }
 
-        public IXboxDebugTarget DebugTarget => null;
-        public IXboxAutomation XboxAutomation => null;
+        public IXboxDebugTarget DebugTarget { get; }
+        public IXboxAutomation XboxAutomation { get; }
 
 
         public string Drives
@@ -247,6 +258,6 @@ namespace XDevkit
             get;
         }
 
-        public string Name => throw new NotImplementedException();
+        public string Name { get; }
     }
 }

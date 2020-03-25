@@ -17,7 +17,7 @@ namespace XDevkit
             return null;
         }
 
-        internal IXboxConsole OpenConsole(string xboxNameOrIP)
+        public IXboxConsole OpenConsole(string xboxNameOrIP)
         {
             return activeXboxConsole = new XboxConsoleClass(xboxNameOrIP);
         }

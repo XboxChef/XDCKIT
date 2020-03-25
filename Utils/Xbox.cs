@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -21,6 +23,7 @@ namespace XDevkit.Utils
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public static TcpClient xboxName = new TcpClient();
         public static string GivenIP;
+        private static StreamReader sreader;
 
         public static IXboxConsole XConsole;
         /// <summary>
@@ -52,14 +55,21 @@ namespace XDevkit.Utils
         /// <param name="Color"></param>
         public static void SetColor(string Color)
         {
-            string responses;
-            SendTextCommand($"setcolor name={Color}", out responses);
+            SendTextCommand($"setcolor name={Color}", out _);
+        }
+        public static void ConsoleColor(ConsoleColor Color)
+        {
+            SendTextCommand("setcolor name=" + System.Enum.GetName(typeof(int), Color).ToLower(),out _);
         }
         public  static string GetConsoleid()
         {
          string responses;
             SendTextCommand(string.Concat("getconsoleid"), out responses);
             return responses.Replace("200- consoleid=", "");
+        }
+        public static void DebugName(string DebugName)
+        {
+            SendTextCommand("dbgname name=" + DebugName,out _);
         }
         public static TcpClient XboxName
         {
@@ -104,6 +114,30 @@ namespace XDevkit.Utils
 
             totalFreeBytes = Convert.ToUInt64(msg.Substring(msg.IndexOf("totalfreebyteslo") + 19, 8), 16);
             totalFreeBytes |= (Convert.ToUInt64(msg.Substring(msg.IndexOf("totalfreebyteshi") + 19, 8), 16) << 32);
+        }
+        public static string[] SendText(string Text)
+        {
+
+            new BinaryWriter(XboxName.GetStream()).Write(Encoding.ASCII.GetBytes(Text + "\r\n"));
+            return sreader.ReadToEnd().Split("\n".ToCharArray());
+        }
+        public static XBOX_Hardware_Info HardwareInfo()
+        {
+            string[] lines = SendText("hwinfo");
+            XBOX_Hardware_Info info;
+            info.Flags = uint.Parse(lines[1].Split(" : ".ToCharArray())[1].Replace("0x", ""), NumberStyles.HexNumber);
+            info.NumberOfProcessors = byte.Parse(lines[2].Split(" : ".ToCharArray())[1].Replace("0x", ""), NumberStyles.HexNumber);
+            info.PCIBridgeRevisionID = byte.Parse(lines[3].Split(" : ".ToCharArray())[1].Replace("0x", ""), NumberStyles.HexNumber);
+            info.ReservedBytes = new byte[6];
+            info.ReservedBytes[0] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(0, 2), NumberStyles.HexNumber);
+            info.ReservedBytes[1] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(3, 2), NumberStyles.HexNumber);
+            info.ReservedBytes[2] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(6, 2), NumberStyles.HexNumber);
+            info.ReservedBytes[3] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(9, 2), NumberStyles.HexNumber);
+            info.ReservedBytes[4] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(12, 2), NumberStyles.HexNumber);
+            info.ReservedBytes[5] = byte.Parse(lines[4].Split(" : 0x ".ToCharArray())[1].Substring(15, 2), NumberStyles.HexNumber);
+            info.BldrMagic = ushort.Parse(lines[5].Split(" : ".ToCharArray())[1].Replace("0x", ""), NumberStyles.HexNumber);
+            info.BldrFlags = ushort.Parse(lines[6].Split(" : ".ToCharArray())[1].Replace("0x", ""), NumberStyles.HexNumber);
+            return info;
         }
 
         private static void SendTextCommand(string v1, string v2)
@@ -188,7 +222,28 @@ namespace XDevkit.Utils
                     Thread.Sleep(0);
                 }
             }
+        public static string ConvertHexToString(string hexInput, Encoding encoding)
+        {
+            int numberChars = hexInput.Length;
+            byte[] bytes = new byte[numberChars / 2];
+            for (int i = 0; i < numberChars; i += 2)
+            {
+                bytes[i / 2] = Convert.ToByte(hexInput.Substring(i, 2), 16);
+            }
+            return encoding.GetString(bytes);
         }
+
+        public static string ConvertStringToHex(string input, Encoding encoding)
+        {
+            byte[] stringBytes = encoding.GetBytes(input);
+            StringBuilder sbBytes = new StringBuilder(stringBytes.Length * 2);
+            foreach (byte b in stringBytes)
+            {
+                sbBytes.Append($"{b:X2}");
+            }
+            return sbBytes.ToString();
+        }
+    }
 
     }
 

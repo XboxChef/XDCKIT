@@ -17,6 +17,23 @@
 		RebootingTitle,
 		PendingTitle
 	}
+	public enum ConsoleColor
+	{
+		Black,
+		Blue,
+		BlueGray,
+		White,
+	};
+	public enum ExecutionState
+	{
+		Pending,
+		Reboot,
+		Start,
+		Stop,
+		TitlePending,
+		TitleReboot,
+		Unknown
+	};
 	public enum XboxExceptionFlags
 	{
 		Noncontinuable = 1,
