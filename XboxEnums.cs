@@ -10,30 +10,85 @@
 	}
 	public enum XboxExecutionState
 	{
-		Stopped,
-		Running,
-		Rebooting,
 		Pending,
-		RebootingTitle,
-		PendingTitle
+		Rebooting,
+		Running,
+		Stopped,
+		TitlePending,
+		TitleRebooting,
+		Unknown,
+
 	}
-	public enum ConsoleColor
+	public enum XboxColor
 	{
 		Black,
 		Blue,
 		BlueGray,
 		White,
 	};
-	public enum ExecutionState
+	/// <summary>
+	/// Party System
+	/// </summary>
+	public enum Xbox_Party_Options
 	{
-		Pending,
-		Reboot,
-		Start,
-		Stop,
-		TitlePending,
-		TitleReboot,
-		Unknown
+		CreateParty = 0xafc,
+		PartySettings = 0xb08,
+		InviteOnly = 1,
+		Kick = 0xb02,
+		OpenParty = 0,
+		JoinParty = 0xb01,
+		AltJoinParty = 0xb1b,
+		LeaveParty = 0xafd,
+		InvitePlayer = 0xb15,
+
+	}
+	/// <summary>
+	/// Guide Shortcuts
+	/// </summary>
+	public enum XboxShortcuts
+	{
+		//Main Shortcut
+		Recent = 0x2C8,
+		Guide_Button = 0x506,
+		//End Of Main Shortcut
+
+		//Games And Apps Tab
+		Achievements = 0x2D0,
+		Awards,
+		My_Games,
+		Active_Downloads,
+		Redeem_Code,
+		//End Of Games And Apps Tab
+
+		//Main Guide
+		XboxHome,
+		Friends = 0x2BF,
+		Party,
+		Messages = 0x2C0,
+		Beacons_And_Activiy = 0xB39,
+		Private_Chat = 0x2C2,
+		Open_Tray,
+		//End Of Main Guide
+
+		//Media
+		System_Video_Player,
+		System_Music_Player,
+		Picture_Viewer,
+		Windows_Media_Center,
+		Select_Music,
+		//End Of Media
+
+		//settings
+		Profile = 0x2c4,
+		Preferences,
+		Family_Settings,
+		System_Settings,
+	    Account_Management,
+		Turn_Off_Console
+		//End Of settings
+
 	};
+
 	public enum XboxExceptionFlags
 	{
 		Noncontinuable = 1,

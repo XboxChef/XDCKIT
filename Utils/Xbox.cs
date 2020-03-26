@@ -40,26 +40,35 @@ namespace XDevkit.Utils
         {
             if (FalseorTrue == true)
             {
-                string responses;
-                SendTextCommand("stop", out responses);
+                SendTextCommand("stop");
             }
             else if (FalseorTrue == false)
             {
-                string responses;
-                SendTextCommand("go", out responses);
+                SendTextCommand("go");
             }
+        }
+
+        public static void SendTextCommand(string Command)
+        {
+            // Send a text command. Always have \r\n at the end of commands
+           XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+        }
+
+        /// <summary>
+        /// Shortcuts To Guide The Xbox Very Fast
+        /// </summary>
+        /// <param name="Color"></param>
+        public static void XboxShortcut(XboxShortcuts UI)
+        {
+            SendTextCommand("");
         }
         /// <summary>
         /// Turns The Console's Default neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar , white)
         /// </summary>
         /// <param name="Color"></param>
-        public static void SetColor(string Color)
+        public static void ConsoleColor(XboxColor Color)
         {
-            SendTextCommand($"setcolor name={Color}", out _);
-        }
-        public static void ConsoleColor(ConsoleColor Color)
-        {
-            SendTextCommand("setcolor name=" + System.Enum.GetName(typeof(int), Color).ToLower(),out _);
+            SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
         }
         public  static string GetConsoleid()
         {
@@ -69,7 +78,7 @@ namespace XDevkit.Utils
         }
         public static void DebugName(string DebugName)
         {
-            SendTextCommand("dbgname name=" + DebugName,out _);
+            SendTextCommand("dbgname name=" + DebugName);
         }
         public static TcpClient XboxName
         {
@@ -82,16 +91,15 @@ namespace XDevkit.Utils
                 xboxName = value;
             }
         }
-        public static string ToHexS(this string String)//help it depend on it's own
+
+        public static void ConsoleFinder()
         {
-            string str = string.Empty;
-            string str1 = String;
-            for (int i = 0; i < str1.Length; i++)
-            {
-                byte num = (byte)str1[i];
-                str = string.Concat(str, num.ToString("X2"));
-            }
-            return str;
+
+        }
+        public static void XNotify(string Text, uint Type)
+        {
+            object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=12 params=\"A\\0\\A\\2\\", 2, "/", Text.Length, "\\", Text.ToHexS(), "\\", 1, "\\", Type, "\\\"" };
+            SendTextCommand(string.Concat(jRPCVersion));
         }
         /// <summary>
         /// Dont use this, higher-level methods are available.  Use GetDriveFreeSpace or GetDriveSize instead.
@@ -114,6 +122,23 @@ namespace XDevkit.Utils
 
             totalFreeBytes = Convert.ToUInt64(msg.Substring(msg.IndexOf("totalfreebyteslo") + 19, 8), 16);
             totalFreeBytes |= (Convert.ToUInt64(msg.Substring(msg.IndexOf("totalfreebyteshi") + 19, 8), 16) << 32);
+        }
+        public static XboxExecutionState ExecutionState()
+        {
+            string str = SendText("getexecstate")[0].Replace("200- ", "");
+            if (str == "pending")
+                return XboxExecutionState.Pending;
+            else if (str == "reboot")
+                return XboxExecutionState.Rebooting;
+            else if (str == "start")
+                return XboxExecutionState.Running;
+            else if (str == "stop")
+                return XboxExecutionState.Stopped;
+            else if (str == "pending_title")
+                return XboxExecutionState.TitlePending;
+            else if (str == "reboot_title")
+                return XboxExecutionState.TitleRebooting;
+            return XboxExecutionState.Unknown;
         }
         public static string[] SendText(string Text)
         {
@@ -144,31 +169,6 @@ namespace XDevkit.Utils
         {
             XConsole.SendTextCommand(v1+v2, out _);
         }
-
-        //public static bool Connect(this IXboxConsole console, out IXboxConsole Console, string XboxNameOrIP = "default")
-        //{
-
-        //    if (XboxNameOrIP == "default")
-        //    {
-        //        XboxNameOrIP = new XboxManager().DefaultConsole;
-        //    }
-
-        //    IXboxConsole xboxConsole = new XboxManager().OpenConsole(XboxNameOrIP);
-        //    TcpClient ConsoleName;
-        //    console = new XboxManager().OpenConsole(XboxNameOrIP);
-        //    ConsoleName = new TcpClient();
-        //    ConsoleName.Connect(GivenIP, 730);
-        //    // First thing that XBDM does is send a packet to us when we connect
-
-        //    // Max packet size is 1026
-        //    byte[] Packet = new byte[1026];
-        //    ConsoleName.Client.Receive(Packet);
-        //    XboxName = ConsoleName;
-        //    if (string.Compare(Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 3), "201", StringComparison.Ordinal) != 0)
-        //    XBDM.Show("XBDM did not send connect message");
-        //    Console = xboxConsole;
-        //    return true;
-        //}
         private static void SendTextCommand(string v, out string responses)
         {
             XConsole.SendTextCommand(v,out responses);
@@ -222,27 +222,7 @@ namespace XDevkit.Utils
                     Thread.Sleep(0);
                 }
             }
-        public static string ConvertHexToString(string hexInput, Encoding encoding)
-        {
-            int numberChars = hexInput.Length;
-            byte[] bytes = new byte[numberChars / 2];
-            for (int i = 0; i < numberChars; i += 2)
-            {
-                bytes[i / 2] = Convert.ToByte(hexInput.Substring(i, 2), 16);
-            }
-            return encoding.GetString(bytes);
-        }
 
-        public static string ConvertStringToHex(string input, Encoding encoding)
-        {
-            byte[] stringBytes = encoding.GetBytes(input);
-            StringBuilder sbBytes = new StringBuilder(stringBytes.Length * 2);
-            foreach (byte b in stringBytes)
-            {
-                sbBytes.Append($"{b:X2}");
-            }
-            return sbBytes.ToString();
-        }
     }
 
     }

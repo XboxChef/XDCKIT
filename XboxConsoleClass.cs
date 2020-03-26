@@ -36,15 +36,11 @@ namespace XDevkit
         {
         }
 
-        private void SendTextCommand(string Command)
-        {
-            // Send a text command. Always have \r\n at the end of commands
-            Xbox.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
-        }
+
 
         public void CloseConnection(uint Connection)
         {
-            SendTextCommand("bye");
+            Xbox.SendTextCommand("bye");
             Xbox.xboxName.Close();
         }
 
@@ -54,11 +50,12 @@ namespace XDevkit
             string Directory = "";
             for (int i = 0; i < (lines.Length - 1); i++)
                 Directory += lines[i] + "\\";
-            SendTextCommand("delete title=\"" + Filename + "\" dir=\"" + Directory + "\"");
+            Xbox.SendTextCommand("delete title=\"" + Filename + "\" dir=\"" + Directory + "\"");
         }
 
         public IXboxFiles DirectoryFiles(string Directory)
         {
+            //"DIRLIST NAME="Directory"
 
             return null;
         }
@@ -72,7 +69,7 @@ namespace XDevkit
                 try
                 {
                     Retries++;
-                    ConsoleFinder();
+                    Xbox.ConsoleFinder();
                     break; // Sucess! Lets exit the loop!
                 }
                 catch (Exception)
@@ -84,10 +81,7 @@ namespace XDevkit
 
         }
 
-        private void ConsoleFinder()
-        {
 
-        }
 
         /// <summary>
         /// Dont use this, higher-level methods are available.  Use GetDriveFreeSpace or GetDriveSize instead.
@@ -119,8 +113,8 @@ namespace XDevkit
             string[] lines = Name.Split("\\".ToCharArray());
             for (int i = 0; i < lines.Length - 1; i++)
                 MediaDirectory += lines[i] + "\\";
-            object[] Reboot = new object[] { "magicboot title=\"" + Name + "\" directory=\"" + MediaDirectory + "\"" };//todo
-            SendTextCommand(string.Concat(Reboot));
+            object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//todo
+            Xbox.SendTextCommand(string.Concat(Reboot));
         }
 
         public void ReceiveSocketLine(uint Connection, out string Line)
@@ -165,11 +159,8 @@ namespace XDevkit
 
         public void RenameFile(string OldName, string NewName)
         {
-            string[] lines = OldName.Split("\\".ToCharArray());
-            string Directory = "";
-            for (int i = 0; i < (lines.Length - 1); i++)
-                Directory += lines[i] + "\\";
-            SendTextCommand("Rename title=\"" + OldName + "\" dir=\"" + Directory + "\"");
+            
+            SendTextCommand("RENAME NAME=" + OldName + " "+"NEWNAME=" + NewName,out _);
         }
 
         public void ScreenShot(string Filename)
@@ -193,14 +184,9 @@ namespace XDevkit
 
         public void XNotify(string Text)
         {
-            XNotify(Text, 34);
+            Xbox.XNotify(Text, 34);
         }
 
-        public void XNotify(string Text, uint Type)
-        {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=12 params=\"A\\0\\A\\2\\", 2, "/", Text.Length, "\\", Text.ToHexS(), "\\", 1, "\\", Type, "\\\"" };
-            SendTextCommand(string.Concat(jRPCVersion));
-        }
 
         public void SendBinary(uint connectionId, byte[] callData, uint length)
         {
@@ -219,6 +205,8 @@ namespace XDevkit
 
         public IXboxDebugTarget DebugTarget { get; }
         public IXboxAutomation XboxAutomation { get; }
+        public XboxDumpMode DumpMode { get; }
+
 
 
         public string Drives
@@ -249,14 +237,12 @@ namespace XDevkit
             }
             set
             {
-                SendTextCommand(string.Concat("setsystime"));
+                Xbox.SendTextCommand(string.Concat("setsystime"));
             }
         }
 
-        public XBOX_PROCESS_INFO RunningProcessInfo
-        {
-            get;
-        }
+        public XBOX_PROCESS_INFO RunningProcessInfo{ get; }
+
 
         public string Name { get; }
     }
