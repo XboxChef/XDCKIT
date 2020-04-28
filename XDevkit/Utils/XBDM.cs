@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace XDevkit.Utils
+namespace XDevkit
 {
     internal class XBDM
     {
@@ -100,12 +100,5 @@ namespace XDevkit.Utils
         [DllImport("xbdm.dll", CharSet = CharSet.Ansi)]
         public static extern int DmScreenshot(IntPtr walkMod);
     }
-    internal class XNotify
-    {
-        public static string Show(string Message)
-        {
 
-            return Message;
-        }
-    }
 }

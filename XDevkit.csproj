@@ -41,24 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IXboxInterfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Converters.cs" />
-    <Compile Include="Utils\new 2.cs" />
-    <Compile Include="Utils\XBDM.cs" />
-    <Compile Include="Utils\Xbox.cs" />
-    <Compile Include="XboxAutomation.cs" />
-    <Compile Include="XboxConsoleClass.cs" />
-    <Compile Include="XboxDebugTarget.cs" />
-    <Compile Include="XboxEnums.cs" />
-    <Compile Include="XboxFile.cs" />
-    <Compile Include="XboxManager.cs" />
-    <Compile Include="XboxStructs.cs" />
-    <Compile Include="XboxThread.cs" />
+    <Compile Include="XDevkit\Utils\XBDM.cs" />
+    <Compile Include="XDevkit\xdevkit.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="About XDevkit.txt" />
-    <Content Include="xbdm.dll" />
+    <Content Include="XDevkit\About XDevkit.txt" />
+    <Content Include="XDevkit\Utils\xbdm.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

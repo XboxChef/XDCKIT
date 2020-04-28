@@ -11,31 +11,38 @@ Learned:
 classes call on other classes so they can be called withing that class like so console.debug.endconsole
 this is useful for and easy to learn to use i also got around learning how interfaces work they are kinda useless in some areas but there
 easy to understand once you get the hang of them
+
+
+Xdevkit Should Pass Threw My Class Then it will be partail classes that do the rest of the work
 ___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
-No Known Bugs As Of Now -- 3/1/20
+No Known Bugs As Of Now -- 4/26/2020
 
 
 
 Changes:  (Added + Removed -)
-
+Polished Code - at 6:33 Am 4/26/2020
 
 
 
 
 things todo: (Done ==)(Working On *)(Almost Finished -=)
-1.Finish The Get Set Memory 
-2.fix the connection system (Main Porarity)
-3.implement all possible features xdevkit has and make them into one class once finished
-4.work on the find console feature
+1.== Finish The Get Set Memory 
+2.==fix the connection system (Main Porarity)
+3.*implement all possible features xdevkit has and make them into one class once finished
+4.*work on the find console feature
 5.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
 6.work on the debugging and memory dumping so it can be used for a future cheat finder tool on pc and andriod aka cheat engine
 7.add new features XDevkit Is Missing..
+8.replace all types of commands passing threw xdevkit to Xbox Class making is a pez to debug
+9.real time editing
 
 
 Progress Road:
-Getting Closer To Building A Proper XDevkit Emulation Dll -- 3/1/20
+Getting Closer To Building A Proper XDevkit Emulation Dll -- 3/1/20 - future me says that was a lie ... 4/26/2020
+finished fixing issues with connection 4/15/2020
+
 
 
 

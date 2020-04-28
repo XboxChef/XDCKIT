@@ -5,6 +5,6 @@ C:\Users\Serenity\source\repos\XDevkit\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\source\repos\XDevkit\XDevkit\obj\Debug\XDevkit.pdb
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileInputs.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.pdb
