@@ -1,8 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -47,28 +49,28 @@ namespace XDevkit
 		{
 			if (Exception == true)
 			{
-				CurrentConsole.SendTextCommand("Continue", out _);
+				CurrentConsole.SendTextCommand("Continue" );
 			}
 
 		}
 
 		public void Halt()
 		{
-			CurrentConsole.SendTextCommand("Halt", out _);
+			CurrentConsole.SendTextCommand("Halt" );
 		}
 
 		public void Resume()
 		{
-			CurrentConsole.SendTextCommand("Resume", out _);
+			CurrentConsole.SendTextCommand("Resume" );
 		}
 
 		public void Suspend()
 		{
-			CurrentConsole.SendTextCommand("Suspend", out _);
+			CurrentConsole.SendTextCommand("Suspend" );
 		}
 		public void Break()
 		{
-			CurrentConsole.SendTextCommand("Break", out _);
+			CurrentConsole.SendTextCommand("Break" );
 		}
 	}
 	#endregion
@@ -657,7 +659,8 @@ namespace XDevkit
 
 		public void ScreenShot(string Filename)
 		{
-
+			Xbox XConsole = new Xbox();
+			XConsole.Screenshot(Filename);
 		}
 
 
@@ -666,10 +669,9 @@ namespace XDevkit
 			CurrentConsole.SendTextCommand(Command, out Response);
 		}
 
-
 		public void XNotify(string Text)
 		{
-			CurrentConsole.XNotify(Text, 34);
+			XDevkit.XNotify.Show(Text,true);
 		}
 
 
@@ -734,7 +736,7 @@ namespace XDevkit
 			if (Xbox.XboxName.Connected)
 			{
 
-				CurrentConsole.SendTextCommand(Command, out _);
+				CurrentConsole.SendTextCommand(Command );
 			}
 		}
 
@@ -1295,7 +1297,22 @@ namespace XDevkit
 				}
 			}
 		}
-
+		public static byte[] ToWCHAR(this string String)
+		{
+			return WCHAR(String);
+		}
+		public static byte[] WCHAR(string String)
+		{
+			byte[] numArray = new byte[String.Length * 2 + 2];
+			int num = 1;
+			string str = String;
+			for (int i = 0; i < str.Length; i++)
+			{
+				numArray[num] = (byte)str[i];
+				num += 2;
+			}
+			return numArray;
+		}
 	}
 	#endregion
 
@@ -1318,11 +1335,6 @@ namespace XDevkit
 		public IXboxConsole Function = new XboxConsoleClass();
 		public IXboxDebugTarget DebugTarget = new XboxDebugTarget();
 
-		/// <summary>
-		/// Gets or sets the maximum waiting time given (in milliseconds) for a response.
-		/// </summary>
-		[Browsable(false)]
-		public int Timeout { get { return timeout; } set { timeout = value; } }
 
 		internal static void TCPConnect(string DebuggerName, XboxDebugConnectFlags Flags)
 		{
@@ -1340,6 +1352,7 @@ namespace XDevkit
 		private int timeout = 5000;
 		private bool Connected;
 		private string responses;
+		private byte[] response_in_bytes;
 		internal int connectionId;
 
 		public bool TCPConnect(string XboxIP)
@@ -1371,6 +1384,35 @@ namespace XDevkit
 				SendTextCommand("go");
 			}
 		}
+		public void SendTextCommand(string Command, out byte[] response)//todo
+		{
+			response = null;
+			if (XboxName == null)
+			{
+				Console.WriteLine("SendTextCommand ==> XboxName == null <==");
+			}
+			else
+				try
+				{
+					// Max packet size is 1026
+					byte[] Packet = new byte[1026];
+					if (XboxName.Connected == false)
+					{
+						XBDM.Exception("Not Connected");
+						Console.WriteLine("Failed to SendTextCommand ==> Not Connected <==");
+					}
+					else
+						Console.WriteLine("SendTextCommand ==> Sending Command... <==");
+					XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+					XboxName.Client.Receive(Packet);
+					response = Encoding.Default.GetBytes(ReceiveMultilineResponse());
+				}
+				catch
+				{
+
+				}
+
+		}
 		public void SendTextCommand(string Command, out string response)//todo
 		{
 			response = "";
@@ -1401,14 +1443,8 @@ namespace XDevkit
 
 		}
 
-		internal void XNotify(string v)
-		{
-			XNotify(v, 32);
-		}
-
 		public string SendTextCommand(string Command)
 		{
-			string str = null;
 			try
 			{
 				SendTextCommand(Command, out responses);
@@ -1416,7 +1452,7 @@ namespace XDevkit
 			catch
 			{
 			}
-			return str;
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -1504,6 +1540,7 @@ namespace XDevkit
 
 				}
 		}
+
 		/// <summary>
 		/// Returns To Console's Home.
 		/// </summary>
@@ -1512,177 +1549,181 @@ namespace XDevkit
 			Reboot(@"\Device\Harddisk0\SystemExtPartition\20445100\dash.xex", @"\Device\Harddisk0\SystemExtPartition\20445100\", @"\Device\Harddisk0\SystemExtPartition\20445100\", XboxRebootFlags.Title);
 		}
 
+		/// <summary>
+		///Reboots you
+		/// </summary>
+		/// <param name="Name"></param>
+		/// <param name="MediaDirectory"></param>
+		/// <param name="CmdLine"></param>
+		/// <param name="Flags"></param>
 		private void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
 		{
 			Function.Reboot(Name, MediaDirectory, CmdLine, Flags);
 		}
 
 		/// <summary>
-		/// Turns The Console's Default neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar , white)
+		/// Turns The Console's Default Neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar , white)
+		/// Also Changes The Type Of Console It Is.
 		/// </summary>
 		/// <param name="Color"></param>
 		public void ConsoleColor(XboxColor Color)
 		{
 			SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
 		}
+
+		/// <summary>
+		/// Get's The Consoles ID.
+		/// </summary>
+		/// <returns></returns>
 		public string GetConsoleID()
 		{
 			string responses;
 			SendTextCommand(string.Concat("getconsoleid"), out responses);
 			return responses.Replace("200- consoleid=", "");
 		}
-		public string GetSystemInfo(Info Type)
+
+		/// <summary>
+		/// Get's Consoles System Information.
+		/// </summary>
+		/// <param name="Type"></param>
+		/// <returns>Type Is The System Type Of Information you Want To Retrieve</returns>
+		public string GetSystemInfo(Info Type)//finish missing parts
 		{
-			if (Type == Info.HDD)
+			Console.WriteLine("System Info Came Threw.. (Command Executed == " + Type + " )");
+			switch ((int)Type)
 			{
-				#region HDD
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+				case (int)Info.HDD:
+					#region HDD
+					try
 					{
-						int Start = s.IndexOf("hdd=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start + 1, End);
-						return responses;
+						SendTextCommand(string.Concat("systeminfo"));
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf("hdd=");
+							int End = s.IndexOf("type=");
+							responses = s.Substring(Start + 4, End - 4);
+							return responses;
+						}
 					}
-				}
-				catch
-				{
-
-				}
-				#endregion
-			}
-			else if (Type == Info.Type)
-			{
-
-				#region MyRegion
-				try
-				{
-
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					catch
 					{
-						int Start = s.IndexOf("Type=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start, End);
-						return responses;
+
 					}
-				}
-				catch
-				{
-
-				}
-				#endregion
-
-			}
-			else if (Type == Info.Platform)
-			{
-				#region Platform
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					#endregion
+					break;
+				case (int)Info.Type:
+					#region Console Type
+					try
 					{
-						int Start = s.IndexOf(" Platform=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start, End);
-						return responses;
+						SendTextCommand(string.Concat("consoletype"),out responses);
+							return responses.Replace("200- ", "");
 					}
-				}
-				catch
-				{
-
-
-				}
-				#endregion
-			}
-			else if (Type == Info.System)
-			{
-				#region System
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					catch
 					{
-						int Start = s.IndexOf("System=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start, End);
-						return responses;
-					}
-				}
-				catch
-				{
 
-				}
-				#endregion
-			}
-			else if (Type == Info.BaseKrnlVersion)
-			{
-				#region BaseKrnlVersion
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					}
+					#endregion
+					break;
+		        case (int)Info.Platform:
+					#region Platform
+					try
 					{
-						int Start = s.IndexOf(" krnl=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start - 10, End);
-						return responses;
+						SendTextCommand(string.Concat("systeminfo"));
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf("type=");
+							int End = s.IndexOf(" p");
+							responses = s.Substring(Start + End, End).Substring(Start);
+							return responses;
+						}
 					}
-				}
-				catch
-				{
-
-				}
-				#endregion
-			}
-			else if (Type == Info.KrnlVersion)
-			{
-				#region Kernal Version
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"));
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					catch
 					{
-						int Start = s.IndexOf(" krnl=");
-						int End = s.IndexOf(" ");
-						responses = s.Substring(Start + 6, End);
-						return responses;
-					}
-				}
-				catch
-				{
 
-				}
-				#endregion
-			}
-			else if (Type == Info.XDKVersion)
-			{
-				#region XDK Version
-				try
-				{
-					SendTextCommand(string.Concat("systeminfo"), out responses);
-					string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-					foreach (string s in Info)
+					}
+					#endregion
+					break;
+				case (int)Info.System:
+					#region System
+					try
 					{
-						int Start = s.IndexOf(" xdk=");
-						responses = s.Substring(Start + 5, 12);
-						return responses;
+						SendTextCommand(string.Concat("systeminfo"));
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf("type=");
+							int End = Int32.Parse(" basekrnl =");
+							responses = s.Substring(Start , End);
+							return responses;
+						}
 					}
-				}
-				catch
-				{
+					catch
+					{
 
-				}
-				#endregion
+					}
+					#endregion
+					break;
+				case (int)Info.BaseKrnlVersion:
+					#region BaseKrnlVersion
+					try
+					{
+						SendTextCommand(string.Concat("systeminfo"));
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf(" krnl=");
+							int End = s.IndexOf(" ");
+							responses = s.Substring(Start - 10, End);
+							return responses;
+						}
+					}
+					catch
+					{
 
+					}
+					#endregion
+					break;
+				case (int)Info.KrnlVersion:
+					#region Kernal Version
+					try
+					{
+						SendTextCommand(string.Concat("systeminfo"));
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf(" krnl=");
+							int End = s.IndexOf(" ");
+							responses = s.Substring(Start + 6, End);
+							return responses;
+						}
+					}
+					catch
+					{
+
+					}
+					#endregion
+					break;
+				case (int)Info.XDKVersion:
+					#region XDK Version
+					try
+					{
+						SendTextCommand(string.Concat("systeminfo"), out responses);
+						string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+						foreach (string s in Info)
+						{
+							int Start = s.IndexOf(" xdk=");
+							responses = s.Substring(Start + 5, 12);
+							return responses;
+						}
+					}
+					catch
+					{
+
+					}
+					#endregion
+					break;
 
 			}
 			return string.Empty;
@@ -1717,18 +1758,16 @@ namespace XDevkit
 			SendTextCommand(dre, out responses);
 			return responses.Replace("200- ", "");
 		}
-		public void DebugName(string DebugName)
+
+		public void SetDebugName(string DebugName)
 		{
+	
 			SendTextCommand("dbgname name=" + DebugName);
 		}
 
 		public void ConsoleFinder()
 		{
 
-		}
-		public void XNotify(string Text, uint Type)
-		{
-			SendTextCommand("consolefeatures ver=2 type=12 params=\"A\\0\\A\\2\\2" + "/" + Text.Length + "\\" + Text.ToHexS() + "\\1\\" + Type + "\\\"", out _);
 		}
 		/// <summary>
 		/// Dont use this, higher-level methods are available.  Use GetDriveFreeSpace or GetDriveSize instead.
@@ -1740,7 +1779,7 @@ namespace XDevkit
 		public void GetDriveInformation(ushort drive, out ulong FreeBytesAvailableToCaller, out ulong TotalNumberOfBytes, out ulong totalFreeBytes)
 		{
 			FreeBytesAvailableToCaller = 0; TotalNumberOfBytes = 0; totalFreeBytes = 0;
-			SendTextCommand("drivefreespace name=\"{0}\"" + drive.ToString() + ":\\", out _);
+			SendTextCommand("drivefreespace name=\"{0}\"" + drive.ToString() + ":\\" );
 
 			string msg = ReceiveMultilineResponse();
 			FreeBytesAvailableToCaller = Convert.ToUInt64(msg.Substring(msg.IndexOf("freetocallerlo") + 17, 8), 16);
@@ -1843,6 +1882,7 @@ namespace XDevkit
 				Thread.Sleep(0);
 			}
 		}
+
 		/// <summary>
 		/// Reboot Method flag types cold or warm reboot.
 		/// </summary>
@@ -1858,6 +1898,17 @@ namespace XDevkit
 			}
 		}
 
+
+		public Image Screenshot(string filename)
+		{
+			SendTextCommand("screenshot", out response_in_bytes);
+			return (Bitmap)((new ImageConverter()).ConvertFrom(response_in_bytes));
+		}
+		public Image Screenshot()
+		{
+			SendTextCommand("screenshot", out response_in_bytes);
+			return (Bitmap)((new ImageConverter()).ConvertFrom(response_in_bytes));
+		}
 	}
 
 	#endregion
@@ -2031,13 +2082,13 @@ namespace XDevkit
 	/// </summary>
 	public enum Info
 	{
+		HDD,
 		Type,
 		Platform,
 		System,
 		BaseKrnlVersion,
 		KrnlVersion,
 		XDKVersion,
-		HDD,
 	}
 	public enum TRAY_STATE
 	{
@@ -2615,6 +2666,76 @@ namespace XDevkit
 		System,
 		Title
 	}
+	public enum XNotiyLogo
+	{
+		XBOX_LOGO = 0,
+		NEW_MESSAGE_LOGO = 1,
+		FRIEND_REQUEST_LOGO = 2,
+		NEW_MESSAGE = 3,
+		FLASHING_XBOX_LOGO = 4,
+		GAMERTAG_SENT_YOU_A_MESSAGE = 5,
+		GAMERTAG_SINGED_OUT = 6,
+		GAMERTAG_SIGNEDIN = 7,
+		GAMERTAG_SIGNED_INTO_XBOX_LIVE = 8,
+		GAMERTAG_SIGNED_IN_OFFLINE = 9,
+		GAMERTAG_WANTS_TO_CHAT = 10,
+		DISCONNECTED_FROM_XBOX_LIVE = 11,
+		DOWNLOAD = 12,
+		FLASHING_MUSIC_SYMBOL = 13,
+		FLASHING_HAPPY_FACE = 14,
+		FLASHING_FROWNING_FACE = 15,
+		FLASHING_DOUBLE_SIDED_HAMMER = 16,
+		GAMERTAG_WANTS_TO_CHAT_2 = 17,
+		PLEASE_REINSERT_MEMORY_UNIT = 18,
+		PLEASE_RECONNECT_CONTROLLERM = 19,
+		GAMERTAG_HAS_JOINED_CHAT = 20,
+		GAMERTAG_HAS_LEFT_CHAT = 21,
+		GAME_INVITE_SENT = 22,
+		FLASH_LOGO = 23,
+		PAGE_SENT_TO = 24,
+		FOUR_2 = 25,
+		FOUR_3 = 26,
+		ACHIEVEMENT_UNLOCKED = 27,
+		FOUR_9 = 28,
+		GAMERTAG_WANTS_TO_TALK_IN_VIDEO_KINECT = 29,
+		VIDEO_CHAT_INVITE_SENT = 30,
+		READY_TO_PLAY = 31,
+		CANT_DOWNLOAD_X = 32,
+		DOWNLOAD_STOPPED_FOR_X = 33,
+		FLASHING_XBOX_CONSOLE = 34,
+		X_SENT_YOU_A_GAME_MESSAGE = 35,
+		DEVICE_FULL = 36,
+		FOUR_7 = 37,
+		FLASHING_CHAT_ICON = 38,
+		ACHIEVEMENTS_UNLOCKED = 39,
+		X_HAS_SENT_YOU_A_NUDGE = 40,
+		MESSENGER_DISCONNECTED = 41,
+		BLANK = 42,
+		CANT_SIGN_IN_MESSENGER = 43,
+		MISSED_MESSENGER_CONVERSATION = 44,
+		FAMILY_TIMER_X_TIME_REMAINING = 45,
+		DISCONNECTED_XBOX_LIVE_11_MINUTES_REMAINING = 46,
+		KINECT_HEALTH_EFFECTS = 47,
+		FOUR_5 = 48,
+		GAMERTAG_WANTS_YOU_TO_JOIN_AN_XBOX_LIVE_PARTY = 49,
+		PARTY_INVITE_SENT = 50,
+		GAME_INVITE_SENT_TO_XBOX_LIVE_PARTY = 51,
+		KICKED_FROM_XBOX_LIVE_PARTY = 52,
+		NULLED = 53,
+		DISCONNECTED_XBOX_LIVE_PARTY = 54,
+		DOWNLOADED = 55,
+		CANT_CONNECT_XBL_PARTY = 56,
+		GAMERTAG_HAS_JOINED_XBL_PARTY = 57,
+		GAMERTAG_HAS_LEFT_XBL_PARTY = 58,
+		GAMER_PICTURE_UNLOCKED = 59,
+		AVATAR_AWARD_UNLOCKED = 60,
+		JOINED_XBL_PARTY = 61,
+		PLEASE_REINSERT_USB_STORAGE_DEVICE = 62,
+		PLAYER_MUTED = 63,
+		PLAYER_UNMUTED = 64,
+		FLASHING_CHAT_SYMBOL = 65,
+		UPDATING = 76,
+	}
 	#endregion
 
 	#region Xbox Structs
@@ -3033,15 +3154,46 @@ namespace XDevkit
 		int Count { get; }
 	}
 	#endregion
-	
+
 	#region XNotify
 	public class XNotify
 	{
-		public static string Show(string Message)
+		public static IXboxConsole console;
+		public static bool XNotifyEnabled
 		{
-
-			return Message;
+			get
+			{
+				return XNotifyEnabled;
+			}
+			set
+			{
+				XNotifyEnabled = value;
+			}
 		}
+		public static void Show(string Message, bool isON)
+		{
+			if (isON == true)
+			{
+				XNotifyEnabled = true;
+			}
+			if (XNotifyEnabled == true)
+			{
+				Show(XNotiyLogo.FLASHING_XBOX_LOGO, Message, isON);
+			}
+		}
+		public static void Show(XNotiyLogo Type, string Message, bool isON)
+		{
+			if (isON == true)
+			{
+				XNotifyEnabled = true;
+			}
+			if (XNotifyEnabled == true)
+			{
+				object[] arguments = new object[] { 0x18, 0xff, 2, (Message).ToWCHAR(), (int)Type };
+				console.CallVoid((int)ThreadType.Title, "xam.xex", 0x290, arguments);
+			}
+		}
+
 	}
 	#endregion
 }
