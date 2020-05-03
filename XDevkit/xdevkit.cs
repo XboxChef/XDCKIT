@@ -189,6 +189,7 @@ namespace XDevkit
 		{
 			get
 			{
+				
 				using (XmlReader reader = XmlReader.Create("Settings.xml"))
 				{
 					while (reader.Read())
@@ -229,6 +230,7 @@ namespace XDevkit
 	class XboxDebugTarget : IXboxDebugTarget
 	{
 		public TcpClient xboxName = Xbox.XboxName;
+		public Xbox XConsole = new Xbox();
 		public XboxConsole Console
 		{
 			get;
@@ -360,9 +362,9 @@ namespace XDevkit
 
 		public void Go(bool NotStopped)
 		{
+			XConsole.SendText("go");
 
 		}
-
 		public void InvalidateMemoryCache(bool ExecutablePages, uint Address, uint Size)
 		{
 
@@ -403,27 +405,37 @@ namespace XDevkit
 
 		public void RemoveAllBreakpoints()
 		{
-
+			XConsole.SendCommand("break clearall");
 		}
 
 		public void RemoveBreakpoint(uint Address)
 		{
-
+			XConsole.SendCommand("break addr=0x{0} clear", Address.ToString("X8"));
 		}
 
 		public void SetBreakpoint(uint Address)
 		{
-
+			XConsole.SendCommand("break addr=0x{0}", Address.ToString("X8"));
 		}
 
 		public void SetDataBreakpoint(uint Address, XboxBreakpointType Type, uint Size)
 		{
+			if (Size != sizeof(byte) && Size != sizeof(short) && Size != sizeof(int))
+				throw new ArgumentOutOfRangeException("size", Size.ToString());
 
+			bool clear = Type == XboxBreakpointType.NoBreakpoint;
+
+			// xboxdbg.dll only uses one breakpoint type, so multiple types shouldn't be bitted together...
+			string type_str = Type.ToString().Replace(",", "");
+
+			//SendCommand("break {0}=0x{1} size={2} {3}", type_str, address.ToString("X8"), size,
+			//clear ? "clear" : "");
+			XConsole.SendCommand("break addr={0} size={1} {2}", Address, Size, Type.ToString().Replace(",", ""));
 		}
 
 		public void SetInitialBreakpoint()
 		{
-
+			XConsole.SendCommand("break start");
 		}
 
 		public void SetMemory(uint Address, uint BytesToWrite, byte[] Data, out uint BytesWritten)//aka response
@@ -456,13 +468,12 @@ namespace XDevkit
 
 		public void Stop(bool AlreadyStopped)
 		{
-
-
+			XConsole.SendText("stop");
 		}
 
 		public void StopOn(XboxStopOnFlags StopOn, bool Stop)
 		{
-
+			XConsole.SendCommand("{0}stopon {0}", !Stop ? "no" : "", StopOn.ToString().Replace(",", " "));
 		}
 
 		public void WriteDump(string Filename, XboxDumpFlags Type)
@@ -513,7 +524,23 @@ namespace XDevkit
 		}
 	}
 	#endregion
-	
+	/// <summary>
+	/// Xbox command status response.
+	/// </summary>
+	public class StatusResponse
+	{
+		public string Full { get; private set; }
+		public ResponseType Type { get; private set; }
+		public string Message { get; private set; }
+		public bool Success { get { return ((int)Type & 200) == 200; } }
+
+		public StatusResponse(string full, ResponseType type, string message)
+		{
+			this.Full = full;
+			this.Type = type;
+			this.Message = message;
+		}
+	};
 	#region XboxConsole Class
 	partial class XboxConsoleClass : IXboxConsole
 	{
@@ -717,17 +744,34 @@ namespace XDevkit
 			}
 		}
 
-		public string SystemTime
+		/// <summary>
+		/// Gets or sets the xbox system time.
+		/// </summary>
+		public /*unsafe*/ DateTime SystemTime
 		{
 			get
 			{
-				string responses;
-				SendTextCommand(string.Concat("systime"), out responses);
-				return responses.Replace("200- systime=", string.Empty);
+				StatusResponse response = CurrentConsole.SendCommand("systime");
+				if (response.Type == ResponseType.SingleResponse)
+				{
+					string ticks = string.Format("0x{0}{1}",
+						response.Message.Substring(7, 7),
+						response.Message.Substring(21).PadLeft(8, '0')
+						);
+					return DateTime.FromFileTime(Convert.ToInt64(ticks, 16));
+				}
+				else throw new ApiException("Failed to get xbox system time.");
 			}
 			set
 			{
-				SendTextCommand(string.Concat("setsystime"));
+				
+				long fileTime = value.ToFileTimeUtc();
+				int lo = (int)(fileTime & 0xFFFFFFFF); // *(int*)&fileTime;
+				int hi = (int)(((ulong)fileTime & 0xFFFFFFFF00000000UL) >> 32);// *((int*)&fileTime + 1);
+
+				StatusResponse response = CurrentConsole.SendCommand(string.Format("setsystime clockhi=0x{0} clocklo=0x{1} tz=1", Convert.ToString(hi, 16), Convert.ToString(lo, 16)));
+				if (response.Type != ResponseType.SingleResponse)
+					throw new ApiException("Failed to set xbox system time.");
 			}
 		}
 
@@ -753,7 +797,10 @@ namespace XDevkit
 
 
 		public string Name { get; }
-		public Xbox CurrentConsole { get; set; }
+		Xbox IXboxConsole.CurrentConsole { get; set; }
+		string IXboxConsole.SystemTime { get => SystemTime.ToString(); set => SystemTime = DateTime.Parse(value); }
+
+		public Xbox CurrentConsole = new Xbox();
 	}
 	#endregion
 	
@@ -829,13 +876,9 @@ namespace XDevkit
 		private readonly static uint Float;
 		private readonly static uint Uint64 = 0;
 
-		private readonly static uint Uint64Array;
+		private readonly static uint Uint64Array = 0;
 
 		private static HashSet<Type> ValidReturnTypes;
-
-		private static Dictionary<Type, int> ValueTypeSizeMap;
-		private readonly static uint Void;
-
 		public readonly static uint Int;
 
 		public readonly static uint THTVersion;
@@ -858,7 +901,7 @@ namespace XDevkit
 		}
 		public static void CallVoid(this IXboxConsole console, uint Address, params object[] Arguments)
 		{
-			CallArgs(console, true, Void, typeof(void), null, 0, Address, 0, Arguments);
+			CallArgs(console, true, 0, typeof(void), null, 0, Address, 0, Arguments);
 		}
 		public static int find(this string String, string _Ptr)
 		{
@@ -1272,7 +1315,7 @@ namespace XDevkit
 									return numArray5;
 								}
 							}
-							if (Type == Void)
+							if (Type == 0)
 							{
 								return 0;
 							}
@@ -1349,12 +1392,234 @@ namespace XDevkit
 		}
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int timeout = 5000;
 		private bool Connected;
 		private string responses;
 		private byte[] response_in_bytes;
 		internal int connectionId;
+		/// <summary>
+		/// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
+		/// </summary>
+		/// <returns>Connection status</returns>
+		public bool Ping()
+		{
+			return Ping(Timeout);
+		}
+		/// <summary>
+		/// Disconnects from the xbox.
+		/// </summary>
+		public void Disconnect()
+		{
+			try
+			{
+				// attempt to clean up if still connected
+				if (Ping())
+				{
+					SendCommand("bye"); // we cant leave without saying goodbye ;)
+				}
+			}
+			catch { }
+		}
+		// todo: dont timeout if still receiving, currently it could timeout if receiving large information with small timeout...
 
+		/// <summary>
+		/// Waits for a specified amount of data to be received.  Use with file IO.
+		/// </summary>
+		/// <param name="targetLength">Amount of data to wait for</param>
+		public void Wait(int targetLength)
+		{
+			if (XboxName != null)
+			{
+				if (XboxName.Available < targetLength) // avoid waiting if we already have data in our buffer...
+				{
+					Stopwatch sw = Stopwatch.StartNew();
+					while (XboxName.Available < targetLength)
+					{
+						Thread.Sleep(0);
+						if (sw.ElapsedMilliseconds > timeout)
+						{
+							if (!Ping(250)) Disconnect();  // only disconnect if actually disconnected
+							throw new TimeoutException();
+						}
+					}
+				}
+			}
+			else throw new NoConnectionException();
+		}
+		/// <summary>
+		/// Waits for data to be received.  During execution this method will enter a spin-wait loop and appear to use 100% cpu when in fact it is just a suspended thread.  
+		/// This is much more efficient than waiting a millisecond since most commands take fractions of a millisecond.
+		/// It will either resume after the condition is met or throw a timeout exception.
+		/// </summary>
+		/// <param name="type">Wait type</param>
+		public void Wait(WaitType type)
+		{
+			if (XboxName != null)
+			{
+				Stopwatch sw = Stopwatch.StartNew();
+				switch (type)
+				{
+					// waits for data to start being received
+					case WaitType.Partial:
+						while (XboxName.Available == 0)
+						{
+							Thread.Sleep(0);
+							if (sw.ElapsedMilliseconds > 5000)
+							{
+								if (!Ping(250)) Disconnect();  // only disconnect if actually disconnected
+								throw new TimeoutException();
+							}
+						}
+						break;
+
+					// waits for data to start and then stop being received
+					case WaitType.Full:
+
+						// do a partial wait first
+						while (XboxName.Available == 0)
+						{
+							Thread.Sleep(0);
+							if (sw.ElapsedMilliseconds > 5000)
+							{
+								if (!Ping(250)) Disconnect();  // only disconnect if actually disconnected
+								throw new TimeoutException();
+							}
+						}
+
+						// wait for rest of data to be received
+						int avail = XboxName.Available;
+						Thread.Sleep(0);
+						while (XboxName.Available != avail)
+						{
+							avail = XboxName.Available;
+							Thread.Sleep(0);
+						}
+						break;
+
+					// waits for data to stop being received
+					case WaitType.Idle:
+						int before = XboxName.Available;
+						Thread.Sleep(0);
+						while (XboxName.Available != before)
+						{
+							before = XboxName.Available;
+							Thread.Sleep(0);
+							if (sw.ElapsedMilliseconds > 5000)
+							{
+								if (!Ping(250)) Disconnect();  // only disconnect if actually disconnected
+								throw new TimeoutException();
+							}
+						}
+						break;
+				}
+			}
+			else throw new NoConnectionException();
+		}
+		/// <summary>
+		/// Gets or sets the maximum waiting time given (in milliseconds) for a response.
+		/// </summary>
+		[Browsable(false)]
+		public int Timeout { get { return timeout; } set { timeout = value; } }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private int timeout = 5000;
+		/// <summary>
+		/// Waits for a specified amount and then flushes it from the socket buffer.
+		/// </summary>
+		/// <param name="size">Size to flush</param>
+		public void FlushSocketBuffer(int size)
+		{
+			if (size > 0)
+			{
+				Wait(size);
+				try
+				{
+					XboxName.Client.Receive(new byte[size]);
+				}
+				catch { connected = false; }
+			}
+		}
+		/// <summary>
+		/// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
+		/// </summary>
+		/// <param name="waitTime">Time to wait for a response</param>
+		/// <returns>Connection status</returns>
+		public bool Ping(int waitTime)
+		{
+			int oldTimeOut = timeout;
+			try
+			{
+				if (XboxName != null)
+				{
+					if (XboxName.Available > 0)
+						XboxName.Client.Receive(new byte[XboxName.Available]);
+
+					XboxName.Client.Send(ASCIIEncoding.ASCII.GetBytes(Environment.NewLine));
+					timeout = waitTime;
+					FlushSocketBuffer(16);    // throw out garbage response "400- Unknown Command\r\n"
+					connected = true;
+					return true;
+				}
+				return false;
+			}
+			catch
+			{
+				connected = false;
+				XboxName.Close();
+				return false;
+			}
+			finally
+			{
+				timeout = oldTimeOut;   // make sure to restore old timeout
+			}
+		}
+		/// <summary>
+		/// Gets the current connection status known to Yelo.Debug.  For an actual status update you need to Ping() the xbox.
+		/// </summary>
+		[Browsable(false)]
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private bool connected = false;
+		/// <summary>
+		/// Waits for the receive buffer to stop receiving, then clears it.
+		/// Call this before you send anything to the xbox to help keep the channel in sync.
+		/// </summary>
+		public void FlushSocketBuffer()
+		{
+			Wait(WaitType.Idle);    // waits for the link to be idle...
+			try
+			{
+				if (XboxName.Available > 0)
+					XboxName.Client.Receive(new byte[XboxName.Available]);
+			}
+			catch { connected = false; }
+		}
+		/// <summary>
+		/// Sends a command to the xbox.
+		/// </summary>
+		/// <param name="command">Command to be sent</param>
+		/// <param name="args">Arguments</param>
+		/// <returns>Status response</returns>
+		public StatusResponse SendCommand(string command, params object[] args)
+		{
+			if (XboxName != null)
+			{
+				FlushSocketBuffer();
+
+				try
+				{
+					XboxName.Client.Send(ASCIIEncoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
+				}
+				catch (Exception /*ex*/)
+				{
+					Disconnect();
+					throw new NoConnectionException();
+				}
+
+				StatusResponse response = ReceiveStatusResponse();
+
+				if (response.Success) return response;
+				else throw new ApiException(response.Full);
+			}
+			else throw new NoConnectionException();
+		}
 		public bool TCPConnect(string XboxIP)
 		{
 			try
@@ -1369,7 +1634,19 @@ namespace XDevkit
 				return false;
 			}
 		}
-
+		/// <summary>
+		/// Waits for a status response to be received from the xbox.
+		/// </summary>
+		/// <returns>Status response</returns>
+		public StatusResponse ReceiveStatusResponse()
+		{
+			if (XboxName != null)
+			{
+				string response = ReceiveSocketLine();
+				return new StatusResponse(response, (ResponseType)Convert.ToInt32(response.ToString().Remove(3)), response.Remove(0, 5).ToString());
+			}
+			else throw new NoConnectionException();
+		}
 
 		/// Freezes/Stops Console.
 		/// </summary>
@@ -1454,7 +1731,13 @@ namespace XDevkit
 			}
 			return string.Empty;
 		}
-
+		/// <summary>
+		/// Gets or sets the xbox notification port.
+		/// </summary>
+		[Browsable(false)]
+		public int NotificationPort { get { return notificationPort; } set { notificationPort = value; } }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private int notificationPort = 731;
 		/// <summary>
 		/// Shortcuts To Guide The Xbox Very Fast
 		/// </summary>
@@ -1909,6 +2192,96 @@ namespace XDevkit
 			SendTextCommand("screenshot", out response_in_bytes);
 			return (Bitmap)((new ImageConverter()).ConvertFrom(response_in_bytes));
 		}
+
+		public void SetMemory(uint Address, byte[] Data)
+		{
+			uint num;
+			DebugTarget.SetMemory(Address, (uint)Data.Length, Data, out num);
+			throw new NotImplementedException();
+		}
+
+		public byte[] GetMemory(uint Address, uint Length)
+		{
+			uint bytesRead = 0;
+			byte[] data = new byte[Length];
+			DebugTarget.GetMemory(Address, Length, data, out bytesRead);
+			//DebugTarget.InvalidateMemoryCache(true, Address, Length);// ADD This Method
+			return data;
+		}
+		public void WriteUInt32(uint Address, uint Value)
+		{
+			byte[] bytes = BitConverter.GetBytes(Value);
+			ReverseBytes(bytes, 4);
+			SetMemory(Address, bytes);
+		}
+
+		
+		public void WriteUInt32(uint Address, uint[] Value)
+		{
+			byte[] array = new byte[Value.Length * 4];
+			for (int i = 0; i < Value.Length; i++)
+			{
+				BitConverter.GetBytes(Value[i]).CopyTo(array, (int)(i * 4));
+			}
+			ReverseBytes(array, 4);
+			SetMemory(Address, array);
+		}
+	
+		public void WriteByte(uint Address, byte Value)
+		{
+			byte[] data = new byte[] { Value };
+			SetMemory(Address, data);
+		}
+
+		
+		public void WriteByte(uint Address, byte[] Value)
+		{
+			SetMemory(Address, Value);
+		}
+		public void WriteFloat(uint Address, float Value)
+		{
+			byte[] bytes = BitConverter.GetBytes(Value);
+			Array.Reverse(bytes);
+			SetMemory(Address, bytes);
+		}
+
+		
+		public void WriteFloat(uint Address, float[] Value)
+		{
+			byte[] array = new byte[Value.Length * 4];
+			for (int i = 0; i < Value.Length; i++)
+			{
+				BitConverter.GetBytes(Value[i]).CopyTo(array, (int)(i * 4));
+			}
+			ReverseBytes(array, 4);
+			SetMemory(Address, array);
+		}
+		private static void ReverseBytes(byte[] buffer, int groupSize)
+		{
+			if ((buffer.Length % groupSize) != 0)
+			{
+				throw new ArgumentException("Group size must be a multiple of the buffer length", "groupSize");
+			}
+			int num = 0;
+			while (num < buffer.Length)
+			{
+				int index = num;
+				int num3 = (num + groupSize) - 1;
+				while (true)
+				{
+					if (index >= num3)
+					{
+						num += groupSize;
+						break;
+					}
+					byte num4 = buffer[index];
+					buffer[index] = buffer[num3];
+					buffer[num3] = num4;
+					index++;
+					num3--;
+				}
+			}
+		}
 	}
 
 	#endregion
@@ -2053,6 +2426,75 @@ namespace XDevkit
 	#endregion
 
 	#region Xbox Enums
+	/// <summary>
+	/// Xbox response type.
+	/// </summary>
+	public enum ResponseType
+	{
+		// Success
+		SingleResponse = 200,  //OK
+		Connected = 201,
+		MultiResponse = 202,  //terminates with period
+		BinaryResponse = 203,
+		ReadyForBinary = 204,
+		NowNotifySession = 205,  // notificaiton channel/ dedicated connection
+
+		// Errors
+		UndefinedError = 400,
+		MaxConnectionsExceeded = 401,
+		FileNotFound = 402,
+		NoSuchModule = 403,
+		MemoryNotMapped = 404,  //setzerobytes or setmem failed
+		NoSuchThread = 405,
+		ClockNotSet = 406,  //linetoolong or clocknotset
+		UnknownCommand = 407,
+		NotStopped = 408,
+		FileMustBeCopied = 409,
+		FileAlreadyExists = 410,
+		DirectoryNotEmpty = 411,
+		BadFileName = 412,
+		FileCannotBeCreated = 413,
+		AccessDenied = 414,
+		NoRoomOnDevice = 415,
+		NotDebuggable = 416,
+		TypeInvalid = 417,
+		DataNotAvailable = 418,
+		BoxIsNotLocked = 420,
+		KeyExchangeRequired = 421,
+		DedicatedConnectionRequired = 422,
+		InvalidArgument = 423,
+		ProfileNotStarted = 424,
+		ProfileAlreadyStarted = 425,
+		D3DDebugCommandNotImplemented = 480,
+		D3DInvalidSurface = 481,
+		VxTaskPending = 496,
+		VxTooManySessions = 497,
+	};
+	/// <summary>
+	/// Receive wait type.
+	/// </summary>
+	public enum WaitType
+	{
+		/// <summary>
+		/// Does not wait.
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Waits for data to start being received.
+		/// </summary>
+		Partial,
+
+		/// <summary>
+		/// Waits for data to start and then stop being received.
+		/// </summary>
+		Full,
+
+		/// <summary>
+		/// Waits for data to stop being received.
+		/// </summary>
+		Idle
+	};
 	public enum XboxFunctionType
 	{
 		NoPData = -1,
@@ -2290,8 +2732,8 @@ namespace XDevkit
 	}
 	public enum XboxBreakpointType
 	{
-		NoBreakpoint,
 		OnWrite,
+		NoBreakpoint,
 		OnRead,
 		OnExecuteHW,
 		OnExecute
