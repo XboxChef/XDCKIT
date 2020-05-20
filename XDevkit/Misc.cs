@@ -18,6 +18,8 @@ namespace XDevkit
 		private readonly static uint Uint64Array = 0;
 
 		private static HashSet<Type> ValidReturnTypes;
+		private static int ConversationTimeout;
+		private static int ConnectTimeout;
 		public readonly static uint Int;
 
 		public readonly static uint THTVersion;
@@ -29,9 +31,9 @@ namespace XDevkit
 			throw new NotImplementedException();
 		}
 
-		public static void CallVoid(this Xbox console, uint Address, params object[] Arguments)
+		public static void CallVoid(uint Address, params object[] Arguments)
 		{
-			CallArgs(console, true, 0, typeof(void), null, 0, Address, 0, Arguments);
+			CallArgs(true, 0, typeof(void), null, 0, Address, 0, Arguments);
 		}
 		public static int find(this string String, string _Ptr)
 		{
@@ -63,12 +65,15 @@ namespace XDevkit
 		{
 			return ValidReturnTypes.Contains(t);
 		}
-		private static string SendCommand(Xbox console, string Command)
+		public static XboxConsole Jtag = new XboxConsole();
+
+		private static string SendCommand(string Command)
 		{
 			string str = null;
 			try
 			{
-				console.SendTextCommand(Command, out str);
+				XboxConsole x = new XboxConsole();
+				x.SendTextCommand(Command, out str);
 				if (str.Contains("error="))
 				{
 					throw new Exception(str.Substring(11));
@@ -85,16 +90,16 @@ namespace XDevkit
 
 			return str;
 		}
-		public static uint ResolveFunction(this Xbox console, string ModuleName, uint Ordinal)
+		public static uint ResolveFunction(string ModuleName, uint Ordinal)
 		{
-			object[] XBDMVersion = new object[] { "consolefeatures ver=", THTVersion, " type=9 params=\"A\\0\\A\\2\\", String, "/", ModuleName.Length, "\\", ModuleName.ToHexS(), "\\", Int, "\\", Ordinal, "\\\"" };
-			string str = SendCommand(console, string.Concat(XBDMVersion));
+			object[] XBDMVersion = new object[] { "consolefeatures ver=", THTVersion, " type=9 params=\"A\\0\\A\\2\\", String, "/", ModuleName.Length, "\\", ModuleName.ToHexString(), "\\", Int, "\\", Ordinal, "\\\"" };
+			string str = SendCommand(string.Concat(XBDMVersion));
 			return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
 		}
 		/// <summary>
 		/// EDITED:  Do Not Use
 		/// </summary>
-		private static object CallArgs(Xbox console, bool SystemThread, uint Type, System.Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
+		private static object CallArgs(bool SystemThread, uint Type, System.Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
 		{
 
 			{
@@ -111,8 +116,8 @@ namespace XDevkit
 					throw new Exception(string.Concat(name));
 				}
 
-				console.ConversationTimeout = 4000000;
-				console.ConnectTimeout = 4000000;
+				ConversationTimeout = 4000000;
+				ConnectTimeout = 4000000;
 				object[] XBDMVersion = new object[] { "consolefeatures ver=", THTVersion, " type=", Type, null, null, null, null, null, null, null, null, null };
 				XBDMVersion[4] = (SystemThread ? " system" : string.Empty);
 				object[] objArray = XBDMVersion;
@@ -185,7 +190,7 @@ namespace XDevkit
 					{
 						string str4 = (string)obj2;
 						object obj6 = str2;
-						object[] objArray3 = new object[] { obj6, ByteArray.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexS(), "\\" };
+						object[] objArray3 = new object[] { obj6, ByteArray.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexString(), "\\" };
 						str2 = string.Concat(objArray3);
 						flag = true;
 					}
@@ -250,16 +255,16 @@ namespace XDevkit
 					}
 				}
 				str2 = string.Concat(str2, "\"");
-				string str5 = SendCommand(console, str2);
+				string str5 = SendCommand(str2);
 				string str6 = "buf_addr=";
 				while (str5.Contains(str6))
 				{
 					Thread.Sleep(250);
 					uint num6 = uint.Parse(str5.Substring(str5.find(str6) + str6.Length), NumberStyles.HexNumber);
-					str5 = SendCommand(console, string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
+					str5 = SendCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
 				}
-				console.ConversationTimeout = 2000;
-				console.ConnectTimeout = 5000;
+				ConversationTimeout = 2000;
+				ConnectTimeout = 5000;
 				switch (Type)
 				{
 					case 1:

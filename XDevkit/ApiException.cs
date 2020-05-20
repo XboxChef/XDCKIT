@@ -7,6 +7,23 @@ using System;
 
 namespace XDevkit
 {
+    /// <summary>
+    /// Xbox command status response.
+    /// </summary>
+    public class StatusResponse
+    {
+        public string Full { get; private set; }
+        public ResponseType Type { get; private set; }
+        public string Message { get; private set; }
+        public bool Success { get { return ((int)Type & 200) == 200; } }
+
+        public StatusResponse(string full, ResponseType type, string message)
+        {
+            this.Full = full;
+            this.Type = type;
+            this.Message = message;
+        }
+    };
     /// <summary>Thrown when an Yelo.Debug API function fails</summary>
     public class ApiException : Exception
     {

@@ -10,6 +10,22 @@ namespace XDevkit
 	#region Converter
 	public static class Converters
 	{
+		public static byte[] ToWCHAR(this string String)
+		{
+			return WCHAR(String);
+		}
+		public static byte[] WCHAR(string String)
+		{
+			byte[] numArray = new byte[String.Length * 2 + 2];
+			int num = 1;
+			string str = String;
+			for (int i = 0; i < str.Length; i++)
+			{
+				numArray[num] = (byte)str[i];
+				num += 2;
+			}
+			return numArray;
+		}
 		internal static ulong ConvertToUInt64(object o)
 		{
 			if (o is bool)
@@ -58,6 +74,7 @@ namespace XDevkit
 			}
 			return (ulong)BitConverter.DoubleToInt64Bits((double)o);
 		}
+
 		public static string ConvertHexToString(string hexInput, Encoding encoding)
 		{
 			int numberChars = hexInput.Length;
@@ -84,7 +101,7 @@ namespace XDevkit
 			}
 			return bytes;
 		}
-		public static string ToHexS(this string String)//help it depend on it's own
+		public static string ToHexString(this string String)//help it depend on it's own
 		{
 			string str = string.Empty;
 			string str1 = String;
@@ -145,4 +162,5 @@ namespace XDevkit
 		}
 	}
 	#endregion
+
 }

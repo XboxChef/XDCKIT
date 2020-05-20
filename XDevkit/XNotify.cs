@@ -9,7 +9,10 @@ namespace XDevkit
 	#region XNotify
 	public class XNotify
 	{
+		public readonly static uint Int;
 		public static Xbox console;
+		public readonly static uint JRPCVersion;
+		public readonly static uint String;
 		public static bool XNotifyEnabled
 		{
 			get
@@ -21,7 +24,12 @@ namespace XDevkit
 
 			}
 		}
-		public static void Show(string Message, bool isON)
+		public void Show(string Message)
+		{
+             Show(XNotiyLogo.FLASHING_XBOX_LOGO, Message, true);
+		}
+
+		public void Show(string Message, bool isON)
 		{
 			if (isON == true)
 			{
@@ -32,7 +40,8 @@ namespace XDevkit
 				Show(XNotiyLogo.FLASHING_XBOX_LOGO, Message, isON);
 			}
 		}
-		public static void Show(XNotiyLogo Type, string Message, bool isON)
+		public Xbox Jtag = new Xbox();
+		public void Show(XNotiyLogo Type, string Message, bool isON)
 		{
 			if (isON == true)
 			{
@@ -40,10 +49,12 @@ namespace XDevkit
 			}
 			if (XNotifyEnabled == true)
 			{
-				object[] arguments = new object[] { 0x18, 0xff, 2, (Message).ToWCHAR(), (int)Type };
-				console.CallVoid((int)ThreadType.Title, "xam.xex", 0x290, arguments);
+
+				object[] jRPCVersion = new object[] { "consolefeatures ver=", JRPCVersion, " type=12 params=\"A\\0\\A\\2\\", String, "/", Message.Length, "\\", Message.ToHexString(), "\\", Int, "\\", Type, "\\\"" };
+				Jtag.SendTextCommand(string.Concat(jRPCVersion));
 			}
 		}
+
 
 	}
 	#endregion

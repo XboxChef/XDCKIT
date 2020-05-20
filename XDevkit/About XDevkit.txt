@@ -4,20 +4,20 @@
 
 ___________________________________________________________________________________________________________________________________________________
 INFO:
-Project Started Around 2017-2018
+Project Started Around 2017-2018 Currently Being Worked On 2020
 Goal Is To Emulate The Xdevkit And Add All Of It's Features and Turn It Into TCPClient Class
 
 Learned:
-classes call on other classes so they can be called withing that class like so console.debug.endconsole
-this is useful for and easy to learn to use i also got around learning how interfaces work they are kinda useless in some areas but there
-easy to understand once you get the hang of them
+Having Your Own Class Work Independent IS Musch Better Than Running It Threw Interfaces
+___________________________________________________________________________________________________________________________________________________
 
-
-Xdevkit Should Pass Threw My Class Then it will be partail classes that do the rest of the work
+Xdevkit Should Pass Threw My Class Then it will be partial classes that do the rest of the work
+Note: The Idea Was Good But Lead To A Big Mess Scraping The Idea And Basically Passing Everything To My DLL
 ___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
 No Known Bugs As Of Now -- 4/26/2020
+No Known Bugs As Of Now -- 5/26/2020
 
 
 
@@ -28,15 +28,11 @@ Polished Code - at 6:33 Am 4/26/2020
 
 
 things todo: (Done ==)(Working On *)(Almost Finished -=)
-1.== Finish The Get Set Memory 
-2.==fix the connection system (Main Porarity)
-3.*implement all possible features xdevkit has and make them into one class once finished
-4.*work on the find console feature
-5.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
-6.work on the debugging and memory dumping so it can be used for a future cheat finder tool on pc and andriod aka cheat engine
-7.add new features XDevkit Is Missing..
-8.replace all types of commands passing threw xdevkit to Xbox Class making is a pez to debug
-9.real time editing
+1.*work on the find console feature
+2.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
+3.Cheat Engine Like: Debugger ETC.
+4.add new features XDevkit Is Missing../Realtime editing
+
 
 
 Progress Road:
