@@ -4,10 +4,21 @@ namespace XDevkit
 {
     public interface IXboxConsole
     {
+        Xbox XboxConsole { get;}
         uint ResolveFunction(string ModuleName, uint Ordinal);
         bool Connected { get; set; }
         bool Connect(string XboxNameOrIP = "defualt");
         TcpClient XboxName { get; set; }
+        int ConnectTimeout { get; set; }
+        int ConversationTimeout { get; set; }
+        bool IPAddress { get; }
+        IXboxDebugTarget DebugTarget { get; }
+        XBOX_PROCESS_INFO RunningProcessInfo { get; }
+        string Name
+        {
+            get;
+            set;
+        }
         void Disconnect();
         void CloseConnection(uint Connection);
         string SendTextCommand(string Command);
@@ -52,6 +63,52 @@ namespace XDevkit
         void FlushSocketBuffer(int size);
         bool Ping();
         bool Ping(int waitTime);
+        bool SetBool(uint Address);
+        void SetBool(uint Address, bool Value);
+        void SetBool(uint Address, bool[] Value);
+        string GetString(uint Address, uint size);
+        void SetString(uint Address, string String);
+        float GetFloat(uint Address);
+        float[] GetFloat(uint Address, uint ArraySize);
+        void SetFloat(uint Address, float Value);
+        void SetFloat(uint Address, float[] Value);
+        byte GetByte(uint Address);
+        void SetByte(uint Address, byte Value);
+        void SetByte(uint Address, byte[] Value);
+        sbyte GetSByte(uint Address);
+        void SetSByte(uint Address, sbyte Value);
+        void SetSByte(uint Address, sbyte[] Value);
+        short GetInt16(uint Address);
+        short[] GetInt16(uint Address, uint ArraySize);
+        void SetInt16(uint Address, short Value);
+        void SetInt16(uint Address, short[] Value);
+        int GetInt32(uint Address);
+        int[] GetInt32(uint Address, uint ArraySize);
+        void SetInt32(uint Address, int Value);
+        void SetInt32(uint Address, int[] Value);
+        long GetInt64(uint Address);
+        long[] GetInt64(uint Address, uint ArraySize);
+        void SetInt64(uint Address, long Value);
+        void SetInt64(uint Address, long[] Value);
+        ushort GetUInt16(uint Address);
+        ushort[] GetUInt16(uint Address, uint ArraySize);
+        void SetUInt16(uint Address, ushort Value);
+
+        void SetUInt16(uint Address, ushort[] Value);
+        uint GetUInt32(uint Address);
+
+        uint[] GetUInt32(uint Address, uint ArraySize);
+        void SetUInt32(uint Address, uint Value);
+        void SetUInt32(uint Address, uint[] Value);
+        ulong GetUInt64(uint Address);
+
+        ulong[] GetUInt64(uint Address, uint ArraySize);
+
+        void SetUInt64(uint Address, ulong Value);
+
+        void SetUInt64(uint Address, ulong[] Value);
+
+
 
     }
 }

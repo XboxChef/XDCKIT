@@ -10,7 +10,7 @@ namespace XDevkit
 	public class XNotify
 	{
 		public readonly static uint Int;
-		public static Xbox console;
+		public Xbox Jtag = new Xbox();
 		public readonly static uint JRPCVersion;
 		public readonly static uint String;
 		public static bool XNotifyEnabled
@@ -40,7 +40,7 @@ namespace XDevkit
 				Show(XNotiyLogo.FLASHING_XBOX_LOGO, Message, isON);
 			}
 		}
-		public Xbox Jtag = new Xbox();
+
 		public void Show(XNotiyLogo Type, string Message, bool isON)
 		{
 			if (isON == true)

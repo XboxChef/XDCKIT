@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -14,18 +15,41 @@ namespace XDevkit
     /// <summary>
     /// Credits To JRPC Dev And Yelo debug. the Rest Is Created By Me TeddyHammer
     /// </summary>
-    public class Xbox : IXboxConsole
+    public class Xbox : IXboxConsole, IXboxDebugTarget
     {
+
+        public Xbox()
+        {
+
+        }
         #region Objects
         public static TcpClient XboxName;
         public StreamReader sreader;
         internal int connectionId;
         private static string responses;
+            
         public bool Connected { get; set; }
-        private string LastIPAddress = "192.168.0.5";
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
+        /// <summary>
+        /// Gets or sets the last xbox connection used.
+        /// </summary>
+        [Browsable(false)]
+        public string LastConnectionUsed
+        {
+            get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
+            set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
+        }
+        TcpClient IXboxConsole.XboxName { get; set; }
+        private TcpClient connection = new TcpClient();
+        Xbox IXboxConsole.XboxConsole { get => new Xbox(); }
         #endregion
 
         #region Connect/Disconnect TCPConnection
+        public void OpenConsole(string XboxNameOrIP)
+        {
+
+        }
         /// <summary>
         /// Connects To The Console Via Tcp Connection. 
         /// </summary>
@@ -39,7 +63,7 @@ namespace XDevkit
             {
                 if (XboxNameOrIP == "defualt")
                 {
-                    XboxNameOrIP = LastIPAddress;
+                    XboxNameOrIP = "192.168.0.5";
                     XboxName = new TcpClient(XboxNameOrIP, 730);
                     XboxName.ReceiveTimeout = 5000; //1sec
                     sreader = new StreamReader(XboxName.GetStream());
@@ -391,6 +415,16 @@ namespace XDevkit
         #endregion
 
         #region Features
+        public byte[] NOP()
+        {
+            return new byte[] { 0x60, 0x00, 0x00, 0x00 };
+        }
+        public static void X360Text(string a)
+        {
+
+            object[] arguments = new object[] { 0x14/*Type*/, 0xff, 2, (a).ToWCHAR(), 1 };
+            misc.CallVoid(ThreadType.Title, "xam.xex", 0x290, arguments);
+        }
         public void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
         {
             string[] lines = Name.Split("\\".ToCharArray());
@@ -596,11 +630,7 @@ namespace XDevkit
                 SendTextCommand("go");
             }
         }
-        public static string XboxIP()//TODO:
-        {
 
-            return "";
-        }
         public string ConsoleType()
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
@@ -778,15 +808,166 @@ namespace XDevkit
 
         #region Yelo debug stuff
         /// <summary>
+        /// Connects to an xbox on the network. If multiple consoles are detected this method 
+        /// will attempt to connect to the last connection used. If that connection or information
+        /// is unavailable this method will fail.
+        /// </summary>
+        public void Connect()
+        {
+            try
+            {
+                connected = Ping(100); // update connection status
+                if (!connected)
+                {
+                    Disconnect();   // destroy any old connection we might have had
+
+                    // determines the debug names and ips of all debug xboxes on the network
+                    List<DebugConnection> connections = QueryXboxConnections();
+
+                    // attempt to narrow the list down to one connection
+                    if (connections.Count == 1)
+                    {
+                        //store debug info
+                        debugName = LastConnectionUsed = connections[0].Name;
+                        debugIP = connections[0].IP;
+                    }
+                    else if (connections.Count > 1)
+                    {
+                        bool found = false;
+                        foreach (DebugConnection dbgConnection in connections)
+                        {
+                            if (LastConnectionUsed == null) break;
+                            if (dbgConnection.IP.ToString() == LastConnectionUsed || dbgConnection.Name == LastConnectionUsed)
+                            {
+                                //store debug info
+                                debugName = LastConnectionUsed = dbgConnection.Name;
+                                debugIP = dbgConnection.IP;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) throw new NoConnectionException("Unable to distinguish between multiple connections. Please turn off all other consoles or try to connect again using a specific ip.");
+                    }
+                    else throw new NoConnectionException("Unable to detect a connection.");
+
+                    // establish debug session
+                    Initialize(debugIP.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                connected = false;
+                throw ex;
+            }
+        }
+
+        private void Initialize(string xboxIP)
+        {
+            // establish debug session
+            XboxName = new TcpClient();
+            XboxName.SendTimeout = 250;
+            XboxName.ReceiveTimeout = 250;
+            XboxName.ReceiveBufferSize = 0x100000 * 3;    // todo: check on this
+            XboxName.SendBufferSize = 0x100000 * 3;
+            XboxName.NoDelay = true;
+            XboxName.Connect(xboxIP, 731);
+            connected = Ping(100);  // make sure it is successful
+            if(connected)
+            {
+                Console.WriteLine("Yelo Debug Connection Successful");
+            }
+        }
+
+        /// <summary>
+        /// Returns a list containing all consoles detected on the network.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>Updated for use with multiple NICs by xmt ;D</remarks>
+        public List<DebugConnection> QueryXboxConnections()
+        {
+            List<DebugConnection> connections = new List<DebugConnection>();
+            List<Socket> socks = new List<Socket>();
+
+            // create our connections
+            foreach (NetworkInterface i in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                foreach (UnicastIPAddressInformation ua in i.GetIPProperties().UnicastAddresses)
+                {
+                    Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                    s.EnableBroadcast = true;
+
+                    try
+                    {
+                        // broadcast our request on xbox port 731
+                        s.Bind(new IPEndPoint(ua.Address, 0));
+                        s.SendTo(new byte[] { 3, 0 }, new IPEndPoint(System.Net.IPAddress.Broadcast, 731));
+                        socks.Add(s);
+                    }
+                    catch { /* failed broadcast */}
+                }
+            }
+
+            Stopwatch sw = Stopwatch.StartNew();
+            do
+            {
+                Thread.Sleep(1);
+                foreach (Socket s in socks)
+                {
+                    while (s.Available > 0)
+                    {
+                        // parse any information returned
+                        byte[] data = new byte[s.Available];
+                        EndPoint end = new IPEndPoint(System.Net.IPAddress.Any, 0);
+                        s.ReceiveFrom(data, ref end);
+                        IPEndPoint endpoint = (IPEndPoint)end;
+                        connections.Add(new DebugConnection(((IPEndPoint)end).Address, ASCIIEncoding.ASCII.GetString(data, 2, data.Length - 2).Replace("\0", "")));
+                    }
+                }
+            }
+            while (sw.ElapsedMilliseconds < 25);            // wait for response
+            sw.Stop();
+
+            if (connections.Count == 0)
+                throw new NoConnectionException("No xbox connection detected.");
+
+            // close the connections
+            foreach (Socket s in socks)
+            {
+                s.Close();
+            }
+
+            // check to make sure that each box has unique connection information...(case sensitive)
+            for (int i = 0; i < connections.Count; i++)
+                for (int j = 0; j < connections.Count; j++)
+                    if (i != j && (connections[i].Name == connections[j].Name || connections[i].IP == connections[j].IP))
+                        throw new NoConnectionException("Multiple consoles found that have the same connection information.  Please ensure that each box connected to the network has different debug names and ips.");
+
+            return connections;
+        }
+        /// <summary>
         /// Gets or sets the maximum waiting time given (in milliseconds) for a response.
         /// </summary>
         [Browsable(false)]
         public int Timeout { get { return timeout; } set { timeout = value; } }
 
-        TcpClient IXboxConsole.XboxName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int ConnectTimeout { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int ConversationTimeout { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public bool IPAddress => throw new NotImplementedException();
+
+        IXboxDebugTarget IXboxConsole.DebugTarget => throw new NotImplementedException();
+
+        public XBOX_PROCESS_INFO RunningProcessInfo => throw new NotImplementedException();
+
+        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private int timeout = 5000;
+        private bool connected;
+        private string debugName;
+        private IPAddress debugIP;
+
+
         /// <summary>
         /// Receives multiple lines of text from the xbox.
         /// </summary>
@@ -1113,7 +1294,6 @@ namespace XDevkit
             SetMemory(Address, numArray);
         }
         #endregion
-
 
         #region Float {Get; Set;}
         public float GetFloat(uint Address)
@@ -1442,7 +1622,12 @@ namespace XDevkit
             ReverseBytes(numArray, 8);
             SetMemory(Address, numArray);
         }
-        #endregion 
+
+        public void InvalidateMemoryCache(bool v, uint address, uint length)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
 
 
@@ -1450,10 +1635,11 @@ namespace XDevkit
 
     }
 
+
+    #region Misc
     /// <summary>
     /// Credits To James The JRPC Dev.
     /// </summary>
-    #region Misc
     public static class misc
     {
         private readonly static uint ByteArray = 0;
@@ -1471,15 +1657,18 @@ namespace XDevkit
 
         public readonly static uint String;
 
-        private static string DefaultConsole()
-        {
-            throw new NotImplementedException();
-        }
+
 
         public static void CallVoid(uint Address, params object[] Arguments)
         {
             CallArgs(true, 0, typeof(void), null, 0, Address, 0, Arguments);
         }
+        private readonly static uint Void;
+        public static void CallVoid(ThreadType Type, string module, int ordinal, params object[] Arguments)
+        {
+            CallArgs(Type == ThreadType.System, Void, typeof(void), module, ordinal, 0, 0, Arguments);
+        }
+
         public static int find(this string String, string _Ptr)
         {
             if (_Ptr.Length == 0 || String.Length == 0)
@@ -1921,25 +2110,10 @@ namespace XDevkit
             InArray.CopyTo(OutArray, 0);
             OutArray[InArray.Length] = Value;
         }
-        public static byte[] ToWCHAR(this string String)
-        {
-            return WCHAR(String);
-        }
-        public static byte[] WCHAR(string String)
-        {
-            byte[] numArray = new byte[String.Length * 2 + 2];
-            int num = 1;
-            string str = String;
-            for (int i = 0; i < str.Length; i++)
-            {
-                numArray[num] = (byte)str[i];
-                num += 2;
-            }
-            return numArray;
-        }
+
     }
     #endregion
-
+    
     #region Converter
     public static class Converters
     {
@@ -2101,5 +2275,25 @@ namespace XDevkit
             return DateTime.ParseExact(sDate, "yyyyMMddHHmmss", provider).ToString();
         }
     }
+
     #endregion
+
+    public class XboxManagerClass
+    {
+
+    }
+    public class XboxManager
+    {
+        public XboxManager()
+        {
+        }
+
+        public string DefaultConsole { get; internal set; }
+
+        internal IXboxConsole OpenConsole(string xboxNameOrIP)
+        {
+            Xbox console = new Xbox();
+            return console;
+        }
+    }
 }
