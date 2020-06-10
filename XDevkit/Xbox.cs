@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -20,10 +19,11 @@ namespace XDevkit
 
         public Xbox()
         {
-
+            
         }
+
         #region Objects
-        public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
+    public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
         public int ConversationTimeout { get => XboxName.SendTimeout; set => XboxName.SendTimeout = value; }
         bool IXboxConsole.IPAddress => IPAddress;
         IXboxDebugTarget IXboxConsole.DebugTarget { get; }
@@ -193,6 +193,11 @@ namespace XDevkit
         #endregion
 
         #region SendCommands
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <returns></returns>
         public string SendTextCommand(string Command)
         {
             try
@@ -204,6 +209,11 @@ namespace XDevkit
             }
             return string.Empty;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <param name="response"></param>
         public void SendTextCommand(string Command, out string response)
         {
             response = "";
@@ -474,6 +484,13 @@ namespace XDevkit
             object[] arguments = new object[] { 0x14/*Type*/, 0xff, 2, (a).ToWCHAR(), 1 };
             misc.CallVoid(ThreadType.Title, "xam.xex", 0x290, arguments);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="MediaDirectory"></param>
+        /// <param name="CmdLine"></param>
+        /// <param name="Flags"></param>
         public void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
         {
             string[] lines = Name.Split("\\".ToCharArray());
@@ -679,7 +696,10 @@ namespace XDevkit
                 SendTextCommand("go");
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ConsoleType()
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
@@ -696,23 +716,43 @@ namespace XDevkit
             string str1 = SendTextCommand(str);
             return responses.Replace("200- ", "");
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public uint GetKernalVersion()
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return uint.Parse(str1.Substring(str1.find(" ") + 1));
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="TemperatureType"></param>
+        /// <returns></returns>
         public uint GetTemperature(TemperatureFlag TemperatureType)
         {
             object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
             string str = SendTextCommand(string.Concat(jRPCVersion));
             return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Top_Left"></param>
+        /// <param name="Top_Right"></param>
+        /// <param name="Bottom_Left"></param>
+        /// <param name="Bottom_Right"></param>
         public void SetLeds(LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
         {
             object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=14 params=\"A\\0\\A\\4\\", 1, "\\", (uint)Top_Left, "\\", 1, "\\", (uint)Top_Right, "\\", 1, "\\", (uint)Bottom_Left, "\\", 1, "\\", (uint)Bottom_Right, "\\\"" };
             SendCommand(string.Concat(jRPCVersion));
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public uint XamGetCurrentTitleId()
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");
@@ -755,13 +795,23 @@ namespace XDevkit
         #endregion
 
         #region Misc
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ModuleName"></param>
+        /// <param name="Ordinal"></param>
+        /// <returns></returns>
         public  uint ResolveFunction(string ModuleName, uint Ordinal)
         {
             object[] XBDMVersion = new object[] { "consolefeatures ver=", 2/*THTVersion*/, " type=9 params=\"A\\0\\A\\2\\", /*String*/0, "/", ModuleName.Length, "\\", ModuleName.ToHexString(), "\\", /*Int*/0, "\\", Ordinal, "\\\"" };
             string str = SendTextCommand(string.Concat(XBDMVersion));
             return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="groupSize"></param>
         private void ReverseBytes(byte[] buffer, int groupSize)
         {
             if (buffer.Length % groupSize != 0)

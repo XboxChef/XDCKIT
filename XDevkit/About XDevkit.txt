@@ -4,30 +4,31 @@
 
 ___________________________________________________________________________________________________________________________________________________
 INFO:
-Project Started Around 2017-2018 Currently Being Worked On 2020
+Project Started Around 2017-2018 Currently Being Worked On 2020 - active project
 Goal Is To Emulate The Xdevkit And Add All Of It's Features and Turn It Into TCPClient Class
 
 Learned:
-Having Your Own Class Work Independent IS Musch Better Than Running It Threw Interfaces
+Having Your Own Class Work Independent IS Much Better Than Running It Threw Interfaces or some unknown code
 ___________________________________________________________________________________________________________________________________________________
 
 Xdevkit Should Pass Threw My Class Then it will be partial classes that do the rest of the work
-Note: The Idea Was Good But Lead To A Big Mess Scraping The Idea And Basically Passing Everything To My DLL
+Note: The Idea Was Good But Lead To A Big Mess... Scraping The Idea And Basically Passing Everything To My DLL
 ___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
 No Known Bugs As Of Now -- 4/26/2020
 No Known Bugs As Of Now -- 5/26/2020
-
+No Known Bugs As Of Now -- 6/10/2020
 
 
 Changes:  (Added + Removed -)
 Polished Code - at 6:33 Am 4/26/2020
+- deleted un wanted code
 
 
 
 
-things todo: (Done ==)(Working On *)(Almost Finished -=)
+Things Todo: (Done ==)(Working On *)(Almost Finished -=)
 1.*work on the find console feature
 2.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
 3.Cheat Engine Like: Debugger ETC.
@@ -36,12 +37,3 @@ things todo: (Done ==)(Working On *)(Almost Finished -=)
 
 
 Progress Road:
-Getting Closer To Building A Proper XDevkit Emulation Dll -- 3/1/20 - future me says that was a lie ... 4/26/2020
-finished fixing issues with connection 4/15/2020
-
-
-
-
-how nb works 
-nb gets the existing consoles then display's them consoles you have saved and made as defualt to emmulate that 
-we have to attempt to get a defualt console ip address and name...
