@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JRPC_Client\JRPC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XDevkit\ApiException.cs" />
     <Compile Include="XDevkit\IXboxConsole.cs" />

@@ -23,7 +23,18 @@ namespace XDevkit
 
         }
         #region Objects
+        public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
+        public int ConversationTimeout { get => XboxName.SendTimeout; set => XboxName.SendTimeout = value; }
+        bool IXboxConsole.IPAddress => IPAddress;
+        IXboxDebugTarget IXboxConsole.DebugTarget { get; }
+
+        public XBOX_PROCESS_INFO RunningProcessInfo;
+
+        public string Name { get; set; }
+        XBOX_PROCESS_INFO IXboxConsole.RunningProcessInfo => RunningProcessInfo;
+        public bool IPAddress;
         public static TcpClient XboxName;
+        private int Xbox_Port = 730;
         public StreamReader sreader;
         internal int connectionId;
         private static string responses;
@@ -41,14 +52,66 @@ namespace XDevkit
             set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
         }
         TcpClient IXboxConsole.XboxName { get; set; }
-        private TcpClient connection = new TcpClient();
         Xbox IXboxConsole.XboxConsole { get => new Xbox(); }
         #endregion
 
         #region Connect/Disconnect TCPConnection
+        /// <summary>
+        /// looks up local addresses on the network to find console ip
+        /// </summary>
+        /// <param name="host"></param>
+        /// <returns></returns>
+        public static bool IsLocalIpAddress(string host)
+        {
+            try
+            { // get host IP addresses
+                IPAddress[] hostIPs = Dns.GetHostAddresses(host);
+                // get local IP addresses
+                IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+
+                // test if any host IP equals to any local IP or to localhost
+                foreach (IPAddress hostIP in hostIPs)
+                {
+                    // is localhost
+                    if (System.Net.IPAddress.IsLoopback(hostIP)) return true;
+                    // is local address
+                    foreach (IPAddress localIP in localIPs)
+                    {
+                        if (hostIP.Equals(localIP)) return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
         public void OpenConsole(string XboxNameOrIP)
         {
+            Connect(XboxNameOrIP);
+        }
+        /// <summary>
+        /// Connects to an xbox on the network. If console is detected this method 
+        /// will attempt to connect to the console.
+        /// </summary>
+        public bool Connect()
+        {
+            try
+            {
+                if ("" == "")
+                {
+                    Connected = true;
+                    return true;
 
+                }
+                else
+                {
+                    // return false;
+                }
+            }
+            catch
+            {
+                Connected = false;
+                return false;
+            }
         }
         /// <summary>
         /// Connects To The Console Via Tcp Connection. 
@@ -63,22 +126,7 @@ namespace XDevkit
             {
                 if (XboxNameOrIP == "defualt")
                 {
-                    XboxNameOrIP = "192.168.0.5";
-                    XboxName = new TcpClient(XboxNameOrIP, 730);
-                    XboxName.ReceiveTimeout = 5000; //1sec
-                    sreader = new StreamReader(XboxName.GetStream());
-                    connectionId = 1;
-                    // First thing that XBDM does is send a packet to us when we connect
-
-                    // Max packet size is 1026
-                    byte[] Packet = new byte[1026];
-                    XboxName.Client.Receive(Packet);
-
-                    if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 3) != "201")
-                    {
-                        throw new Exception("XBDM did not send connect message");
-                    }
-                    else if (XboxName.Connected)
+           /*else */if (Connect() == true)
                     {
                         Console.WriteLine("Connected == ( Method 1 )");
                         return Connected = true;
@@ -87,24 +135,25 @@ namespace XDevkit
                 }
                 if (XboxNameOrIP.Contains("192"))
                 {
-                    XboxName = new TcpClient(XboxNameOrIP, 730);
+                    XboxName.SendTimeout = 250;
+                    XboxName.ReceiveTimeout = 250;
+                    XboxName.NoDelay = true;
+
+
+                    XboxName = new TcpClient(XboxNameOrIP, Xbox_Port);
                     XboxName.ReceiveTimeout = 5000; //1sec
                     sreader = new StreamReader(XboxName.GetStream());
-                    connectionId = 1;
-                    // First thing that XBDM does is send a packet to us when we connect
 
-                    // Max packet size is 1026
-                    byte[] Packet = new byte[1026];
-                    XboxName.Client.Receive(Packet);
-
-                    if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 3) != "201")
+                    Connected = Ping(100);  // make sure it is successful
+                    if (Ping() == false)
                     {
+                        connectionId = 0;
                         return Connected = false;
-                        throw new Exception("XBDM did not send connect message");
                     }
-                    else if (XboxName.Connected)
+                    else if (Ping() == true)
                     {
                         Console.WriteLine("Connected == ( Method 2 )");
+                        connectionId = 200;
                         return Connected = true;
                     }
                 }
@@ -637,7 +686,11 @@ namespace XDevkit
             string str1 = SendTextCommand(str);
             return str1.Substring(str1.find(" ") + 1);
         }
-        public  string GetCPUKey()
+        /// <summary>
+        /// Retrieve's The Console's Central Processing Unit Key.
+        /// </summary>
+        /// <returns>Console Central Processing Unit Key.</returns>
+        public string GetCPUKey()
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
@@ -681,12 +734,20 @@ namespace XDevkit
             {
             }
         }
+        /// <summary>
+        /// Sends Text To Appear On The Screen. 
+        /// </summary>
+        /// <param name="Text"></param>
         public void XNotify(string Text)
         {
             XNotify(Text, 34);
         }
-
-        public  void XNotify(string Text, uint Type)
+        /// <summary>
+        /// Sends Text To Appear On The Screen. 
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <param name="Type"></param>
+        public void XNotify(string Text, uint Type)
         {
             object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=12 params=\"A\\0\\A\\2\\", 2, "/", Text.Length, "\\", Text.ToHexString(), "\\", 1, "\\", Type, "\\\"" };
             SendTextCommand(string.Concat(jRPCVersion), out responses);
@@ -694,14 +755,10 @@ namespace XDevkit
         #endregion
 
         #region Misc
-        public readonly static uint Int;
 
-        public readonly static uint THTVersion;
-
-        public readonly static uint String;
         public  uint ResolveFunction(string ModuleName, uint Ordinal)
         {
-            object[] XBDMVersion = new object[] { "consolefeatures ver=", THTVersion, " type=9 params=\"A\\0\\A\\2\\", String, "/", ModuleName.Length, "\\", ModuleName.ToHexString(), "\\", Int, "\\", Ordinal, "\\\"" };
+            object[] XBDMVersion = new object[] { "consolefeatures ver=", 2/*THTVersion*/, " type=9 params=\"A\\0\\A\\2\\", /*String*/0, "/", ModuleName.Length, "\\", ModuleName.ToHexString(), "\\", /*Int*/0, "\\", Ordinal, "\\\"" };
             string str = SendTextCommand(string.Concat(XBDMVersion));
             return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
         }
@@ -807,165 +864,18 @@ namespace XDevkit
         #endregion
 
         #region Yelo debug stuff
-        /// <summary>
-        /// Connects to an xbox on the network. If multiple consoles are detected this method 
-        /// will attempt to connect to the last connection used. If that connection or information
-        /// is unavailable this method will fail.
-        /// </summary>
-        public void Connect()
-        {
-            try
-            {
-                connected = Ping(100); // update connection status
-                if (!connected)
-                {
-                    Disconnect();   // destroy any old connection we might have had
 
-                    // determines the debug names and ips of all debug xboxes on the network
-                    List<DebugConnection> connections = QueryXboxConnections();
 
-                    // attempt to narrow the list down to one connection
-                    if (connections.Count == 1)
-                    {
-                        //store debug info
-                        debugName = LastConnectionUsed = connections[0].Name;
-                        debugIP = connections[0].IP;
-                    }
-                    else if (connections.Count > 1)
-                    {
-                        bool found = false;
-                        foreach (DebugConnection dbgConnection in connections)
-                        {
-                            if (LastConnectionUsed == null) break;
-                            if (dbgConnection.IP.ToString() == LastConnectionUsed || dbgConnection.Name == LastConnectionUsed)
-                            {
-                                //store debug info
-                                debugName = LastConnectionUsed = dbgConnection.Name;
-                                debugIP = dbgConnection.IP;
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) throw new NoConnectionException("Unable to distinguish between multiple connections. Please turn off all other consoles or try to connect again using a specific ip.");
-                    }
-                    else throw new NoConnectionException("Unable to detect a connection.");
 
-                    // establish debug session
-                    Initialize(debugIP.ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                connected = false;
-                throw ex;
-            }
-        }
-
-        private void Initialize(string xboxIP)
-        {
-            // establish debug session
-            XboxName = new TcpClient();
-            XboxName.SendTimeout = 250;
-            XboxName.ReceiveTimeout = 250;
-            XboxName.ReceiveBufferSize = 0x100000 * 3;    // todo: check on this
-            XboxName.SendBufferSize = 0x100000 * 3;
-            XboxName.NoDelay = true;
-            XboxName.Connect(xboxIP, 731);
-            connected = Ping(100);  // make sure it is successful
-            if(connected)
-            {
-                Console.WriteLine("Yelo Debug Connection Successful");
-            }
-        }
-
-        /// <summary>
-        /// Returns a list containing all consoles detected on the network.
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>Updated for use with multiple NICs by xmt ;D</remarks>
-        public List<DebugConnection> QueryXboxConnections()
-        {
-            List<DebugConnection> connections = new List<DebugConnection>();
-            List<Socket> socks = new List<Socket>();
-
-            // create our connections
-            foreach (NetworkInterface i in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                foreach (UnicastIPAddressInformation ua in i.GetIPProperties().UnicastAddresses)
-                {
-                    Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                    s.EnableBroadcast = true;
-
-                    try
-                    {
-                        // broadcast our request on xbox port 731
-                        s.Bind(new IPEndPoint(ua.Address, 0));
-                        s.SendTo(new byte[] { 3, 0 }, new IPEndPoint(System.Net.IPAddress.Broadcast, 731));
-                        socks.Add(s);
-                    }
-                    catch { /* failed broadcast */}
-                }
-            }
-
-            Stopwatch sw = Stopwatch.StartNew();
-            do
-            {
-                Thread.Sleep(1);
-                foreach (Socket s in socks)
-                {
-                    while (s.Available > 0)
-                    {
-                        // parse any information returned
-                        byte[] data = new byte[s.Available];
-                        EndPoint end = new IPEndPoint(System.Net.IPAddress.Any, 0);
-                        s.ReceiveFrom(data, ref end);
-                        IPEndPoint endpoint = (IPEndPoint)end;
-                        connections.Add(new DebugConnection(((IPEndPoint)end).Address, ASCIIEncoding.ASCII.GetString(data, 2, data.Length - 2).Replace("\0", "")));
-                    }
-                }
-            }
-            while (sw.ElapsedMilliseconds < 25);            // wait for response
-            sw.Stop();
-
-            if (connections.Count == 0)
-                throw new NoConnectionException("No xbox connection detected.");
-
-            // close the connections
-            foreach (Socket s in socks)
-            {
-                s.Close();
-            }
-
-            // check to make sure that each box has unique connection information...(case sensitive)
-            for (int i = 0; i < connections.Count; i++)
-                for (int j = 0; j < connections.Count; j++)
-                    if (i != j && (connections[i].Name == connections[j].Name || connections[i].IP == connections[j].IP))
-                        throw new NoConnectionException("Multiple consoles found that have the same connection information.  Please ensure that each box connected to the network has different debug names and ips.");
-
-            return connections;
-        }
         /// <summary>
         /// Gets or sets the maximum waiting time given (in milliseconds) for a response.
         /// </summary>
         [Browsable(false)]
         public int Timeout { get { return timeout; } set { timeout = value; } }
 
-        public int ConnectTimeout { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ConversationTimeout { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public bool IPAddress => throw new NotImplementedException();
-
-        IXboxDebugTarget IXboxConsole.DebugTarget => throw new NotImplementedException();
-
-        public XBOX_PROCESS_INFO RunningProcessInfo => throw new NotImplementedException();
-
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private int timeout = 5000;
-        private bool connected;
-        private string debugName;
-        private IPAddress debugIP;
 
 
         /// <summary>
@@ -1642,31 +1552,18 @@ namespace XDevkit
     /// </summary>
     public static class misc
     {
-        private readonly static uint ByteArray = 0;
-        private readonly static uint Float = 0;
-        private readonly static uint Uint64 = 0;
-
-        private readonly static uint Uint64Array = 0;
-
-        private static HashSet<Type> ValidReturnTypes;
-        private static int ConversationTimeout;
-        private static int ConnectTimeout;
-        public readonly static uint Int;
-
-        public readonly static uint THTVersion;
-
-        public readonly static uint String;
 
 
+        private static HashSet<Type> ValidReturnTypes { get; set; }
 
         public static void CallVoid(uint Address, params object[] Arguments)
         {
             CallArgs(true, 0, typeof(void), null, 0, Address, 0, Arguments);
         }
-        private readonly static uint Void;
+
         public static void CallVoid(ThreadType Type, string module, int ordinal, params object[] Arguments)
         {
-            CallArgs(Type == ThreadType.System, Void, typeof(void), module, ordinal, 0, 0, Arguments);
+            CallArgs(Type == ThreadType.System, 0 /*Void*/, typeof(void), module, ordinal, 0, 0, Arguments);
         }
 
         public static int find(this string String, string _Ptr)
@@ -1699,38 +1596,13 @@ namespace XDevkit
         {
             return ValidReturnTypes.Contains(t);
         }
-        public static Xbox Jtag = new Xbox();
-
-        private static string SendCommand(string Command)
-        {
-            string str = null;
-            try
-            {
-                Xbox x = new Xbox();
-                x.SendTextCommand(Command, out str);
-                if (str.Contains("error="))
-                {
-                    throw new Exception(str.Substring(11));
-                }
-                if (str.Contains("DEBUG"))
-                {
-
-                }
-            }
-            catch
-            {
-
-            }
-
-            return str;
-        }
 
         /// <summary>
         /// EDITED:  Do Not Use
         /// </summary>
         private static object CallArgs(bool SystemThread, uint Type, System.Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
         {
-
+            Xbox xbox = new Xbox();
             {
                 object[] name;
                 int i;
@@ -1745,9 +1617,9 @@ namespace XDevkit
                     throw new Exception(string.Concat(name));
                 }
 
-                ConversationTimeout = 4000000;
-                ConnectTimeout = 4000000;
-                object[] XBDMVersion = new object[] { "consolefeatures ver=", THTVersion, " type=", Type, null, null, null, null, null, null, null, null, null };
+                xbox.ConversationTimeout = 4000000;
+                xbox.ConnectTimeout = 4000000;
+                object[] XBDMVersion = new object[] { "consolefeatures ver=",2 /*version*/, " type=", Type, null, null, null, null, null, null, null, null, null };
                 XBDMVersion[4] = (SystemThread ? " system" : string.Empty);
                 object[] objArray = XBDMVersion;
                 if (module != null)
@@ -1780,7 +1652,7 @@ namespace XDevkit
                     if (obj2 is uint)
                     {
                         obj = str2;
-                        object[] num2 = new object[] { obj, Int, "\\", Converters.UIntToInt((uint)obj2), "\\" };
+                        object[] num2 = new object[] { obj, /*Int*/0, "\\", Converters.UIntToInt((uint)obj2), "\\" };
                         str2 = string.Concat(num2);
                         flag = true;
                     }
@@ -1789,7 +1661,7 @@ namespace XDevkit
                         if (!(obj2 is bool))
                         {
                             object obj3 = str2;
-                            object[] objArray2 = new object[] { obj3, Int, "\\", null, null };
+                            object[] objArray2 = new object[] { obj3, /*Int*/0, "\\", null, null };
                             objArray2[3] = (obj2 is byte ? Convert.ToByte(obj2).ToString() : Convert.ToInt32(obj2).ToString());
                             objArray2[4] = "\\";
                             str2 = string.Concat(objArray2);
@@ -1797,7 +1669,7 @@ namespace XDevkit
                         else
                         {
                             object obj4 = str2;
-                            object[] num3 = new object[] { obj4, Int, "/", Convert.ToInt32((bool)obj2), "\\" };
+                            object[] num3 = new object[] { obj4, /*Int*/0, "/", Convert.ToInt32((bool)obj2), "\\" };
                             str2 = string.Concat(num3);
                         }
                         flag = true;
@@ -1806,7 +1678,7 @@ namespace XDevkit
                     {
                         byte[] numArray = Converters.IntArrayToByte((int[])obj2);
                         object obj5 = str2;
-                        object[] str3 = new object[] { obj5, ByteArray.ToString(), "/", numArray.Length, "\\" };
+                        object[] str3 = new object[] { obj5, 0.ToString(), "/", numArray.Length, "\\" };
                         str2 = string.Concat(str3);
                         for (int j = 0; j < numArray.Length; j++)
                         {
@@ -1819,7 +1691,7 @@ namespace XDevkit
                     {
                         string str4 = (string)obj2;
                         object obj6 = str2;
-                        object[] objArray3 = new object[] { obj6, ByteArray.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexString(), "\\" };
+                        object[] objArray3 = new object[] { obj6, 0.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexString(), "\\" };
                         str2 = string.Concat(objArray3);
                         flag = true;
                     }
@@ -1827,7 +1699,7 @@ namespace XDevkit
                     {
                         double num4 = (double)obj2;
                         str = str2;
-                        strArrays = new string[] { str, Float.ToString(), "\\", num4.ToString(), "\\" };
+                        strArrays = new string[] { str, 0.ToString(), "\\", num4.ToString(), "\\" };
                         str2 = string.Concat(strArrays);
                         flag = true;
                     }
@@ -1835,7 +1707,7 @@ namespace XDevkit
                     {
                         float single = (float)obj2;
                         str = str2;
-                        strArrays = new string[] { str, Float.ToString(), "\\", single.ToString(), "\\" };
+                        strArrays = new string[] { str, 0.ToString(), "\\", single.ToString(), "\\" };
                         str2 = string.Concat(strArrays);
                         flag = true;
                     }
@@ -1843,7 +1715,7 @@ namespace XDevkit
                     {
                         float[] singleArray = (float[])obj2;
                         str = str2;
-                        strArrays = new string[] { str, ByteArray.ToString(), "/", null, null };
+                        strArrays = new string[] { str, 0.ToString(), "/", null, null };
                         int length = singleArray.Length * 4;
                         strArrays[3] = length.ToString();
                         strArrays[4] = "\\";
@@ -1864,7 +1736,7 @@ namespace XDevkit
                     {
                         byte[] numArray1 = (byte[])obj2;
                         obj = str2;
-                        name = new object[] { obj, ByteArray.ToString(), "/", numArray1.Length, "\\" };
+                        name = new object[] { obj, 0.ToString(), "/", numArray1.Length, "\\" };
                         str2 = string.Concat(name);
                         for (int m = 0; m < numArray1.Length; m++)
                         {
@@ -1876,7 +1748,7 @@ namespace XDevkit
                     if (!flag)
                     {
                         str = str2;
-                        strArrays = new string[] { str, Uint64.ToString(), "\\", null, null };
+                        strArrays = new string[] { str, 0.ToString(), "\\", null, null };
                         ulong num5 = Converters.ConvertToUInt64(obj2);
                         strArrays[3] = num5.ToString();
                         strArrays[4] = "\\";
@@ -1884,16 +1756,16 @@ namespace XDevkit
                     }
                 }
                 str2 = string.Concat(str2, "\"");
-                string str5 = SendCommand(str2);
+                string str5 = xbox.SendTextCommand(str2);
                 string str6 = "buf_addr=";
                 while (str5.Contains(str6))
                 {
                     Thread.Sleep(250);
                     uint num6 = uint.Parse(str5.Substring(str5.find(str6) + str6.Length), NumberStyles.HexNumber);
-                    str5 = SendCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
+                    str5 = xbox.SendTextCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
                 }
-                ConversationTimeout = 2000;
-                ConnectTimeout = 5000;
+                xbox.ConversationTimeout = 2000;
+                xbox.ConnectTimeout = 5000;
                 switch (Type)
                 {
                     case 1:
@@ -2040,7 +1912,7 @@ namespace XDevkit
                                 }
                                 return numArray3;
                             }
-                            if (Type == Uint64Array)
+                            if (Type == 0)
                             {
                                 string str14 = str5.Substring(str5.find(" ") + 1);
                                 int num12 = 0;

@@ -16,7 +16,7 @@ namespace JRPC_Client
 
         private readonly static uint ByteArray;
 
-        private static uint connectionId;
+        private static uint connectionId { get; set; }
 
         private readonly static uint Float;
 
