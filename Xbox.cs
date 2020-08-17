@@ -6,6 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 
@@ -14,7 +16,7 @@ namespace XDevkit
     /// <summary>
     /// Credits To JRPC Dev And Yelo debug. the Rest Is Created By Me TeddyHammer
     /// </summary>
-    public class Xbox : IXboxConsole, IXboxDebugTarget
+    public class Xbox 
     {
 
         public Xbox()
@@ -23,16 +25,15 @@ namespace XDevkit
         }
 
         #region Objects
-    public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
+        public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
         public int ConversationTimeout { get => XboxName.SendTimeout; set => XboxName.SendTimeout = value; }
-        bool IXboxConsole.IPAddress => IPAddress;
-        IXboxDebugTarget IXboxConsole.DebugTarget { get; }
 
+
+        private const string Connection_Error = "Console Not Connected";
         public XBOX_PROCESS_INFO RunningProcessInfo;
 
         public string Name { get; set; }
-        XBOX_PROCESS_INFO IXboxConsole.RunningProcessInfo => RunningProcessInfo;
-        public bool IPAddress;
+        private string IPAddress { get; set; }
         public static TcpClient XboxName;
         private int Xbox_Port = 730;
         public StreamReader sreader;
@@ -40,6 +41,7 @@ namespace XDevkit
         private static string responses;
             
         public bool Connected { get; set; }
+        public static bool _Connected { get; set; }
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
         /// <summary>
@@ -51,8 +53,9 @@ namespace XDevkit
             get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
             set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
         }
-        TcpClient IXboxConsole.XboxName { get; set; }
-        Xbox IXboxConsole.XboxConsole { get => new Xbox(); }
+
+
+
         #endregion
 
         #region Connect/Disconnect TCPConnection
@@ -92,27 +95,7 @@ namespace XDevkit
         /// Connects to an xbox on the network. If console is detected this method 
         /// will attempt to connect to the console.
         /// </summary>
-        public bool Connect()
-        {
-            try
-            {
-                if ("" == "")
-                {
-                    Connected = true;
-                    return true;
 
-                }
-                else
-                {
-                    // return false;
-                }
-            }
-            catch
-            {
-                Connected = false;
-                return false;
-            }
-        }
         /// <summary>
         /// Connects To The Console Via Tcp Connection. 
         /// </summary>
@@ -126,22 +109,20 @@ namespace XDevkit
             {
                 if (XboxNameOrIP == "defualt")
                 {
-           /*else */if (Connect() == true)
+
+                    if (!CheckConnection()) return false; //Call function - If not connected return
                     {
                         Console.WriteLine("Connected == ( Method 1 )");
+                        _Connected = true;
                         return Connected = true;
                     }
 
                 }
                 if (XboxNameOrIP.Contains("192"))
                 {
-                    XboxName.SendTimeout = 250;
-                    XboxName.ReceiveTimeout = 250;
+                    IPAddress = XboxNameOrIP;
                     XboxName.NoDelay = true;
-
-
                     XboxName = new TcpClient(XboxNameOrIP, Xbox_Port);
-                    XboxName.ReceiveTimeout = 5000; //1sec
                     sreader = new StreamReader(XboxName.GetStream());
 
                     Connected = Ping(100);  // make sure it is successful
@@ -153,6 +134,12 @@ namespace XDevkit
                     else if (Ping() == true)
                     {
                         Console.WriteLine("Connected == ( Method 2 )");
+                        _Connected = true;
+                        StreamWriter sW = new StreamWriter(XboxName.GetStream());
+                        sW.AutoFlush = true;
+
+                       //get's the pc's connection and port
+                        Console.WriteLine("Xbox Connected to "+XboxName.Client.LocalEndPoint.ToString());
                         connectionId = 200;
                         return Connected = true;
                     }
@@ -168,6 +155,9 @@ namespace XDevkit
                 return Connected = false;
             }
         }
+
+
+
         public void CloseConnection(uint Connection)
         {
             SendTextCommand("bye");
@@ -219,7 +209,7 @@ namespace XDevkit
             response = "";
             if (XboxName == null)
             {
-                Console.WriteLine("SendTextCommand ==> XboxName == null <==");
+                Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection == null <==") ;
             }
             else
                 try
@@ -231,7 +221,8 @@ namespace XDevkit
                         Console.WriteLine("Failed to SendTextCommand ==> Not Connected <==");
                     }
                     else
-                        Console.WriteLine("SendTextCommand ==> Sending Command... <==");
+                        FlushSocketBuffer();
+                    Console.WriteLine("SendTextCommand ==> Sending Command... <==");
                     XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
                     XboxName.Client.Receive(Packet);
                     response = Encoding.ASCII.GetString(Packet);
@@ -249,8 +240,8 @@ namespace XDevkit
         /// <param name="fileName">File to delete.</param>
         public string GetBoxID()
         {
-            string dre = string.Concat("BOXID");
-            SendTextCommand(dre, out responses);
+            
+            SendTextCommand("BOXID", out responses);
             return responses.Replace("200- ", "");
         }
         /// <summary>
@@ -260,6 +251,7 @@ namespace XDevkit
         /// <param name="Color"></param>
         public void SetConsoleColor(XboxColor Color)
         {
+            
             SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
         }
         /// <summary>
@@ -277,8 +269,7 @@ namespace XDevkit
         /// </summary>
         public string GetDMVersion()
         {
-            string dre = string.Concat("dmversion");
-            SendTextCommand(dre, out responses);
+            SendTextCommand("dmversion", out responses);
             return responses.Replace("200- ", "");
         }
         /// <summary>
@@ -302,6 +293,7 @@ namespace XDevkit
                         #region HDD
                         try
                         {
+
                             SendTextCommand(string.Concat("systeminfo"));
                             string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
                             foreach (string s in Info)
@@ -474,7 +466,27 @@ namespace XDevkit
         #endregion
 
         #region Features
-        public byte[] NOP()
+        /// <summary>
+        /// Gets A Float From Address And Returns it as String.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public string ReadFloat(string text)
+        {
+            try
+            {
+                Console.WriteLine("ReadFloat Was Passed Threw Returning float to String");
+                return GetFloat(0x8+uint.Parse(text.Substring(1))).ToString();
+
+            }
+            catch
+            {
+                Console.WriteLine("ReadFloat Failed Sending Empty String");
+                return string.Empty;
+            }
+
+        }
+        public byte[] NOPBytes()
         {
             return new byte[] { 0x60, 0x00, 0x00, 0x00 };
         }
@@ -795,6 +807,7 @@ namespace XDevkit
         #endregion
 
         #region Misc
+
         /// <summary>
         /// 
         /// </summary>
@@ -847,11 +860,32 @@ namespace XDevkit
         {
             constantMemorySetting(Address, Value, true, IfValue, true, TitleID);
         }
-
         public  void constantMemorySetting(uint Address, uint Value, bool useIfValue, uint IfValue, bool usetitleID, uint TitleID)
         {
             object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=18 params=\"A\\", Address.ToString("X"), "\\A\\5\\", 1, "\\", Converters.UIntToInt(Value), "\\", 1, "\\", (useIfValue ? 1 : 0), "\\", 1, "\\", IfValue, "\\", 1, "\\", (usetitleID ? 1 : 0), "\\", 1, "\\", Converters.UIntToInt(TitleID), "\\\"" };
             SendTextCommand(string.Concat(jRPCVersion));
+        }
+        public void SetMemory(uint address, string data)
+        {
+            int sent = 0;
+            try
+            {
+                // Send the setmem command
+                XboxName.Client.Send(
+                    Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", address.ToString("X2"), data)));
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.WouldBlock ||
+                    ex.SocketErrorCode == SocketError.IOPending ||
+                    ex.SocketErrorCode == SocketError.NoBufferSpaceAvailable)
+                {
+                    // socket buffer is probably full, wait and try again
+                    Thread.Sleep(30);
+                }
+                else
+                    throw new Exception(ex.Message + " - " + sent); // any serious error occurr
+            }
         }
         public void SetMemory(uint Address, byte[] Data)
         {
@@ -912,7 +946,378 @@ namespace XDevkit
             }
         }
         #endregion
+        #region PeekPoker
 
+        private bool ValidConnection;
+        private RwStream _readWriter;
+        private uint _startDumpLength;
+        private uint _startDumpOffset;
+        private bool _stopSearch;
+        #region Constructor
+
+        #endregion
+
+        #region Methods
+        /// <summary>Connect to the  using port 730 using the given ip address</summary>
+        /// <returns>True if connection was successful and False if not</returns>
+        public bool CheckConnection()
+        {
+            try
+            {
+                if (IPAddress.Length < 5)
+                    throw new Exception("Invalid IP");
+                if (_Connected) return true; //If you are already connected then return
+                var response = new byte[1024];
+                XboxName.Client.Receive(response);
+                string reponseString = Encoding.ASCII.GetString(response).Replace("\0", "");
+                //validate connection
+                _Connected = reponseString.Substring(0, 3) == "201";
+
+                return _Connected;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>Poke the Memory</summary>
+        /// <param name="memoryAddress">The memory address to Poke Example:0xCEADEADE - Uses *.FindOffset</param>
+        /// <param name="value">The value to poke Example:000032FF (hex string)</param>
+        public void Poke(string memoryAddress, string value)
+        {
+            Poke(Convert2(memoryAddress), value);
+        }
+
+        /// <summary>Poke the Memory</summary>
+        /// <param name="memoryAddress">The memory address to Poke Example:0xCEADEADE - Uses *.FindOffset</param>
+        /// <param name="value">The value to poke Example:000032FF (hex string)</param>
+        public void Poke(uint memoryAddress, string value)
+        {
+            if (!Functions.IsHex(value))
+                throw new Exception("Not a valid Hex String!");
+            if (!CheckConnection()) return; //Call function - If not connected return
+            try
+            {
+                SetMemory2(memoryAddress, value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                XboxName.Close(); //close connection
+                _Connected = false;
+            }
+        }
+
+        /// <summary>Peek into the Memory</summary>
+        /// <param name="startDumpAddress">The Hex offset to start dump Example:0xC0000000 </param>
+        /// <param name="dumpLength">The Length or size of dump Example:0xFFFFFF </param>
+        /// <param name="memoryAddress">The memory address to peek Example:0xC5352525 </param>
+        /// <param name="peekSize">The byte size to peek Example: "0x4" or "4"</param>
+        /// <returns>Return the hex string of the value</returns>
+        public string Peek(string startDumpAddress, string dumpLength, string memoryAddress, string peekSize)
+        {
+            return Peek(Convert2(startDumpAddress), Convert2(dumpLength), Convert2(memoryAddress), ConvertSigned(peekSize));
+        }
+
+        /// <summary>Peek into the Memory</summary>
+        /// <param name="startDumpAddress">The Hex offset to start dump Example:0xC0000000 </param>
+        /// <param name="dumpLength">The Length or size of dump Example:0xFFFFFF </param>
+        /// <param name="memoryAddress">The memory address to peek Example:0xC5352525 </param>
+        /// <param name="peekSize">The byte size to peek Example: "0x4" or "4"</param>
+        /// <returns>Return the hex string of the value</returns>
+        private string Peek(uint startDumpAddress, uint dumpLength, uint memoryAddress, int peekSize)
+        {
+            uint total = (memoryAddress - startDumpAddress);
+            if (memoryAddress > (startDumpAddress + dumpLength) || memoryAddress < startDumpAddress)
+                throw new Exception("Memory Address Out of Bounds");
+
+            if (!CheckConnection()) return null; //Call function - If not connected return
+            if (!GetMemory2(startDumpAddress, dumpLength))
+                return null; //call function - If not connected or if somethign wrong return
+
+            var readWriter = new RwStream();
+            try
+            {
+                var data = new byte[1026]; //byte chuncks
+
+                //Writing each byte chuncks========
+                for (int i = 0; i < dumpLength / 1024; i++)
+                {
+                    XboxName.Client.Receive(data);
+                    readWriter.WriteBytes(data, 2, 1024);
+                }
+                //Write whatever is left
+                var extra = (int)(dumpLength % 1024);
+                if (extra > 0)
+                {
+                    XboxName.Client.Receive(data);
+                    readWriter.WriteBytes(data, 2, extra);
+                }
+                readWriter.Flush();
+                readWriter.Position = total;
+                byte[] value = readWriter.ReadBytes(peekSize);
+                return Functions.ToHexString(value);
+            }
+            catch (SocketException se)
+            {
+                readWriter.Flush();
+                readWriter.Position = total;
+                byte[] value = readWriter.ReadBytes(peekSize);
+                return Functions.ToHexString(value);
+                throw new Exception(se.Message);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                readWriter.Close(true);
+                XboxName.Close(); //close connection
+                _Connected = false;
+                ValidConnection = false;
+            }
+        }
+
+        /// <summary>
+        /// Find pointer offset
+        /// </summary>
+        /// <param name="pointer"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public BindingList<SearchResults> FindHexOffset(string pointer)
+        {
+            _stopSearch = false;
+            if (pointer == null)
+                throw new Exception("Empty Search string!");
+            if (!Functions.IsHex(pointer))
+                throw new Exception(string.Format("{0} is not a valid Hex string.", pointer));
+            if (!CheckConnection()) return null; //Call function - If not connected return
+            if (!GetMeMex()) return null; //call function - If not connected or if something wrong return
+            BindingList<SearchResults> values;
+            try
+            {
+                //LENGTH or Size = Length of the dump
+                uint size = _startDumpLength;
+                _readWriter = new RwStream();
+                var data = new byte[1026]; //byte chuncks
+
+                //Writing each byte chuncks========
+                //No need to mess with it :D
+                for (int i = 0; i < size / 1024; i++)
+                {
+                    if (_stopSearch)
+                        return new BindingList<SearchResults>();
+                    XboxName.Client.Receive(data);
+                    _readWriter.WriteBytes(data, 2, 1024);
+                }
+                //Write whatever is left
+                var extra = (int)(size % 1024);
+                if (extra > 0)
+                {
+                    if (_stopSearch)
+                        return new BindingList<SearchResults>();
+                    XboxName.Client.Receive(data);
+                    _readWriter.WriteBytes(data, 2, extra);
+                }
+                _readWriter.Flush();
+                //===================================
+                //===================================
+                if (_stopSearch)
+                    return new BindingList<SearchResults>();
+                _readWriter.Position = 0;
+                values = _readWriter.SearchHexString(Functions.StringToByteArray(pointer),
+                                                     _startDumpOffset);
+                return values;
+            }
+            catch (SocketException)
+            {
+                _readWriter.Flush();
+                //===================================
+                //===================================
+                if (_stopSearch)
+                    return new BindingList<SearchResults>();
+                _readWriter.Position = 0;
+                values = _readWriter.SearchHexString(Functions.StringToByteArray(pointer),
+                                                     _startDumpOffset);
+
+                return values;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _readWriter.Close(true);
+                XboxName.Close(); //close connection
+                _Connected = false;
+                ValidConnection = false;
+            }
+        }
+
+        /// <summary>
+        /// Dump the memory
+        /// </summary>
+        /// <param name="filename">The file to save to</param>
+        /// <param name="startDumpAddress">The start dump address</param>
+        /// <param name="dumpLength">The dump length</param>
+        public void Dump(string filename, string startDumpAddress, string dumpLength)
+        {
+            Dump(filename, Functions.Convert(startDumpAddress), Functions.Convert(dumpLength));
+        }
+
+        /// <summary>
+        /// Dump the memory
+        /// </summary>
+        /// <param name="filename">The file to save to</param>
+        /// <param name="startDumpAddress">The start dump address</param>
+        /// <param name="dumpLength">The dump length</param>
+        public void Dump(string filename, uint startDumpAddress, uint dumpLength)
+        {
+            if (!CheckConnection()) return; //Call function - If not connected return
+            if (!GetMemory2(startDumpAddress, dumpLength))
+                return; //call function - If not connected or if something wrong return
+
+            var readWriter = new RwStream(filename);
+            try
+            {
+                var data = new byte[1026]; //byte chuncks
+                //Writing each byte chuncks========
+                for (int i = 0; i < dumpLength / 1024; i++)
+                {
+                    XboxName.Client.Receive(data);
+                    readWriter.WriteBytes(data, 2, 1024);
+                }
+                //Write whatever is left
+                var extra = (int)(dumpLength % 1024);
+                if (extra > 0)
+                {
+                    XboxName.Client.Receive(data);
+                    readWriter.WriteBytes(data, 2, extra);
+                }
+                readWriter.Flush();
+            }
+            catch (SocketException)
+            {
+                readWriter.Flush();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                readWriter.Close(false);
+                XboxName.Close(); //close connection
+                _Connected = false;
+                ValidConnection = false;
+            }
+        }
+
+
+        #region Private
+
+        private void SetMemory2(uint address, string data)
+        {
+            int sent = 0;
+            try
+            {
+                // Send the setmem command
+                XboxName.Client.Send(
+                    Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", address.ToString("X2"), data)));
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.WouldBlock ||
+                    ex.SocketErrorCode == SocketError.IOPending ||
+                    ex.SocketErrorCode == SocketError.NoBufferSpaceAvailable)
+                {
+                    // socket buffer is probably full, wait and try again
+                    Thread.Sleep(30);
+                }
+                else
+                    throw new Exception(ex.Message + " - " + sent); // any serious error occurr
+            }
+        }
+
+        private bool GetMeMex()
+        {
+            return GetMemory2(_startDumpOffset, _startDumpLength);
+        }
+
+        private bool GetMemory2(uint Address, uint length)
+        {
+            if (ValidConnection) return true;
+            //ADDR=0xDA1D0000 - The start offset in the physical memory I want the dump to start
+            //LENGTH = Length of the dump
+            XboxName.Client.Send(
+                Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR={0} LENGTH={1}\r\n", Address, length)));
+            var response = new byte[1024];
+            XboxName.Client.Receive(response);
+            string reponseString = Encoding.ASCII.GetString(response).Replace("\0", "");
+            //validate connection
+            ValidConnection = reponseString.Substring(0, 3) == "203";
+            return ValidConnection;
+        }
+
+        private static uint Convert2(string value)
+        {
+            if (value.Contains("0x"))
+                return System.Convert.ToUInt32(value.Substring(2), 16);
+            return System.Convert.ToUInt32(value, 16);
+        }
+
+        private static int ConvertSigned(string value)
+        {
+            if (value.Contains("0x"))
+                return System.Convert.ToInt32(value.Substring(2), 16);
+            return System.Convert.ToInt32(value, 16);
+        }
+
+        #endregion
+
+        #endregion
+        #region Properties
+
+        /// <summary>Set or Get the start dump offset</summary>
+        public uint DumpOffset
+        {
+            set { _startDumpOffset = value; }
+        }
+
+        /// <summary>Set or Get the dump length</summary>
+        public uint DumpLength
+        {
+            set { _startDumpLength = value; }
+            get { return _startDumpLength; }
+        }
+
+        /// <summary>
+        /// Stop any searching
+        /// </summary>
+        public bool StopSearch
+        {
+            get
+            {
+                if (!_readWriter.Accessed) return false;
+                return _readWriter.StopSearch;
+            }
+            set
+            {
+                if (!_readWriter.Accessed) return;
+                _readWriter.StopSearch = value;
+                _stopSearch = value;
+            }
+        }
+
+        #endregion
+        #endregion
         #region Yelo debug stuff
 
 
@@ -1256,11 +1661,22 @@ namespace XDevkit
         #endregion
 
         #region Float {Get; Set;}
+
         public float GetFloat(uint Address)
         {
-            byte[] memory = GetMemory(Address, 4);
-            ReverseBytes(memory, 4);
-            return BitConverter.ToSingle(memory, 0);
+            if(Connected == true)
+            {
+                Console.WriteLine(" Command On Address ==>" + Address + " <== Is Being checked");
+                byte[] memory = GetMemory(Address, 4);
+                ReverseBytes(memory, 4);
+                Console.WriteLine(" Command On Address ==>" + Address + " <== Is Returned");
+                return BitConverter.ToSingle(memory, 0);
+            }
+            else
+            {
+                Console.WriteLine(Connection_Error);
+                return 0;
+            }
         }
 
         public float[] GetFloat(uint Address, uint ArraySize)
@@ -1589,7 +2005,12 @@ namespace XDevkit
         }
         #endregion
 
+        #region Double {get; Set;}
 
+        #endregion
+        #region Long {get; Set;}
+
+        #endregion
 
         #endregion
 
@@ -2141,6 +2562,10 @@ namespace XDevkit
             }
             return str;
         }
+        /// <summary>
+        /// Turn hex string to byte array
+        /// </summary>
+        /// <param name="text">The hex string</param>
         public static byte[] StringToByteArray(String hex)
         {
             int NumberChars = hex.Length;
@@ -2149,6 +2574,8 @@ namespace XDevkit
                 bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
+
+
         public static string ConvertStringToHex(string input, Encoding encoding)
         {
             byte[] stringBytes = encoding.GetBytes(input);
@@ -2200,22 +2627,4 @@ namespace XDevkit
 
     #endregion
 
-    public class XboxManagerClass
-    {
-
-    }
-    public class XboxManager
-    {
-        public XboxManager()
-        {
-        }
-
-        public string DefaultConsole { get; internal set; }
-
-        internal IXboxConsole OpenConsole(string xboxNameOrIP)
-        {
-            Xbox console = new Xbox();
-            return console;
-        }
-    }
 }

@@ -4,7 +4,7 @@
 
 ___________________________________________________________________________________________________________________________________________________
 INFO:
-Project Started Around 2017-2018 Currently Being Worked On 2020 - active project
+Project Started Around 2017-2018 Currently Being Worked On 2020 - Active Project
 Goal Is To Emulate The Xdevkit And Add All Of It's Features and Turn It Into TCPClient Class
 
 Learned:
@@ -16,9 +16,7 @@ Note: The Idea Was Good But Lead To A Big Mess... Scraping The Idea And Basicall
 ___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
-No Known Bugs As Of Now -- 4/26/2020
-No Known Bugs As Of Now -- 5/26/2020
-No Known Bugs As Of Now -- 6/10/2020
+
 
 
 Changes:  (Added + Removed -)
