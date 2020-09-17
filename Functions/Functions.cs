@@ -1,9 +1,208 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
 namespace XDevkit
 {
     static class Functions
     {
+        public static byte[] HexStringToBytes(string hexString)
+        {
+            List<byte> list = new List<byte>();
+            for (int i = 0; i < hexString.Length; i += 2)
+            {
+                if (hexString.Length > (i + 1))
+                {
+                    list.Add(byte.Parse(hexString[i] + hexString[i + 1].ToString(), NumberStyles.HexNumber));
+                }
+            }
+            return list.ToArray();
+        }
+        public static string BytesToHexString(byte[] data)
+        {
+            string str = "";
+            int index = 0;
+            while (index < data.Length)
+            {
+                string str2 = data[index].ToString("X");
+                while (true)
+                {
+                    if (str2.Length == 2)
+                    {
+                        str = str + str2;
+                        index++;
+                        break;
+                    }
+                    str2 = "0" + str2;
+                }
+            }
+            return str;
+        }
+        public static byte[] ToWCHAR(this string String)
+        {
+            return WCHAR(String);
+        }
+        public static byte[] WCHAR(string String)
+        {
+            byte[] numArray = new byte[String.Length * 2 + 2];
+            int num = 1;
+            string str = String;
+            for (int i = 0; i < str.Length; i++)
+            {
+                numArray[num] = (byte)str[i];
+                num += 2;
+            }
+            return numArray;
+        }
+        internal static ulong ConvertToUInt64(object o)
+        {
+            if (o is bool)
+            {
+                if ((bool)o)
+                {
+                    return (ulong)1;
+                }
+                return (ulong)0;
+            }
+            if (o is byte)
+            {
+                return (ulong)((byte)o);
+            }
+            if (o is short)
+            {
+                return (ulong)((short)o);
+            }
+            if (o is int)
+            {
+                return (ulong)(int)o;
+            }
+            if (o is long)
+            {
+                return (ulong)o;
+            }
+            if (o is ushort)
+            {
+                return (ushort)o;
+            }
+            if (o is uint)
+            {
+                return (uint)o;
+            }
+            if (o is ulong)
+            {
+                return (ulong)o;
+            }
+            if (o is float)
+            {
+                return (ulong)BitConverter.DoubleToInt64Bits((double)((float)o));
+            }
+            if (!(o is double))
+            {
+                return 0;
+            }
+            return (ulong)BitConverter.DoubleToInt64Bits((double)o);
+        }
+
+        public static string ConvertHexToString(string hexInput, Encoding encoding)
+        {
+            int numberChars = hexInput.Length;
+            byte[] bytes = new byte[numberChars / 2];
+            for (int i = 0; i < numberChars; i += 2)
+            {
+                bytes[i / 2] = System.Convert.ToByte(hexInput.Substring(i, 2), 16);
+            }
+            return encoding.GetString(bytes);
+        }
+        public static byte[] IntArrayToByte(int[] iArray)
+        {
+            byte[] bytes = new byte[iArray.Length * 4];
+            int num = 0;
+            int num1 = 0;
+            while (num < iArray.Length)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    bytes[num1 + i] = BitConverter.GetBytes(iArray[num])[i];
+                }
+                num++;
+                num1 += 4;
+            }
+            return bytes;
+        }
+        public static string ToHexString(this string String)//help it depend on it's own
+        {
+            string str = string.Empty;
+            string str1 = String;
+            for (int i = 0; i < str1.Length; i++)
+            {
+                byte num = (byte)str1[i];
+                str = string.Concat(str, num.ToString("X2"));
+            }
+            return str;
+        }
+        /// <summary>
+        /// Turn hex string to byte array
+        /// </summary>
+        /// <param name="text">The hex string</param>
+        public static byte[] StringToByteArray(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = System.Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
+
+
+        public static string ConvertStringToHex(string input, Encoding encoding)
+        {
+            byte[] stringBytes = encoding.GetBytes(input);
+            StringBuilder sbBytes = new StringBuilder(stringBytes.Length * 2);
+            foreach (byte b in stringBytes)
+            {
+                sbBytes.Append($"{b:X2}");
+            }
+            return sbBytes.ToString();
+        }
+        private static string DateToHex(DateTime theDate)
+        {
+            string isoDate = theDate.ToString("yyyyMMddHHmmss");
+
+            string resultString = string.Empty;
+
+            for (int i = 0; i < isoDate.Length; i++)    // Amended
+            {
+                int n = char.ConvertToUtf32(isoDate, i);
+                string hs = n.ToString("x");
+                resultString += hs;
+
+            }
+            return resultString;
+        }
+        public static int UIntToInt(uint Value) =>
+    BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
+        public static string CovertHexTime(string hexDate)
+        {
+            hexDate = DateToHex(DateTime.Now);
+
+            string sDate = string.Empty;
+            for (int i = 0; i < hexDate.Length - 1; i += 2)       // Amended
+            {
+                string ss = hexDate.Substring(i, 2);
+                int nn = int.Parse(ss, NumberStyles.AllowHexSpecifier);
+
+                string c = Char.ConvertFromUtf32(nn);
+                sDate += c;
+            }
+
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            CultureInfo[] cultures = { new CultureInfo("fr-FR") };
+
+
+            return DateTime.ParseExact(sDate, "yyyyMMddHHmmss", provider).ToString();
+        }
         /// <summary>Verifies if the given string is hex</summary>
         /// <param name="value">The string value to check</param>
         /// <returns>True if its hex and false if it isn't.</returns>
@@ -30,26 +229,19 @@ namespace XDevkit
             }
         }
 
-        public static byte[] StringToByteArray(string text)
-        {
-            var bytes = new byte[text.Length / 2];
-
-            for (int i = 0; i < text.Length; i += 2)
-            {
-                bytes[i / 2] = byte.Parse(text[i].ToString() + text[i + 1].ToString(),
-                    System.Globalization.NumberStyles.HexNumber);
-            }
-
-            return bytes;
-        }
-
         public static uint Convert(string value)
         {
-            //using Ternary operator
-            return value.Contains("0x") ?
-                System.Convert.ToUInt32(value.Substring(2), 16) : System.Convert.ToUInt32(value,16);
+            if (value.Contains("0x"))
+                return System.Convert.ToUInt32(value.Substring(2), 16);
+            return System.Convert.ToUInt32(value, 16);
         }
-        
+
+        public static int ConvertSigned(string value)
+        {
+            if (value.Contains("0x"))
+                return System.Convert.ToInt32(value.Substring(2), 16);
+            return System.Convert.ToInt32(value, 16);
+        }
         public static string ByteArrayToString(byte[] bytes)
         {
             var text = "";
@@ -101,6 +293,181 @@ namespace XDevkit
             }
         }
 
+        public static string BytesToString(byte[] data) =>
+            RemoveWhiteSpacingFromString(Encoding.ASCII.GetString(data));
+
+        public static int CalculatePadding(int integer, int interval) =>
+            (interval - (integer % interval));
+
+        public static void DeleteBytes(string filePath, int startOffset, int size)
+        {
+            FileStream input = new FileStream(filePath, FileMode.Open);
+            BinaryReader reader = new BinaryReader(input);
+            Stream baseStream = reader.BaseStream;
+            baseStream.Position += size;
+            reader.Close();
+            input.Close();
+            input = new FileStream(filePath, FileMode.Create);
+            BinaryWriter writer = new BinaryWriter(input);
+            writer.Write(reader.ReadBytes(startOffset));
+            writer.Write(reader.ReadBytes(((int)reader.BaseStream.Length) - ((int)reader.BaseStream.Position)));
+            input.Close();
+            writer.Close();
+        }
+
+        public static byte[] GetBytesFromStream(BinaryReader br) =>
+            GetBytesFromStream(br, 0, (int)br.BaseStream.Length);
+
+        public static byte[] GetBytesFromStream(BinaryReader br, int offset, int size)
+        {
+            br.BaseStream.Position = offset;
+            return br.ReadBytes(size);
+        }
+
+
+        public static void InsertBytes(string filePath, int startOffset, int size)
+        {
+            FileStream input = new FileStream(filePath, FileMode.Open);
+            BinaryReader reader = new BinaryReader(input)
+            {
+                BaseStream = { Position = startOffset }
+            };
+            reader.Close();
+            input.Close();
+            input = new FileStream(filePath, FileMode.Open);
+            BinaryWriter writer = new BinaryWriter(input)
+            {
+                BaseStream = { Position = startOffset }
+            };
+            writer.Write(new byte[size]);
+            writer.Write(reader.ReadBytes(((int)reader.BaseStream.Length) - ((int)reader.BaseStream.Position)));
+            input.Close();
+            writer.Close();
+        }
+
+        public static void InsertBytes(string filePath, int startOffset, byte[] data)
+        {
+            FileStream input = new FileStream(filePath, FileMode.Open);
+            BinaryReader reader = new BinaryReader(input)
+            {
+                BaseStream = { Position = startOffset }
+            };
+            reader.Close();
+            input.Close();
+            input = new FileStream(filePath, FileMode.Open);
+            BinaryWriter writer = new BinaryWriter(input)
+            {
+                BaseStream = { Position = startOffset }
+            };
+            writer.Write(data);
+            writer.Write(reader.ReadBytes(((int)reader.BaseStream.Length) - ((int)reader.BaseStream.Position)));
+            input.Close();
+            writer.Close();
+        }
+
+        public static string RemoveWhiteSpacingFromString(string str) =>
+            str.Replace("\0", "");
+
+        public static byte[] StringToBytes(string data) =>
+            Encoding.ASCII.GetBytes(data);
+
+        public static byte[] StringToUnicodeBytes(string text)
+        {
+            byte[] buffer = StringToBytes(text);
+            byte[] buffer2 = new byte[buffer.Length * 2];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer2[i * 2] = buffer[i];
+            }
+            return buffer2;
+        }
+
+        public static byte[] StringToUnicodeBytes(string text, int Length)
+        {
+            byte[] buffer = StringToBytes(text);
+            byte[] buffer2 = new byte[Length];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer2[i * 2] = buffer[i];
+            }
+            return buffer2;
+        }
+
+        public static void SwapBytes(ref byte[] data)
+        {
+            Array.Reverse(data);
+        }
+
+        public static byte[] ValueToBytes(byte data) =>
+            new byte[] { data };
+
+        public static byte[] ValueToBytes(short data)
+        {
+            MemoryStream stream = new MemoryStream();
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.Write(data);
+            nio.In.BaseStream.Position = 0L;
+            byte[] buffer = nio.In.ReadBytes((int)nio.In.BaseStream.Length);
+            nio.Close();
+            stream.Close();
+            return buffer;
+        }
+
+        public static byte[] ValueToBytes(int data)
+        {
+            MemoryStream stream = new MemoryStream();
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.Write(data);
+            nio.In.BaseStream.Position = 0L;
+            byte[] buffer = nio.In.ReadBytes((int)nio.In.BaseStream.Length);
+            nio.Close();
+            stream.Close();
+            return buffer;
+        }
+
+        public static byte[] ValueToBytes(float data)
+        {
+            MemoryStream stream = new MemoryStream();
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.Write(data);
+            nio.In.BaseStream.Position = 0L;
+            byte[] buffer = nio.In.ReadBytes((int)nio.In.BaseStream.Length);
+            nio.Close();
+            stream.Close();
+            return buffer;
+        }
+
+        public static byte[] ValueToBytes(ushort data)
+        {
+            MemoryStream stream = new MemoryStream();
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.Write(data);
+            nio.In.BaseStream.Position = 0L;
+            byte[] buffer = nio.In.ReadBytes((int)nio.In.BaseStream.Length);
+            nio.Close();
+            stream.Close();
+            return buffer;
+        }
+
+        public static byte[] ValueToBytes(uint data)
+        {
+            MemoryStream stream = new MemoryStream();
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.Write(data);
+            nio.In.BaseStream.Position = 0L;
+            byte[] buffer = nio.In.ReadBytes((int)nio.In.BaseStream.Length);
+            nio.Close();
+            stream.Close();
+            return buffer;
+        }
+
+        public static byte[] ValueToBytes(string data, bool unicode) =>
+            (!unicode ? StringToBytes(data) : StringToUnicodeBytes(data));
         #region byte to sbyte to byte
         /// <summary>
         /// Converts a unsigned byte to a signed one

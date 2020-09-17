@@ -16,22 +16,38 @@ Note: The Idea Was Good But Lead To A Big Mess... Scraping The Idea And Basicall
 ___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
-
-
+missing peakpoker features
 
 Changes:  (Added + Removed -)
 Polished Code - at 6:33 Am 4/26/2020
+Polished Code - at 9 am 9/15/2020
+Polished Code - at 9 am 9/17/2020
 - deleted un wanted code
+- added peekpoker features
+
+
 
 
 
 
 Things Todo: (Done ==)(Working On *)(Almost Finished -=)
-1.*work on the find console feature
+1.work on the find console feature -= working needs polished
 2.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
-3.Cheat Engine Like: Debugger ETC.
+3.*Cheat Engine Like: Debugger ETC.
 4.add new features XDevkit Is Missing../Realtime editing
-
+5.InvalidateMemoryCache find what this shit does
+6.make a decent tool with what we have so far
+7.
 
 
 Progress Road:
+work on peekpoker
+add accesion features such as save mods etc
+add scrips for easy share able modding 
+value change detection
+in game change detection such as an xex value changer that you can stop with timer would make finding cheats faster
+in game drawing? possibly?
+anti cheat bypass
+breakpoints
+tracer checks where code is leading to 
+i need a life... 
