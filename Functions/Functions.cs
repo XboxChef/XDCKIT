@@ -6,7 +6,7 @@ using System.Text;
 
 namespace XDevkit
 {
-    static class Functions
+    public static class Functions
     {
         public static byte[] HexStringToBytes(string hexString)
         {

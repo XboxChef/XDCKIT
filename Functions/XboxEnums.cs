@@ -247,6 +247,7 @@ namespace XDevkit
 		Beacons_And_Activiy = 0xB39,
 		Private_Chat = 0x2C2,
 		Open_Tray = 0x60,
+		Close_Tray = 0x60,
 		//End Of Main Guide
 
 		//Media

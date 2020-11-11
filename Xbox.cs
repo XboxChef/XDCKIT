@@ -27,7 +27,6 @@ namespace XDevkit
         #region Property's
         private bool ValidConnection;
         private RwStream _readWriter;
-        private uint _startDumpLength;
         private uint _startDumpOffset;
         private bool _stopSearch;
         /// <summary>
@@ -56,11 +55,7 @@ namespace XDevkit
         }
 
         /// <summary>Set or Get the dump length</summary>
-        public uint DumpLength
-        {
-            set { _startDumpLength = value; }
-            get { return _startDumpLength; }
-        }
+        public uint DumpLength { set; get; }
 
         /// <summary>
         /// Stop any searching
@@ -106,7 +101,7 @@ namespace XDevkit
                 if (Connected) return true; //If you are already connected then return
                 var response = new byte[1024];
                 XboxName.Client.Receive(response);
-                string reponseString = Encoding.ASCII.GetString(response).Replace("\0", "");
+                string reponseString = Encoding.ASCII.GetString(response).Replace("\0", string.Empty);
                 //validate connection
                 Connected = reponseString.Substring(0, 3) == "201";
 
@@ -201,7 +196,7 @@ namespace XDevkit
                                 XboxName = new TcpClient(IPAddress, 730);
                                 sreader = new StreamReader(XboxName.GetStream());
                                 Console.WriteLine("Connected == ( Method 1 )");
-
+                                XNotify.Show("Connected!",XNotiyLogo.FLASHING_HAPPY_FACE);
                                 return Connected = true;
                             }
 
@@ -294,7 +289,7 @@ namespace XDevkit
         /// <param name="response"></param>
         public void SendTextCommand(string Command, out string response)
         {
-            response = "";
+            response = string.Empty;
             if (XboxName == null)
             {
                 Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection == null <==");
@@ -330,7 +325,7 @@ namespace XDevkit
         {
 
             SendTextCommand("BOXID", out responses);
-            return responses.Replace("200- ", "");
+            return responses.Replace("200- ", string.Empty);
         }
         /// <summary>
         /// Turns The Console's Default Neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar , white)
@@ -350,7 +345,7 @@ namespace XDevkit
         {
             string responses;
             SendTextCommand(string.Concat("getconsoleid"), out responses);
-            return responses.Replace("200- consoleid=", "");
+            return responses.Replace("200- consoleid=", string.Empty);
         }
         /// <summary>
         /// Gets the debug Monitor version Number.
@@ -358,7 +353,7 @@ namespace XDevkit
         public string GetDMVersion()
         {
             SendTextCommand("dmversion", out responses);
-            return responses.Replace("200- ", "");
+            return responses.Replace("200- ", string.Empty);
         }
         /// <summary>
         /// Get's Consoles System Information.
@@ -403,7 +398,7 @@ namespace XDevkit
                         try
                         {
                             SendTextCommand(string.Concat("consoletype"), out responses);
-                            return responses.Replace("200- ", "");
+                            return responses.Replace("200- ", string.Empty);
                         }
                         catch
                         {
@@ -518,6 +513,7 @@ namespace XDevkit
         }
 
         #endregion
+
         #region Features
         /// <summary>
         /// Gets A Float From Address And Returns it as String.
@@ -563,33 +559,6 @@ namespace XDevkit
                 MediaDirectory += lines[i] + "\\";
             object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//todo
             SendTextCommand(string.Concat(Reboot));
-        }
-        public void XNotify(string message)
-        {
-            XNotify(message, XNotiyLogo.BLANK);
-        }
-        public void XNotify(string message, XNotiyLogo Logo)
-        {
-            int String = 2;
-            int Int = 1;
-            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + String + "/" + message.Length + "\\" +
-                    Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + Int + "\\";
-            switch (Logo)
-            {
-                case XNotiyLogo.BLANK:
-                    command += "0\\\"";
-                    break;
-                case XNotiyLogo.NEW_MESSAGE_LOGO:
-                    command += "1\\\"";
-                    break;
-                case XNotiyLogo.FRIEND_REQUEST_LOGO:
-                    command += "2\\\"";
-                    break;
-                default:
-                    command += "0\\\"";
-                    break;
-            }
-            SendTextCommand(command);
         }
         /// <summary>
         /// Shortcuts To Guide
@@ -638,6 +607,7 @@ namespace XDevkit
                         break;
                     case (int)XboxShortcuts.Open_Tray:
                         JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
+
                         break;
                     case (int)XboxShortcuts.Party:
                         JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
@@ -720,7 +690,7 @@ namespace XDevkit
         {
             string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
-            return responses.Replace("200- ", "");
+            return responses.Replace("200- ", string.Empty);
         }
         /// <summary>
         /// Version Of Kernal 
@@ -779,29 +749,12 @@ namespace XDevkit
             {
             }
         }
-        ///// <summary>
-        ///// Sends Text To Appear On The Screen. 
-        ///// </summary>
-        ///// <param name="Text"></param>
-        //public void XNotify(string Text)
-        //{
-        //    XNotify(Text, 34);
-        //}
-        /// <summary>
-        /// Sends Text To Appear On The Screen. 
-        /// </summary>
-        /// <param name="Text"></param>
-        /// <param name="Type"></param>
-        public void XNotify(string Text, uint Type)
-        {
-            object[] jRPCVersion = new object[] { "consolefeatures ver=", 2, " type=12 params=\"A\\0\\A\\2\\", 2, "/", Text.Length, "\\", Text.ToHexString(), "\\", 1, "\\", Type, "\\\"" };
-            SendTextCommand(string.Concat(jRPCVersion), out responses);
-        }
         #endregion
+
         #region MemoryEdits {Get; Set;}
         private bool GetMeMex()
         {
-            return GetMemory2(_startDumpOffset, _startDumpLength);
+            return GetMemory2(_startDumpOffset, DumpLength);
         }
 
         private bool GetMemory2(uint Address, uint length)
@@ -813,7 +766,7 @@ namespace XDevkit
                 Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR={0} LENGTH={1}\r\n", Address, length)));
             var response = new byte[1024];
             XboxName.Client.Receive(response);
-            string reponseString = Encoding.ASCII.GetString(response).Replace("\0", "");
+            string reponseString = Encoding.ASCII.GetString(response).Replace("\0", string.Empty);
             //validate connection
             ValidConnection = reponseString.Substring(0, 3) == "203";
             return ValidConnection;
@@ -867,14 +820,14 @@ namespace XDevkit
         {
 
             // Send the setmem command
-            XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", Address.ToString("X2"), BitConverter.ToString(Data).Replace("-", ""))));
+            XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", Address.ToString("X2"), BitConverter.ToString(Data).Replace("-", string.Empty))));
 
             // Check to see our response
             byte[] Packet = new byte[1026];
             XboxName.Client.Receive(Packet);
             BytesWritten = 0;
             //BytesWritten = Convert.ToUInt32(Encoding.ASCII.GetString(Packet));
-            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 11) == "0 bytes set")
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 11) == "0 bytes set")
                 throw new Exception("A problem occurred while writing bytes. 0 bytes set");
         }
         public byte[] GetMemory(uint Address, uint Length)
@@ -902,7 +855,7 @@ namespace XDevkit
             // Receieve the 203 response to verify we are going to recieve raw data in packets
             XboxName.Client.Receive(Packet);
 
-            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 3) != "203")
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 3) != "203")
                 throw new Exception("GETMEMEX 203 response not recieved. Cannot read memory.");
 
             // It will return with data in 1026 byte size packets, first two bytes I think are flags and the rest is the data
@@ -1011,6 +964,7 @@ namespace XDevkit
             }
         }
         #endregion
+
         #region PeekPoker
         #region Methods
 
@@ -1137,7 +1091,7 @@ namespace XDevkit
             try
             {
                 //LENGTH or Size = Length of the dump
-                uint size = _startDumpLength;
+                uint size = DumpLength;
                 _readWriter = new RwStream();
                 var data = new byte[1026]; //byte chuncks
 
@@ -1196,6 +1150,7 @@ namespace XDevkit
         }
         #endregion
         #endregion
+
         #region Yelo debug stuff
 
 
@@ -1420,7 +1375,8 @@ namespace XDevkit
             }
         }
         #endregion
-        //TODO: add {Get; Set;} Double,long etc
+
+        //TODO: add {Set;} Double,long etc
         #region Types {Get; Set;}
 
         #region Bool {Get; Set;}
@@ -1834,16 +1790,27 @@ namespace XDevkit
         #endregion
 
         #region Double {get; Set;}
-
+        public double GetDouble(uint Address)
+        {
+            byte[] memory = GetMemory(Address, 4);
+            ReverseBytes(memory, 4);
+            return BitConverter.ToDouble(memory, 0);
+        }
         #endregion
 
         #region Long {get; Set;}
+        public long Getlong(uint Address)
+        {
+            byte[] memory = GetMemory(Address, 4);
+            ReverseBytes(memory, 4);
 
+            return Convert.ToUInt32(memory);
+        }
         #endregion
 
         #endregion
-
     }
+
     #region Misc
     /// <summary>
     /// Credits To James The JRPC Dev.
