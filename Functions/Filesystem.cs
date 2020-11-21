@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 
 namespace XDevkit
 {
-    class Filesystem
+    public class Filesystem
     {
         Xbox Console = new Xbox();
+
+        public string Name { get; set; }
+
         public Filesystem()
         {
 

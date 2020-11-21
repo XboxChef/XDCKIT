@@ -188,11 +188,6 @@ namespace XDevkit
 		z = 0x1d,
 		zero = 0x27
 	}
-	public enum TRAY
-	{
-		CLOSE = 0x62,
-		OPEN = 0x60
-	}
 	public enum XboxColor
 	{
 		Black,
@@ -247,7 +242,7 @@ namespace XDevkit
 		Beacons_And_Activiy = 0xB39,
 		Private_Chat = 0x2C2,
 		Open_Tray = 0x60,
-		Close_Tray = 0x60,
+		Close_Tray = 0x62,
 		//End Of Main Guide
 
 		//Media

@@ -36,6 +36,11 @@ namespace XDevkit
     {
         public NoConnectionException() : base("Requires debug connection.") { }
     };
+    /// <summary>Represents errors that occur when there is no debug connection detected between the xbox and pc.</summary>
+    public class FailedConnectionException : ApiException
+    {
+        public FailedConnectionException() : base("Failed Connection") { }
+    };
 
 
 
