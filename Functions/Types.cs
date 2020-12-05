@@ -19,7 +19,7 @@
     {
         public string Name { get; set; }
         public int Type { get; set; }
-        public uint Adress { get; set; }
+        public uint Address { get; set; }
         public uint Code { get; set; }
     }
 }

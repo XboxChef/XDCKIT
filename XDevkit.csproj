@@ -69,7 +69,7 @@
     <Compile Include="IO\EndianType.cs" />
     <Compile Include="IO\EndianWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sceenshot.cs" />
+    <Compile Include="Screenshot.cs" />
     <Compile Include="Xbox.cs" />
   </ItemGroup>
   <ItemGroup>

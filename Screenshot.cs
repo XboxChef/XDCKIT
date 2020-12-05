@@ -1,9 +1,9 @@
 ﻿
 namespace XDevkit
 {
-    class Sceenshot
+    class Screenshot
     {
-        public Sceenshot()
+        public Screenshot()
         {
             
         }

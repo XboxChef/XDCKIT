@@ -6,7 +6,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -31,7 +33,6 @@ namespace XDevkit
         private bool _stopSearch;
         private static byte[] byte_0 = new byte[0x10];
         private static byte[] byte_1 = new byte[0x10];
-        private static uint uint_0;
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string timeStamp = GetTimestamp(DateTime.Now);
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -46,7 +47,6 @@ namespace XDevkit
         public XBOX_PROCESS_INFO RunningProcessInfo;
 
         public string Name { get; set; }
-
         public string IPAddress { get; set; }
 
         public static TcpClient XboxName;
@@ -132,38 +132,6 @@ namespace XDevkit
             }
         }
 
-        /// <summary>
-        /// looks up local addresses on the network to find console ip
-        /// </summary>
-        /// <param name="host"></param>
-        /// <returns></returns>
-        public static bool IsLocalIpAddress(string host)
-        {
-            try
-            { // get host IP addresses
-                IPAddress[] hostIPs = Dns.GetHostAddresses(host);
-                // get local IP addresses
-                IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
-
-                // test if any host IP equals to any local IP or to localhost
-                foreach (IPAddress hostIP in hostIPs)
-                {
-                    // is localhost
-                    if (System.Net.IPAddress.IsLoopback(hostIP))
-                        return true;
-                    // is local address
-                    foreach (IPAddress localIP in localIPs)
-                    {
-                        if (hostIP.Equals(localIP))
-                            return true;
-                    }
-                }
-            }
-            catch
-            {
-            }
-            return false;
-        }
 
         public static bool PingHost(string hostUri, int portNumber)
         {
@@ -188,69 +156,84 @@ namespace XDevkit
         /// <summary>
         /// Connects To The Console Via Tcp Connection.
         /// </summary>
-        public bool Connect(string XboxNameOrIP = "defualt")
+        public bool FindConsole()
         {
-            if (XboxNameOrIP == string.Empty)
+            int i = 0;
+
+            for (; ; )
             {
-                XboxNameOrIP = "defualt";
+                if (i < 255)
+                {
+                    XboxName = new TcpClient();
+                    if (XboxName.ConnectAsync("192.168.0." + i, 730).Wait(20))
+                    {
+                        IPAddress = "192.168.0." + i;
+                        return true;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+
+                }
+                else
+                {
+                    return true;
+                }
             }
+        }
+        public bool Connect(string XboxNameOrIP = "defualt")//TODO: Find Console
+        {
             try
             {
-                if (XboxNameOrIP == "defualt")
+                if (Connected == true)
                 {
-                    bool sw = true;
-
-                    while (sw)
-                    {
-                        for (int i = 0; i < 255; i++)
-                        {
-                            XboxName = new TcpClient();
-                            if (!XboxName.ConnectAsync("192.168.0." + i, 730).Wait(10))
-                            {
-                                Connected = Ping(10);  // make sure it is successful
-                            }
-                            else if (Ping() == true)
-                            {
-                                sw = false;
-                                string IPAddress = "192.168.0." + i;
-                                XboxName = new TcpClient(IPAddress, 730);
-                                sreader = new StreamReader(XboxName.GetStream());
-                                Console.WriteLine("Connected == ( Method 1 )");
-                                XNotify.Show("Connected!", XNotiyLogo.FLASHING_HAPPY_FACE);
-                                return Connected = true;
-                            }
-                        }
-                    }
+                    CloseConnection(0);
+                    return Connect();
                 }
-                else if (XboxNameOrIP.Contains("192"))
+                else
                 {
-                    string IPAddress = XboxNameOrIP;
-                    XboxName = new TcpClient(XboxNameOrIP, 730);
-                    sreader = new StreamReader(XboxName.GetStream());
+                    if (XboxNameOrIP == "defualt")
+                    {
+                        if (FindConsole())//if true then continue
+                        {
+                            XboxName = new TcpClient(IPAddress, 730);
+                            sreader = new StreamReader(XboxName.GetStream());
+                            Console.WriteLine("Connected == ( Method 1 )");
+                            return Connected = true;
+                        }
+                        else
+                        {
+                            return Connected = false;
+                        }
 
-                    Connected = Ping(100);  // make sure it is successful
-                    if (Ping() == false)
-                    {
-                        return Connected = false;
+
                     }
-                    else if (Ping() == true)
+                    else if (XboxNameOrIP.ToCharArray().Any(char.IsDigit))
                     {
-                        Console.WriteLine("Connected == ( Method 2 )");
+                        string IPAddress = XboxNameOrIP;
+                        XboxName = new TcpClient(XboxNameOrIP, 730);
+                        sreader = new StreamReader(XboxName.GetStream());
+
                         StreamWriter sW = new StreamWriter(XboxName.GetStream());
                         sW.AutoFlush = true;
-
                         //get's the pc's connection and port
+                        Console.WriteLine("Connected == ( Method 2 )");
                         Console.WriteLine("Xbox Connected to " + XboxName.Client.LocalEndPoint.ToString());
                         return Connected = true;
                     }
+                    else
+                    {
+                        Console.WriteLine("merp is imposter");
+                        return Connected = false;
+                    }
                 }
 
-                return Connected = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message);
                 return Connected = false;
+                throw;
             }
         }
 
@@ -557,7 +540,7 @@ namespace XDevkit
 
 
         private static IEnumerable<Filesystem> DirectoryFiles(string v)
-        { 
+        {
             throw new NotImplementedException();
         }
 
@@ -647,6 +630,7 @@ namespace XDevkit
         {
             object[] arguments = new object[2];
             arguments[0] = byte_2;
+            uint uint_0 = 0;
             JRPC.CallVoid(uint_0, arguments);
         }
 
@@ -717,7 +701,7 @@ namespace XDevkit
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Open_Tray:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray),new object[]{ 0, 0, 0, 0 });
+                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Close_Tray:
                         JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Close_Tray),
