@@ -3,51 +3,50 @@
 //////////////////////////////////////////////
 
 ___________________________________________________________________________________________________________________________________________________
+Project Status: Active Project   Exp: 2021 - 2022
+___________________________________________________________________________________________________________________________________________________
 INFO:
-Project Started Around 2017-2018 Currently Being Worked On 2020 - Active Project
+Project Started Around 2017-2018 Currently Being Worked On 2021
 Goal Is To Emulate The Xdevkit And Add All Of It's Features and Turn It Into TCPClient Class
 
 Learned:
-Having Your Own Class Work Independent IS Much Better Than Running It Threw Interfaces or some unknown code
+Having Your Own Class Work Is Amazing
+___________________________________________________________________________________________________________________________________________________
+How It Works:
+Simulates Every little things the dll would do but you have more control of it..
+___________________________________________________________________________________________________________________________________________________
+Legends Who Helped:
+No One...
+___________________________________________________________________________________________________________________________________________________
+Credits:
+TeddyHammer
 ___________________________________________________________________________________________________________________________________________________
 
-Xdevkit Should Pass Threw My Class Then it will be partial classes that do the rest of the work
-Note: The Idea Was Good But Lead To A Big Mess... Scraping The Idea And Basically Passing Everything To My DLL
-___________________________________________________________________________________________________________________________________________________
 
 Known Bugs:
-missing peakpoker features
+Ghost Exeptions with no way to tell witch one is crashing...
 
 Changes:  (Added + Removed -)
 Polished Code - at 6:33 Am 4/26/2020
 Polished Code - at 9 am 9/15/2020
 Polished Code - at 9 am 9/17/2020
-- deleted un wanted code
-- added peekpoker features
+Polished Code - at 3 am 12/5/2020
+Added    Code + at 3 am 12/5/2020
+
+
+Todo:
+Add Console find by name tcp/IP
 
 
 
-
-
-
-Things Todo: (Done ==)(Working On *)(Almost Finished -=)
-1.work on the find console feature -= working needs polished
-2.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller
-3.*Cheat Engine Like: Debugger ETC.
-4.add new features XDevkit Is Missing../Realtime editing
-5.InvalidateMemoryCache find what this shit does
-6.make a decent tool with what we have so far
+Ideas (Done ==)(Working On *)(Almost Finished -=)
+1.*Cheat Engine Like: Debugger ETC.
+2.work on the gamepad aka console controller and make it so you can emulate a xbox 360 controller // hard then it seems
+3.
+4.
+5.
+6.
 7.
 
 
 Progress Road:
-work on peekpoker
-add accesion features such as save mods etc
-add scrips for easy share able modding 
-value change detection
-in game change detection such as an xex value changer that you can stop with timer would make finding cheats faster
-in game drawing? possibly?
-anti cheat bypass
-breakpoints
-tracer checks where code is leading to 
-i need a life... 

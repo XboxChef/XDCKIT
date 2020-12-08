@@ -10,7 +10,7 @@ namespace XDevkit
 {
     public class Filesystem
     {
-        Xbox Console = new Xbox();
+        public static Xbox XConsole;
 
         public string Name { get; set; }
 
@@ -26,7 +26,15 @@ namespace XDevkit
         public void CreateDirectory(string name)
         {
             string sdr = string.Concat("mkdir name=\"{0}\"", name);
-            Console.SendTextCommand(sdr, out Console.responses);
+            XConsole.SendTextCommand(sdr, out Xbox.responses);
+        }
+        /// <summary>
+        /// Creates a directory on the xbox.
+        /// </summary>
+        /// <param name="name">Directory name.</param>
+        public void GetDirectory(string name)
+        {
+            DownloadDirectory("",name);
         }
 
         /// <summary>
@@ -36,7 +44,7 @@ namespace XDevkit
         public void DeleteFile(string fileName)
         {
             string dre = string.Concat("delete name=\"{0}\"", fileName);
-            Console.SendTextCommand(dre);
+            XConsole.SendTextCommand(dre);
         }
 
         /// <summary>
@@ -48,7 +56,7 @@ namespace XDevkit
         {
 
             string ren = string.Concat("rename name=\"{0}\" newname=\"{1}\"", OldFileName, NewFileName);
-            Console.SendTextCommand(ren);
+            XConsole.SendTextCommand(ren);
         }
         public void UploadDirectory(string localFolder, string remoteFolderToSaveIn)
         {
@@ -94,7 +102,7 @@ namespace XDevkit
         /// <param name="length"></param>
         public void SendBinaryData(byte[] data, int length)
         {
-            Console.FlushSocketBuffer();
+            XConsole.FlushSocketBuffer();
             Xbox.XboxName.Client.Send(data, length, SocketFlags.None);
         }
         /// <summary>
@@ -119,7 +127,7 @@ namespace XDevkit
         /// <returns></returns>
         public byte[] ReceiveBinaryData(int size)
         {
-            Console.Wait(size);
+            XConsole.Wait(size);
             byte[] binData = new byte[size];
             Xbox.XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
             return binData;
@@ -130,7 +138,7 @@ namespace XDevkit
         /// <param name="data"></param>
         public void ReceiveBinaryData(byte[] data)
         {
-            Console.Wait(data.Length);
+            XConsole.Wait(data.Length);
             Xbox.XboxName.Client.Receive(data, data.Length, SocketFlags.None);
         }
 
@@ -140,7 +148,7 @@ namespace XDevkit
         /// <param name="data"></param>
         public void ReceiveBinaryData(byte[] data, int offset, int size)
         {
-            Console.Wait(size);
+            XConsole.Wait(size);
             Xbox.XboxName.Client.Receive(data, offset, size, SocketFlags.None);
         }
         /// <summary>
@@ -152,7 +160,7 @@ namespace XDevkit
         {
             FileStream lfs = new FileStream(localName, FileMode.Open);
             byte[] fileData = new byte[Xbox.XboxName.Client.SendBufferSize];
-            Console.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
+            XConsole.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
 
             int mainIterations = (int)lfs.Length / Xbox.XboxName.Client.SendBufferSize;
             int remainder = (int)lfs.Length % Xbox.XboxName.Client.SendBufferSize;
@@ -174,7 +182,7 @@ namespace XDevkit
         /// <param name="data"></param>
         public void SendBinaryData(byte[] data)
         {
-            Console.FlushSocketBuffer();
+            XConsole.FlushSocketBuffer();
             Xbox.XboxName.Client.Send(data);
         }
 
@@ -190,7 +198,7 @@ namespace XDevkit
         /// <param name="remoteName">Xbox file name.</param>
         public void ReceiveFile(string localName, string remoteName)
         {
-            Console.SendTextCommand("getfile name=\"{0}\"" + remoteName);
+            XConsole.SendTextCommand("getfile name=\"{0}\"" + remoteName);
             int fileSize = BitConverter.ToInt32(ReceiveBinaryData(4), 0);
             using (var lfs = new System.IO.FileStream(localName, FileMode.Create))
             {

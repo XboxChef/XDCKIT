@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace XDevkit
 {
     /// <summary>
-    /// Credits To JRPC Dev Class also Yelo debug  and PeekPoker. the Rest Is Created By Me TeddyHammer
+    /// Credits To JRPC Project also Yelo debug and PeekPoker All Were Merged.
+    /// the Rest Is Created By Me TeddyHammer
     /// </summary>
     public class Xbox : IDisposable
     {
@@ -26,6 +22,9 @@ namespace XDevkit
         {
 
         }
+
+        public Filesystem Filesystem { get; }
+
         #region Property's
         private bool ValidConnection;
         private RwStream _readWriter;
@@ -44,34 +43,31 @@ namespace XDevkit
         public int Timeout { get => 5000; set => Timeout = value; }
 
         private const string Connection_Error = "Console Not Connected";
-        public XBOX_PROCESS_INFO RunningProcessInfo;
 
         public string Name { get; set; }
         public string IPAddress { get; set; }
-
+        [Browsable(false)]
         public static TcpClient XboxName;
+        [Browsable(false)]
         public StreamReader sreader;
-        public string responses;
-
+        public static string responses;
+        [Browsable(false)]
         public bool Connected { get; set; }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
 
-        public int ConnectTimeout { get => XboxName.ReceiveTimeout; set => XboxName.ReceiveTimeout = value; }
-
-        public int ConversationTimeout { get => XboxName.SendTimeout; set => XboxName.SendTimeout = value; }
-
+        [Browsable(false)]
         /// <summary>
         /// Set or Get the start dump offset
         /// </summary>
         public uint DumpOffset { set { _startDumpOffset = value; } }
-
+        [Browsable(false)]
         /// <summary>
         /// Set or Get the dump length
         /// </summary>
         public uint DumpLength { set; get; }
-
+        [Browsable(false)]
         /// <summary>
         /// Stop any searching
         /// </summary>
@@ -93,7 +89,7 @@ namespace XDevkit
         }
 
         /// <summary>
-        /// Gets or sets the last xbox connection used.
+        /// Gets or sets the last xbox connection used. (PC Only)
         /// </summary>
         [Browsable(false)]
         public string LastConnectionUsed
@@ -101,6 +97,8 @@ namespace XDevkit
             get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
             set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
         }
+
+
 
 
         #endregion
@@ -133,28 +131,8 @@ namespace XDevkit
         }
 
 
-        public static bool PingHost(string hostUri, int portNumber)
-        {
-            try
-            {
-                using (var client = new TcpClient(hostUri, portNumber))
-                    return true;
-            }
-            catch (SocketException)
-            {
-                MessageBox.Show("Error pinging host:'" + hostUri + ":" + portNumber.ToString() + "'");
-                return false;
-            }
-        }
-
-        public void OpenConsole(string XboxNameOrIP) { Connect(XboxNameOrIP); }
-
         /// <summary>
-        /// Connects to an xbox on the network. If console is detected this method  will attempt to connect to the
-        /// console.
-        /// </summary>
-        /// <summary>
-        /// Connects To The Console Via Tcp Connection.
+        /// Attemps To Find Console Via IPAddress.
         /// </summary>
         public bool FindConsole()
         {
@@ -165,9 +143,11 @@ namespace XDevkit
                 if (i < 255)
                 {
                     XboxName = new TcpClient();
-                    if (XboxName.ConnectAsync("192.168.0." + i, 730).Wait(20))
+                    if (XboxName.ConnectAsync("192.168.0." + i, 730).Wait(15))//wait time can't be less than 15...
                     {
                         IPAddress = "192.168.0." + i;
+                        IP.Default["IPAddress"] = "192.168.0." + i;
+                        IP.Default.Save(); // Saves settings in application configuration file
                         return true;
                     }
                     else
@@ -182,52 +162,84 @@ namespace XDevkit
                 }
             }
         }
-        public bool Connect(string XboxNameOrIP = "defualt")//TODO: Find Console
+        /// <summary>
+        /// Connects Local Tcp Connection From Device To Xbox Console
+        /// 
+        /// </summary>
+        public bool Connect(string XboxNameOrIP = "defualt")
         {
             try
             {
-                if (Connected == true)
+
+                //User Enter's Nothing
+                if (XboxNameOrIP == "defualt")
                 {
-                    CloseConnection(0);
-                    return Connect();
-                }
-                else
-                {
-                    if (XboxNameOrIP == "defualt")
+                    try
                     {
-                        if (FindConsole())//if true then continue
+                        XboxName = new TcpClient();
+                        if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(15))//wait time can't be less than 15...
+                        {
+                            IPAddress = IP.Default.IPAddress;
+                            return Connected = true;
+                        }
+                        else if (FindConsole())//if true then continue
                         {
                             XboxName = new TcpClient(IPAddress, 730);
                             sreader = new StreamReader(XboxName.GetStream());
-                            Console.WriteLine("Connected == ( Method 1 )");
                             return Connected = true;
                         }
                         else
                         {
                             return Connected = false;
                         }
-
-
                     }
-                    else if (XboxNameOrIP.ToCharArray().Any(char.IsDigit))
+                    catch
                     {
-                        string IPAddress = XboxNameOrIP;
-                        XboxName = new TcpClient(XboxNameOrIP, 730);
-                        sreader = new StreamReader(XboxName.GetStream());
+                        if (FindConsole())//if true then continue
+                        {
+                            XboxName = new TcpClient(IPAddress, 730);
+                            sreader = new StreamReader(XboxName.GetStream());
+                            return Connected = true;
+                        }
+                        else
+                        {
+                            return Connected = false;
+                        }
+                    }
 
-                        StreamWriter sW = new StreamWriter(XboxName.GetStream());
-                        sW.AutoFlush = true;
-                        //get's the pc's connection and port
-                        Console.WriteLine("Connected == ( Method 2 )");
-                        Console.WriteLine("Xbox Connected to " + XboxName.Client.LocalEndPoint.ToString());
+
+
+                }
+                // If User Supply's IP To US.
+                else if (XboxNameOrIP.ToCharArray().Any(char.IsDigit))
+                {
+                    string IPAddress = XboxNameOrIP;
+                    XboxName = new TcpClient(XboxNameOrIP, 730);
+                    sreader = new StreamReader(XboxName.GetStream());
+                    return Connected = true;
+                }
+                //Get IP Via Name
+                else if (XboxNameOrIP.ToCharArray().Any(char.IsLetter))//uses ip to find console makes user think it finds it via name 
+                {
+
+                    if (FindConsole())//if true then continue
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        sreader = new StreamReader(XboxName.GetStream());
                         return Connected = true;
                     }
                     else
                     {
-                        Console.WriteLine("merp is imposter");
                         return Connected = false;
                     }
+
                 }
+
+                else
+                {
+                    return Connected = false;
+                }
+
 
             }
             catch (Exception)
@@ -240,6 +252,7 @@ namespace XDevkit
 
         public void CloseConnection(uint Connection)
         {
+            Connection = 0;
             SendTextCommand("bye");
             sreader.Close();
             XboxName.Close();
@@ -295,6 +308,7 @@ namespace XDevkit
                 Console.WriteLine("SendTextCommand ==> " +
                     Assembly.GetEntryAssembly().GetName().Name +
                     " Connection == null <==");
+
             }
             else
                 try
@@ -323,8 +337,8 @@ namespace XDevkit
         /// <param name="fileName">File to delete.</param>
         public string GetBoxID()
         {
-            SendTextCommand("BOXID", out responses);
-            return responses.Replace("200- ", string.Empty);
+            FlushSocketBuffer();
+            return SendTextCommand("BOXID").Replace("200- ", string.Empty);
         }
 
         /// <summary>
@@ -333,7 +347,10 @@ namespace XDevkit
         /// </summary>
         /// <param name="Color"></param>
         public void SetConsoleColor(XboxColor Color)
-        { SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower()); }
+        {
+            FlushSocketBuffer();
+            SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
+        }
 
         /// <summary>
         /// Get's The Consoles ID.
@@ -341,9 +358,8 @@ namespace XDevkit
         /// <returns></returns>
         public string GetConsoleID()
         {
-            string responses;
-            SendTextCommand(string.Concat("getconsoleid"), out responses);
-            return responses.Replace("200- consoleid=", string.Empty);
+            FlushSocketBuffer();
+            return SendTextCommand(string.Concat("getconsoleid")).Replace("200- consoleid=", string.Empty);
         }
 
         /// <summary>
@@ -351,8 +367,8 @@ namespace XDevkit
         /// </summary>
         public string GetDMVersion()
         {
-            SendTextCommand("dmversion", out responses);
-            return responses.Replace("200- ", string.Empty);
+            FlushSocketBuffer();
+            return SendTextCommand("dmversion").Replace("200- ", string.Empty);
         }
 
         /// <summary>
@@ -381,8 +397,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf("hdd=");
                                 int End = s.IndexOf("type=");
-                                responses = s.Substring(Start + 4, End - 4);
-                                return responses;
+                                return s.Substring(Start + 4, End - 4);
                             }
                         }
                         catch
@@ -394,8 +409,7 @@ namespace XDevkit
                         #region Console Type
                         try
                         {
-                            SendTextCommand(string.Concat("consoletype"), out responses);
-                            return responses.Replace("200- ", string.Empty);
+                            return SendTextCommand(string.Concat("consoletype")).Replace("200- ", string.Empty);
                         }
                         catch
                         {
@@ -412,8 +426,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf("type=");
                                 int End = s.IndexOf(" p");
-                                responses = s.Substring(Start + 9, End - 1).Substring(Start);
-                                return responses;
+                                return s.Substring(Start + 9, End - 1).Substring(Start);
                             }
                         }
                         catch
@@ -431,8 +444,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf("type=");
                                 int End = s.IndexOf(" p");
-                                responses = s.Substring(Start + End + 4, End - 4).Substring(Start);
-                                return responses;
+                                return s.Substring(Start + End + 4, End - 4).Substring(Start);
                             }
                         }
                         catch
@@ -450,8 +462,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf(" krnl=");
                                 int End = s.IndexOf(" ");
-                                responses = s.Substring(Start - 10, End);
-                                return responses;
+                                return s.Substring(Start - 10, End);
                             }
                         }
                         catch
@@ -469,8 +480,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf(" krnl=");
                                 int End = s.IndexOf(" ");
-                                responses = s.Substring(Start + 6, End);
-                                return responses;
+                                return s.Substring(Start + 6, End);
                             }
                         }
                         catch
@@ -486,9 +496,7 @@ namespace XDevkit
                             string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
                             foreach (string s in Info)
                             {
-                                int Start = s.IndexOf(" xdk=");
-                                responses = s.Substring(Start + 5, 12);
-                                return responses;
+                                return s.Substring(s.IndexOf("xdk=") + 4, 12);
                             }
                         }
                         catch
@@ -503,46 +511,6 @@ namespace XDevkit
         #endregion
 
         #region Features
-        public static void Clean_Cache()
-        {
-            Filesystem File = new Filesystem();
-            int num = 0;
-            foreach (Filesystem file in DirectoryFiles(@"Hdd:\cache\"))
-            {
-                try
-                {
-                    File.DeleteFile(file.Name);
-                    num++;
-                }
-                catch
-                {
-                }
-            }
-            try
-            {
-                foreach (Filesystem file2 in DirectoryFiles(@"SysCache0:\"))
-                {
-                    try
-                    {
-                        File.DeleteFile(file2.Name);
-                        num++;
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-            catch
-            {
-            }
-            X360Text("Cleared " + num.ToString() + " files from Cache");
-        }
-
-
-        private static IEnumerable<Filesystem> DirectoryFiles(string v)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Gets A Float From Address And Returns it as String.
@@ -565,14 +533,18 @@ namespace XDevkit
 
         public void NOP(uint address)
         {
+            FlushSocketBuffer();
             byte[] buffer1 = new byte[4];
             buffer1[0] = 0x60;
             byte[] data = buffer1;
             SetMemory(address, data);
         }
 
-        public byte[] NOPBytes() { return new byte[] { 0x60, 0x00, 0x00, 0x00 }; }
-        public static void X360Text(string a) { XNotify.Show(a); }
+        public static void X360Text(string a)
+        {
+
+            XNotify.Show(a);
+        }
 
         /// <summary>
         ///
@@ -583,6 +555,7 @@ namespace XDevkit
         /// <param name="Flags"></param>
         public void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
         {
+            FlushSocketBuffer();
             string[] lines = Name.Split("\\".ToCharArray());
             for (int i = 0; i < lines.Length - 1; i++)
                 MediaDirectory += lines[i] + "\\";
@@ -590,49 +563,6 @@ namespace XDevkit
             SendTextCommand(string.Concat(Reboot));
         }
 
-        private bool Fan_Speed(int int_5, int int_6)
-        {
-            Array.Clear(byte_0, 0, byte_0.Length);
-            Array.Clear(byte_1, 0, byte_1.Length);
-            if (int_5 == 1)
-            {
-                byte_0[0] = 0x94;
-            }
-            else
-            {
-                if (int_5 != 2)
-                {
-                    return false;
-                }
-                byte_0[0] = 0x89;
-            }
-            if (int_6 > 100)
-            {
-                int_6 = 100;
-            }
-            if (int_6 <= 0)
-            {
-                int_6 = 10;
-            }
-            if (int_6 < 0x2d)
-            {
-                byte_0[1] = 0x7f;
-            }
-            else
-            {
-                byte_0[1] = (byte)(int_6 | 0x80);
-            }
-            this.FanSpeed(byte_0);
-            return true;
-        }
-
-        private void FanSpeed(byte[] byte_2)
-        {
-            object[] arguments = new object[2];
-            arguments[0] = byte_2;
-            uint uint_0 = 0;
-            JRPC.CallVoid(uint_0, arguments);
-        }
 
         /// <summary>
         /// Shortcuts To Guide
@@ -640,124 +570,125 @@ namespace XDevkit
         /// <param name="Color"></param>
         public void XboxShortcut(XboxShortcuts UI)
         {
+            FlushSocketBuffer();
             if (XboxName.Connected)
                 switch ((int)UI)//works by getting the int of the UI and matches the numbers to execute things
                 {
                     case (int)XboxShortcuts.XboxHome:
-                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20445100\dash.xex",
-                               @"\Device\Harddisk0\SystemExtPartition\20445100\",
-                               @"\Device\Harddisk0\SystemExtPartition\20445100\",
+                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20445100\dash.xex",
                                XboxRebootFlags.Title);
                         break;
                     case (int)XboxShortcuts.Turn_Off_Console:
                         ShutDownConsole();
                         break;
                     case (int)XboxShortcuts.Account_Management:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Account_Management),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Account_Management),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Achievements:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Achievements),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Achievements),
                                       new object[]
                             { 0, 0, 0, 0 });//achievements
                         break;
                     case (int)XboxShortcuts.Active_Downloads:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Active_Downloads),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Active_Downloads),
                                       new object[]
                             { 0, 0, 0, 0 });//XamShowMarketplaceDownloadItemsUI
                         break;
                     case (int)XboxShortcuts.Awards:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Awards),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Awards),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Beacons_And_Activiy:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Beacons_And_Activiy),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Beacons_And_Activiy),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Family_Settings:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Family_Settings),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Family_Settings),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Friends:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Friends),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Friends),
                                       new object[]
                             { 0, 0, 0, 0 });//friends
                         break;
                     case (int)XboxShortcuts.Guide_Button:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Guide_Button),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Guide_Button),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Messages:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Messages), 0);//messages tab
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Messages), 0);//messages tab
                         break;
                     case (int)XboxShortcuts.My_Games:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.My_Games),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.My_Games),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Open_Tray:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Close_Tray:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Close_Tray),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Close_Tray),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Party:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Preferences:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Preferences),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Preferences),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Private_Chat:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Private_Chat),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Private_Chat),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Profile:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Profile),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Profile),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Recent:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Recent),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Recent),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Redeem_Code:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Redeem_Code),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Redeem_Code),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Select_Music:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Select_Music),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Select_Music),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Music_Player:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Music_Player),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Music_Player),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Settings:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Settings),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Settings),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Video_Player:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Video_Player),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Video_Player),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Windows_Media_Center:
-                        JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Windows_Media_Center),
+                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Windows_Media_Center),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
@@ -769,6 +700,7 @@ namespace XDevkit
         /// </summary>
         public void Reboot(XboxReboot Warm_or_Cold)
         {
+            FlushSocketBuffer();
             if (Warm_or_Cold == XboxReboot.Cold)
             {
                 SendTextCommand("magicboot cold");
@@ -784,6 +716,7 @@ namespace XDevkit
         /// </summary>
         public void Freeze_Console(XboxSwitch Freeze)
         {
+            FlushSocketBuffer();
             if (Freeze == XboxSwitch.True)
             {
                 SendTextCommand("stop");
@@ -793,13 +726,23 @@ namespace XDevkit
                 SendTextCommand("go");
             }
         }
-
+        /// <summary>
+        /// XBEINFO Console.
+        /// </summary>
+        public string XBEINFO()
+        {
+            FlushSocketBuffer();
+            SendTextCommand("XBEINFO RUNNING");
+            string str1 = ReceiveMultilineResponse();
+            return str1.Substring(str1.find("name"));
+        }
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
         public string ConsoleType()
         {
+            FlushSocketBuffer();
             string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return str1.Substring(str1.find(" ") + 1);
@@ -810,49 +753,11 @@ namespace XDevkit
         /// </summary>
         public string GetCPUKey()
         {
+            FlushSocketBuffer();
             string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendTextCommand(str);
-            return responses.Replace("200- ", string.Empty);
+            return SendTextCommand(str).Replace("200- ", string.Empty);
         }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private static string method_8()
-        {
-            int num = 0;
-            string str = Path.GetDirectoryName(Application.ExecutablePath) + @"\";
-            if (Directory.Exists(str + @"Screenshots\"))
-            {
-                for (int i = 0; i < 0x270f; i++)
-                {
-                    string[] textArray1 = new string[] { str, @"Screenshots\", timeStamp, "-", num.ToString(), ".png" };
-                    if (!File.Exists(string.Concat(textArray1)))
-                    {
-                        return num.ToString();
-                    }
-                    num++;
-                }
-            }
-            return num.ToString();
-        }
-
-        public static void ScreenShot()
-        {
-            string str = Path.GetDirectoryName(Application.ExecutablePath) + @"\";
-            string str2 = timeStamp + "-" + method_8();
-            if (!Directory.Exists(str + @"Screenshots\"))
-            {
-                Directory.CreateDirectory(str + @"Screenshots\");
-            }
-            ScreenShot(str2 + ".bmp");
-            string filename = str + str2 + ".bmp";
-            Image image1 = Image.FromFile(filename);
-            image1.Save(str + @"Screenshots\" + str2 + ".png", ImageFormat.Png);
-            image1.Dispose();
-            File.Delete(filename);
-            MessageBox.Show("Screenshot Saved: " + Path.Combine(str, @"Screenshots\" + str2 + ".png"));
-        }
-
-        private static void ScreenShot(string v) { throw new NotImplementedException(); }
 
         /// <summary>
         /// Version Of Kernal
@@ -860,6 +765,7 @@ namespace XDevkit
         /// <returns></returns>
         public uint GetKernalVersion()
         {
+            FlushSocketBuffer();
             string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return uint.Parse(str1.Substring(str1.find(" ") + 1));
@@ -872,6 +778,7 @@ namespace XDevkit
         /// <returns></returns>
         public uint GetTemperature(TemperatureFlag TemperatureType)
         {
+            FlushSocketBuffer();
             object[] jRPCVersion = new object[]
             { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
             string str = SendTextCommand(string.Concat(jRPCVersion));
@@ -894,7 +801,8 @@ namespace XDevkit
         /// <param name="Bottom_Right"></param>
         public void SetLeds(LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
         {
-            object[] jRPCVersion = new object[]
+            FlushSocketBuffer();
+            object[] Resolver = new object[]
             {
                 "consolefeatures ver=",
                 2,
@@ -916,7 +824,7 @@ namespace XDevkit
                 (uint)Bottom_Right,
                 "\\\""
             };
-            SendTextCommand(string.Concat(jRPCVersion));
+            SendTextCommand(string.Concat(Resolver));
         }
 
         /// <summary>
@@ -925,6 +833,7 @@ namespace XDevkit
         /// <returns></returns>
         public uint XamGetCurrentTitleId()
         {
+            FlushSocketBuffer();
             string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return uint.Parse(str1.Substring(str1.find(" ") + 1), NumberStyles.HexNumber);
@@ -935,6 +844,7 @@ namespace XDevkit
         /// </summary>
         public void ShutDownConsole()
         {
+            FlushSocketBuffer();
             try
             {
                 string str = string.Concat("consolefeatures ver=", 2, " type=11 params=\"A\\0\\A\\0\\\"");
@@ -951,6 +861,7 @@ namespace XDevkit
 
         private bool GetMemory2(uint Address, uint length)
         {
+            FlushSocketBuffer();
             if (ValidConnection)
                 return true;
             //ADDR=0xDA1D0000 - The start offset in the physical memory I want the dump to start
@@ -974,12 +885,7 @@ namespace XDevkit
         public void constantMemorySet(uint Address, uint Value, uint IfValue, uint TitleID)
         { constantMemorySetting(Address, Value, true, IfValue, true, TitleID); }
 
-        public void constantMemorySetting(uint Address,
-                                          uint Value,
-                                          bool useIfValue,
-                                          uint IfValue,
-                                          bool usetitleID,
-                                          uint TitleID)
+        public void constantMemorySetting(uint Address, uint Value, bool useIfValue, uint IfValue, bool usetitleID, uint TitleID)
         {
             object[] jRPCVersion = new object[]
             {
@@ -1040,6 +946,7 @@ namespace XDevkit
 
         public void SetMemory(uint Address, uint BytesToWrite, byte[] Data, out uint BytesWritten)//aka response
         {
+            FlushSocketBuffer();
             // Send the setmem command
             XboxName.Client
                 .Send(Encoding.ASCII
@@ -1058,17 +965,17 @@ namespace XDevkit
 
         public byte[] GetMemory(uint Address, uint Length)
         {
-            {
-                uint num = 0;
-                byte[] numArray = new byte[Length];
-                GetMemory(Address, Length, numArray, out num);
+            FlushSocketBuffer();
+            byte[] numArray = new byte[Length];
+                GetMemory(Address, Length, numArray, out _);
                 InvalidateMemoryCache(true, Address, Length);
                 return numArray;
-            }
+            
         }
 
         public void GetMemory(uint Address, uint BytesToRead, byte[] Data, out uint BytesRead)
         {
+            FlushSocketBuffer();
             BytesRead = 0;
             List<byte> ReturnData = new List<byte>();
             byte[] Packet = new byte[1026];
@@ -1167,21 +1074,8 @@ namespace XDevkit
         /// <returns></returns>
         public uint ResolveFunction(string ModuleName, uint Ordinal)
         {
-            object[] XBDMVersion = new object[]
-            {
-                "consolefeatures ver=",
-                2/*THTVersion*/,
-                " type=9 params=\"A\\0\\A\\2\\", /*String*/
-                0,
-                "/",
-                ModuleName.Length,
-                "\\",
-                ModuleName.ToHexString(),
-                "\\", /*Int*/
-                0,
-                "\\",
-                Ordinal,
-                "\\\""
+            FlushSocketBuffer();
+            object[] XBDMVersion = new object[] { "consolefeatures ver= 2", " type=9 params=\"A\\0\\A\\2\\0",  "/",  ModuleName.Length,  "\\", ModuleName.ToHexString(), "\\0", "\\", Ordinal,  "\\\""
             };
             string str = SendTextCommand(string.Concat(XBDMVersion));
             return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
@@ -2056,471 +1950,78 @@ namespace XDevkit
         }
 
         public void Dispose() { ((IDisposable)XboxName).Dispose(); }
+
+        public static byte[] ReadToEnd(System.IO.Stream stream)
+        {
+            long originalPosition = 0;
+
+            if (stream.CanSeek)
+            {
+                originalPosition = stream.Position;
+                stream.Position = 0;
+            }
+
+            try
+            {
+                byte[] readBuffer = new byte[4096];
+
+                int totalBytesRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = stream.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
+                {
+                    totalBytesRead += bytesRead;
+
+                    if (totalBytesRead == readBuffer.Length)
+                    {
+                        int nextByte = stream.ReadByte();
+                        if (nextByte != -1)
+                        {
+                            byte[] temp = new byte[readBuffer.Length * 2];
+                            Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+                            Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+                            readBuffer = temp;
+                            totalBytesRead++;
+                        }
+                    }
+                }
+
+                byte[] buffer = readBuffer;
+                if (readBuffer.Length != totalBytesRead)
+                {
+                    buffer = new byte[totalBytesRead];
+                    Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+                }
+                return buffer;
+            }
+            finally
+            {
+                if (stream.CanSeek)
+                {
+                    stream.Position = originalPosition;
+                }
+            }
+        }
+        internal void GetFileCommand(string Command)//TODO: 
+        {
+            if (XboxName.Connected == false && XboxName == null)
+            {
+                Console.WriteLine("SendingFileCommand ==> " +
+                    Assembly.GetEntryAssembly().GetName().Name +
+                    " Connection == null <==");
+                Console.WriteLine("Failed to SendingFileCommand ==> Not Connected <==");
+            }
+            else
+            {
+                FlushSocketBuffer();
+                Console.WriteLine("FileCommand ==> Sending Command... <==");
+                XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+            }
+        }
         #endregion
 
         #endregion
     }
 
-    #region Misc
-    /// <summary>
-    /// Credits To James The JRPC Dev.
-    /// </summary>
-    public static class JRPC
-    {
-        private static HashSet<Type> ValidReturnTypes { get; set; }
 
-        public static void CallVoid(uint Address, params object[] Arguments)
-        { CallArgs(true, 0, typeof(void), null, 0, Address, 0, Arguments); }
-
-        public static void CallVoid(ThreadType Type, string module, int ordinal, params object[] Arguments)
-        { CallArgs(Type == ThreadType.System, 0/*Void*/, typeof(void), module, ordinal, 0, 0, Arguments); }
-
-        public static int find(this string String, string _Ptr)
-        {
-            if (_Ptr.Length == 0 || String.Length == 0)
-            {
-                return -1;
-            }
-            for (int i = 0; i < String.Length; i++)
-            {
-                if (String[i] == _Ptr[0])
-                {
-                    bool flag = true;
-                    for (int j = 0; j < _Ptr.Length; j++)
-                    {
-                        if (String[i + j] != _Ptr[j])
-                        {
-                            flag = false;
-                        }
-                    }
-                    if (flag)
-                    {
-                        return i;
-                    }
-                }
-            }
-            return -1;
-        }
-
-        internal static bool IsValidReturnType(Type t) { return ValidReturnTypes.Contains(t); }
-
-        /// <summary>
-        /// EDITED:  Do Not Use
-        /// </summary>
-        private static object CallArgs(bool SystemThread,
-                                       uint Type,
-                                       Type t,
-                                       string module,
-                                       int ordinal,
-                                       uint Address,
-                                       uint ArraySize,
-                                       params object[] Arguments)
-        {
-            Xbox xbox = new Xbox();
-            {
-                object[] name;
-                int i;
-                object obj;
-                string str;
-                string[] strArrays;
-                string str1;
-                object obj1;
-                if (!IsValidReturnType(t))
-                {
-                    name = new object[]
-                    {
-                        "Invalid type ",
-                        t.Name,
-                        Environment.NewLine,
-                        "XBDM only supports: bool, byte, short, int, long, ushort, uint, ulong, float, double"
-                    };
-                    throw new Exception(string.Concat(name));
-                }
-
-                xbox.ConversationTimeout = 4000000;
-                xbox.ConnectTimeout = 4000000;
-                object[] XBDMVersion = new object[]
-                {
-                    "consolefeatures ver=",
-                    2/*version*/,
-                    " type=",
-                    Type,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                };
-                XBDMVersion[4] = (SystemThread ? " system" : string.Empty);
-                object[] objArray = XBDMVersion;
-                if (module != null)
-                {
-                    object[] objArray1 = new object[] { " module=\"", module, "\" ord=", ordinal };
-                    obj1 = string.Concat(objArray1);
-                }
-                else
-                {
-                    obj1 = string.Empty;
-                }
-                objArray[5] = obj1;
-                XBDMVersion[6] = " as=";
-                XBDMVersion[7] = ArraySize;
-                XBDMVersion[8] = " params=\"A\\";
-                XBDMVersion[9] = Address.ToString("X");
-                XBDMVersion[10] = "\\A\\";
-                XBDMVersion[11] = Arguments.Length;
-                XBDMVersion[12] = "\\";
-                string str2 = string.Concat(XBDMVersion);
-                if (Arguments.Length > 37)
-                {
-                    throw new Exception("Can not use more than 37 paramaters in a call");
-                }
-                object[] arguments = Arguments;
-                for (i = 0; i < arguments.Length; i++)
-                {
-                    object obj2 = arguments[i];
-                    bool flag = false;
-                    if (obj2 is uint)
-                    {
-                        obj = str2;
-                        object[] num2 = new object[] { obj, /*Int*/ 0, "\\", Functions.UIntToInt((uint)obj2), "\\" };
-                        str2 = string.Concat(num2);
-                        flag = true;
-                    }
-                    if (obj2 is int || obj2 is bool || obj2 is byte)
-                    {
-                        if (!(obj2 is bool))
-                        {
-                            object obj3 = str2;
-                            object[] objArray2 = new object[] { obj3, /*Int*/ 0, "\\", null, null };
-                            objArray2[3] = (obj2 is byte
-                                ? Convert.ToByte(obj2).ToString()
-                                : Convert.ToInt32(obj2).ToString());
-                            objArray2[4] = "\\";
-                            str2 = string.Concat(objArray2);
-                        }
-                        else
-                        {
-                            object obj4 = str2;
-                            object[] num3 = new object[] { obj4, /*Int*/ 0, "/", Convert.ToInt32((bool)obj2), "\\" };
-                            str2 = string.Concat(num3);
-                        }
-                        flag = true;
-                    }
-                    else if (obj2 is int[] || obj2 is uint[])
-                    {
-                        byte[] numArray = Functions.IntArrayToByte((int[])obj2);
-                        object obj5 = str2;
-                        object[] str3 = new object[] { obj5, 0.ToString(), "/", numArray.Length, "\\" };
-                        str2 = string.Concat(str3);
-                        for (int j = 0; j < numArray.Length; j++)
-                        {
-                            str2 = string.Concat(str2, numArray[j].ToString("X2"));
-                        }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
-                    }
-                    else if (obj2 is string)
-                    {
-                        string str4 = (string)obj2;
-                        object obj6 = str2;
-                        object[] objArray3 = new object[]
-                        { obj6, 0.ToString(), "/", str4.Length, "\\", ((string)obj2).ToHexString(), "\\" };
-                        str2 = string.Concat(objArray3);
-                        flag = true;
-                    }
-                    else if (obj2 is double)
-                    {
-                        double num4 = (double)obj2;
-                        str = str2;
-                        strArrays = new string[] { str, 0.ToString(), "\\", num4.ToString(), "\\" };
-                        str2 = string.Concat(strArrays);
-                        flag = true;
-                    }
-                    else if (obj2 is float)
-                    {
-                        float single = (float)obj2;
-                        str = str2;
-                        strArrays = new string[] { str, 0.ToString(), "\\", single.ToString(), "\\" };
-                        str2 = string.Concat(strArrays);
-                        flag = true;
-                    }
-                    else if (obj2 is float[])
-                    {
-                        float[] singleArray = (float[])obj2;
-                        str = str2;
-                        strArrays = new string[] { str, 0.ToString(), "/", null, null };
-                        int length = singleArray.Length * 4;
-                        strArrays[3] = length.ToString();
-                        strArrays[4] = "\\";
-                        str2 = string.Concat(strArrays);
-                        for (int k = 0; k < singleArray.Length; k++)
-                        {
-                            byte[] bytes = BitConverter.GetBytes(singleArray[k]);
-                            Array.Reverse(bytes);
-                            for (int l = 0; l < 4; l++)
-                            {
-                                str2 = string.Concat(str2, bytes[l].ToString("X2"));
-                            }
-                        }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
-                    }
-                    else if (obj2 is byte[])
-                    {
-                        byte[] numArray1 = (byte[])obj2;
-                        obj = str2;
-                        name = new object[] { obj, 0.ToString(), "/", numArray1.Length, "\\" };
-                        str2 = string.Concat(name);
-                        for (int m = 0; m < numArray1.Length; m++)
-                        {
-                            str2 = string.Concat(str2, numArray1[m].ToString("X2"));
-                        }
-                        str2 = string.Concat(str2, "\\");
-                        flag = true;
-                    }
-                    if (!flag)
-                    {
-                        str = str2;
-                        strArrays = new string[] { str, 0.ToString(), "\\", null, null };
-                        ulong num5 = Functions.ConvertToUInt64(obj2);
-                        strArrays[3] = num5.ToString();
-                        strArrays[4] = "\\";
-                        str2 = string.Concat(strArrays);
-                    }
-                }
-                str2 = string.Concat(str2, "\"");
-                string str5 = xbox.SendTextCommand(str2);
-                string str6 = "buf_addr=";
-                while (str5.Contains(str6))
-                {
-                    Thread.Sleep(250);
-                    uint num6 = uint.Parse(str5.Substring(str5.find(str6) + str6.Length), NumberStyles.HexNumber);
-                    str5 = xbox.SendTextCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
-                }
-                xbox.ConversationTimeout = 2000;
-                xbox.ConnectTimeout = 5000;
-                switch (Type)
-                {
-                    case 1:
-                        {
-                            uint num7 = uint.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            if (t == typeof(uint))
-                            {
-                                return num7;
-                            }
-                            if (t == typeof(int))
-                            {
-                                return Functions.UIntToInt(num7);
-                            }
-                            if (t == typeof(short))
-                            {
-                                return short.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            }
-                            if (t != typeof(ushort))
-                            {
-                                goto case 7;
-                            }
-                            return ushort.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                        }
-                    case 2:
-                        {
-                            string str7 = str5.Substring(str5.find(" ") + 1);
-                            if (t == typeof(string))
-                            {
-                                return str7;
-                            }
-                            if (t != typeof(char[]))
-                            {
-                                goto case 7;
-                            }
-                            return str7.ToCharArray();
-                        }
-                    case 3:
-                        {
-                            if (t == typeof(double))
-                            {
-                                return double.Parse(str5.Substring(str5.find(" ") + 1));
-                            }
-                            if (t != typeof(float))
-                            {
-                                goto case 7;
-                            }
-                            return float.Parse(str5.Substring(str5.find(" ") + 1));
-                        }
-                    case 4:
-                        {
-                            byte num8 = byte.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            if (t == typeof(byte))
-                            {
-                                return num8;
-                            }
-                            if (t != typeof(char))
-                            {
-                                goto case 7;
-                            }
-                            return (char)num8;
-                        }
-                    case 5:
-                    case 6:
-                    case 7:
-                        {
-                            if (Type == 5)
-                            {
-                                string str8 = str5.Substring(str5.find(" ") + 1);
-                                int num9 = 0;
-                                string str9 = string.Empty;
-                                uint[] numArray2 = new uint[8];
-                                str1 = str8;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr = str1[i];
-                                    if (chr == ',' || chr == ';')
-                                    {
-                                        numArray2[num9] = uint.Parse(str9, NumberStyles.HexNumber);
-                                        num9++;
-                                        str9 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str9 = string.Concat(str9, chr.ToString());
-                                    }
-                                    if (chr == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                return numArray2;
-                            }
-                            if (Type == 6)
-                            {
-                                string str10 = str5.Substring(str5.find(" ") + 1);
-                                int num10 = 0;
-                                string str11 = string.Empty;
-                                float[] singleArray1 = new float[ArraySize];
-                                str1 = str10;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr1 = str1[i];
-                                    if (chr1 == ',' || chr1 == ';')
-                                    {
-                                        singleArray1[num10] = float.Parse(str11);
-                                        num10++;
-                                        str11 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str11 = string.Concat(str11, chr1.ToString());
-                                    }
-                                    if (chr1 == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                return singleArray1;
-                            }
-                            if (Type == 7)
-                            {
-                                string str12 = str5.Substring(str5.find(" ") + 1);
-                                int num11 = 0;
-                                string str13 = string.Empty;
-                                byte[] numArray3 = new byte[ArraySize];
-                                str1 = str12;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr2 = str1[i];
-                                    if (chr2 == ',' || chr2 == ';')
-                                    {
-                                        numArray3[num11] = byte.Parse(str13);
-                                        num11++;
-                                        str13 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str13 = string.Concat(str13, chr2.ToString());
-                                    }
-                                    if (chr2 == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                return numArray3;
-                            }
-                            if (Type == 0)
-                            {
-                                string str14 = str5.Substring(str5.find(" ") + 1);
-                                int num12 = 0;
-                                string str15 = string.Empty;
-                                ulong[] numArray4 = new ulong[ArraySize];
-                                str1 = str14;
-                                for (i = 0; i < str1.Length; i++)
-                                {
-                                    char chr3 = str1[i];
-                                    if (chr3 == ',' || chr3 == ';')
-                                    {
-                                        numArray4[num12] = ulong.Parse(str15);
-                                        num12++;
-                                        str15 = string.Empty;
-                                    }
-                                    else
-                                    {
-                                        str15 = string.Concat(str15, chr3.ToString());
-                                    }
-                                    if (chr3 == ';')
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (t == typeof(ulong))
-                                {
-                                    return numArray4;
-                                }
-                                if (t == typeof(long))
-                                {
-                                    long[] numArray5 = new long[ArraySize];
-                                    for (int n = 0; n < ArraySize; n++)
-                                    {
-                                        numArray5[n] = BitConverter.ToInt64(BitConverter.GetBytes(numArray4[n]), 0);
-                                    }
-                                    return numArray5;
-                                }
-                            }
-                            if (Type == 0)
-                            {
-                                return 0;
-                            }
-                            return ulong.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                        }
-                    case 8:
-                        {
-                            if (t == typeof(long))
-                            {
-                                return long.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                            }
-                            if (t != typeof(ulong))
-                            {
-                                goto case 7;
-                            }
-                            return ulong.Parse(str5.Substring(str5.find(" ") + 1), NumberStyles.HexNumber);
-                        }
-                    default:
-                        {
-                            goto case 7;
-                        }
-                }
-            }
-        }
-
-        public static void Push(this byte[] InArray, out byte[] OutArray, byte Value)
-        {
-            OutArray = new byte[InArray.Length + 1];
-            InArray.CopyTo(OutArray, 0);
-            OutArray[InArray.Length] = Value;
-        }
-    }
-    #endregion
 }

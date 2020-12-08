@@ -7,10 +7,14 @@ using XDevkit;
 
 namespace XDevkit
 {
+
 	#region XNotify
+    /// <summary>
+    /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
+    /// </summary>
 	public class XNotify
 	{
-		public static Xbox Jtag = new Xbox();
+        public static Xbox XConsole = new Xbox();
 		public static void Show(string Message)
 		{
              Show(Message, true);
@@ -251,7 +255,7 @@ namespace XDevkit
                     command += "\\\"";
                     break;
             }
-            Jtag.SendTextCommand(command);
+            XConsole.SendTextCommand(command);
         }
 
 

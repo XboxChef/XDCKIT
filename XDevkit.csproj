@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Fan_Slider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Fan_Slider.Designer.cs">
+      <DependentUpon>Fan_Slider.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\xex_slider.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -55,6 +61,7 @@
     <Compile Include="Controls\xex_value_file.designer.cs">
       <DependentUpon>xex_value_file.cs</DependentUpon>
     </Compile>
+    <Compile Include="Functions\ContentStorage.cs" />
     <Compile Include="Functions\Filesystem.cs" />
     <Compile Include="Functions\ApiException.cs" />
     <Compile Include="Functions\Functions.cs" />
@@ -63,6 +70,7 @@
     <Compile Include="Functions\Types.cs" />
     <Compile Include="Functions\XboxEnums.cs" />
     <Compile Include="Functions\XboxStructs.cs" />
+    <Compile Include="Functions\Xbox_JRPC.cs" />
     <Compile Include="Functions\XNotify.cs" />
     <Compile Include="IO\EndianIO.cs" />
     <Compile Include="IO\EndianReader.cs" />
@@ -76,7 +84,13 @@
     <Content Include="About XDevkit.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\Fan_Slider.resx">
+      <DependentUpon>Fan_Slider.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
