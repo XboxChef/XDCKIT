@@ -23,6 +23,10 @@ namespace XDevkit
 
 		public int RightThumbY;
 	}
+	public struct wChar
+	{
+		public string Text;
+	}
 	/// <summary>
 	/// Xbox debug connection information.
 	/// </summary>

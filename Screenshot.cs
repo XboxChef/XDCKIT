@@ -1,19 +1,19 @@
 ﻿
 using System;
+using System.Drawing;
 
 namespace XDevkit
 {
-    public class Screenshot
+    public class DMScreenshot
     {
-        public static Xbox XConsole;
-        public Screenshot()
-        {
-            
-        }
+        public Xbox Con;
 
-        internal void GetScreenshot()
+        internal void Screenshot()
         {
-            XConsole.GetFileCommand("screenshot");
+            //sends command
+            //ReceiveSocketLine
+            //
+            Con.GetFileCommand("screenshot");
         }
     }
 }

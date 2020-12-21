@@ -32,10 +32,11 @@ Polished Code - at 9 am 9/15/2020
 Polished Code - at 9 am 9/17/2020
 Polished Code - at 3 am 12/5/2020
 Added    Code + at 3 am 12/5/2020
+Removed  Code - at 1 Pm 12/8/2020 
 
 
 Todo:
-Add Console find by name tcp/IP
+Add Console find by name tcp/IP (NOT POSSIBLE ATM 12/8/20)
 
 
 

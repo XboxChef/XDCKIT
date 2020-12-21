@@ -10,7 +10,7 @@
 
     public class xex_value : UserControl
     {
-        Xbox communicator = new Xbox();
+        public static Xbox Con;
         private Button button1;
         public Stream stream;
         private IContainer components = null;
@@ -40,17 +40,17 @@
             //}
             try
             {
-                if (communicator.IPAddress == "")
+                if (Con.IPAddress == "")
                 {
                     MessageBox.Show("XDK Name/IP not set");
                 }
                 else
                 {
-                    if (!communicator.Connected)
+                    if (!Con.Connected)
                     {
                         try
                         {
-                            communicator.Connect();
+                            Con.Connect();
                         }
                         catch
                         {
@@ -105,7 +105,7 @@
                     }
                     nio.Close();
                     stream.Close();
-                    communicator.Disconnect();
+                    Con.Disconnect();
                 }
             }
             catch

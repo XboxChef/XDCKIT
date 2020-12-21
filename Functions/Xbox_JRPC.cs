@@ -8,8 +8,13 @@ namespace XDevkit
 {
     public static class Xbox_JRPC
     {
+        public static Xbox Con;
         private static HashSet<Type> ValidReturnTypes { get; set; }
-
+        public static void CallVoid(string module, int ordinal, params object[] Arguments)
+        {
+            uint Void = 0;
+            CallArgs(true, Void, typeof(void), module, ordinal, 0U, 0U, Arguments);
+        }
         public static void CallVoid(uint Address, params object[] Arguments)
         { CallArgs(true, 0, typeof(void), null, 0, Address, 0, Arguments); }
 
@@ -57,7 +62,7 @@ namespace XDevkit
                                        uint ArraySize,
                                        params object[] Arguments)
         {
-            Xbox xbox = new Xbox();
+           
             {
                 object[] name;
                 int i;
@@ -233,13 +238,13 @@ namespace XDevkit
                     }
                 }
                 str2 = string.Concat(str2, "\"");
-                string str5 = xbox.SendTextCommand(str2);
+                string str5 = Con.SendTextCommand(str2);
                 string str6 = "buf_addr=";
                 while (str5.Contains(str6))
                 {
                     Thread.Sleep(250);
                     uint num6 = uint.Parse(str5.Substring(str5.find(str6) + str6.Length), NumberStyles.HexNumber);
-                    str5 = xbox.SendTextCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
+                    str5 = Con.SendTextCommand(string.Concat("consolefeatures ", str6, "0x", num6.ToString("X")));
                 }
                 switch (Type)
                 {

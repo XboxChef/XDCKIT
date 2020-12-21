@@ -14,8 +14,8 @@ namespace XDevkit
     /// </summary>
 	public class XNotify
 	{
-        public static Xbox XConsole = new Xbox();
-		public static void Show(string Message)
+        public static Xbox Con;
+        public static void Show(string Message)
 		{
              Show(Message, true);
 		}
@@ -255,7 +255,7 @@ namespace XDevkit
                     command += "\\\"";
                     break;
             }
-            XConsole.SendTextCommand(command);
+            Con.SendTextCommand(command);
         }
 
 

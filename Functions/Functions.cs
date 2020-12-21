@@ -29,6 +29,41 @@ namespace XDevkit
             }
             return true;
         }
+        public static byte[] WideChar(string text)
+        {
+            byte[] numArray = new byte[text.Length * 2 + 2];
+            int index = 1;
+            numArray[0] = (byte)0;
+            foreach (char ch in text)
+            {
+                numArray[index] = System.Convert.ToByte(ch);
+                index += 2;
+            }
+            return numArray;
+        }
+        private static byte[] getData(long[] argument)
+        {
+            byte[] numArray = new byte[argument.Length * 8];
+            int index = 0;
+            foreach (long num in argument)
+            {
+                byte[] bytes = BitConverter.GetBytes(num);
+                Array.Reverse((Array)bytes);
+                bytes.CopyTo((Array)numArray, index);
+                index += 8;
+            }
+            return numArray;
+        }
+        private static float[] toFloatArray(double[] arr)
+        {
+            if (arr == null)
+                return (float[])null;
+            int length = arr.Length;
+            float[] numArray = new float[length];
+            for (int index = 0; index < length; ++index)
+                numArray[index] = (float)arr[index];
+            return numArray;
+        }
         public static string BytesToHexString(byte[] data)
         {
             string str = "";

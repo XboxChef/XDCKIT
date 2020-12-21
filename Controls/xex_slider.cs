@@ -8,7 +8,7 @@
 
     public class xex_slider : UserControl
     {
-        Xbox communicator = new Xbox();
+        public static Xbox Con;
         public Stream stream;
         private IContainer components = null;
         private Label label1;
@@ -75,13 +75,13 @@
         }
         public void streampoke(uint offset, string poketype, string ammount)
         {
-            if (communicator.IPAddress == "")
+            if (Con.IPAddress == "")
             {
                 MessageBox.Show("XDK Name/IP not set");
             }
             else
             {
-                communicator.Connect();
+                Con.Connect();
                 EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
                 nio.Open();
                 nio.Out.BaseStream.Position = offset;
@@ -119,7 +119,7 @@
                 }
                 nio.Close();
                 stream.Close();
-                communicator.Disconnect();
+                Con.Disconnect();
             }
         }
     }
