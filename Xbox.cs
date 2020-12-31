@@ -1,4 +1,8 @@
-﻿using System;
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -14,52 +18,34 @@ using System.Threading;
 namespace XDevkit
 {
     /// <summary>
-    /// Credits To JRPC Project also Yelo debug and PeekPoker All Were Merged.
-    /// the Rest Is Created By Me TeddyHammer
+    /// Xbox Emulation Class
+    /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox : IDisposable
+    public partial class Xbox
     {
         public Xbox()
         {
 
         }
+        ~Xbox() { Dispose(); }
 
-        public Filesystem Filesystem { get; }
-
+        public void Dispose()
+        {
+            Disconnect();
+        }
         #region Property's
+        public FileSystem FileSystem { get; }
         private bool ValidConnection;
         private RwStream _readWriter;
         private uint _startDumpOffset;
         private bool _stopSearch;
-        private static byte[] byte_0 = new byte[0x10];
-        private static byte[] byte_1 = new byte[0x10];
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string timeStamp = GetTimestamp(DateTime.Now);
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string GetTimestamp(DateTime value) { return value.ToString("M" + "MM-" + "dd" + "-" + "yyyy"); }
-        /// <summary>
-        /// Gets or sets the maximum waiting time given (in milliseconds) for a response.
-        /// </summary>
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public int Timeout { get => 5000; set => Timeout = value; }
-
-        private const string Connection_Error = "Console Not Connected";
-
-        public string Name { get; set; }
-        public string IPAddress { get; set; }
-        [Browsable(false)]
-        public static TcpClient XboxName;
-        [Browsable(false)]
-        public StreamReader sreader;
-
-        public static string response;
 
 
-        [Browsable(false)]
-        public bool Connected { get; set; }
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
 
         [Browsable(false)]
         /// <summary>
@@ -92,19 +78,9 @@ namespace XDevkit
             }
         }
 
-        /// <summary>
-        /// Gets or sets the last xbox connection used. (PC Only)
-        /// </summary>
-        [Browsable(false)]
-        public string LastConnectionUsed
-        {
-            get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
-            set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
-        }
 
-        public object DefaultConsole { get; }
-        public uint ConversationTimeout { get; private set; }
-        public uint ConnectTimeout { get; private set; }
+
+
 
 
 
@@ -112,6 +88,132 @@ namespace XDevkit
         #endregion
 
         #region Networking
+        /// <summary>
+        /// Gets or sets the maximum waiting time given (in milliseconds) for a response.
+        /// </summary>
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public int Timeout { get => 5000; set => Timeout = value; }
+
+        private const string Connection_Error = "Console Not Connected";
+        private const string ModuleName = "xam.xex";
+        private const string Module = "xboxkrnl.exe";
+
+        public string Name { get; set; }
+        public string IPAddress { get; set; }
+        [Browsable(false)]
+        public static TcpClient XboxName;
+        [Browsable(false)]
+        public StreamReader Reader;
+        public static string response;
+        [Browsable(false)]
+        public bool Connected { get; set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
+        /// <summary>
+        /// Gets or sets the last Xbox connection used. (PC Use Only)
+        /// </summary>
+        [Browsable(false)]
+        public string LastConnectionUsed
+        {
+            get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
+            set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
+        }
+        public object DefaultConsole { get; }
+        public uint ConversationTimeout { get; private set; }
+        public uint ConnectTimeout { get; private set; }
+        private bool on = true;
+        /// <summary>
+        /// Checks the connection status between xbox and pc.
+        /// This function only checks what Yelo.Debug believes to be the current connection status.
+        /// For a true status check you will need to ping the xbox regularly.
+        /// </summary>
+        public void ConnectionCheck()
+        {
+            //takes too much time to ping when used by continuously called functions 
+            //if connection drops attempt to reconnect, otherwise fuck them, let it crash and burn...
+            if (!Connected) Reconnect(250);    // try to re-establish a connection
+        }
+        /// <summary>
+        /// Re-establishes a connection with the currently selected xbox console.
+        /// </summary>
+        public bool Reconnect()
+        {
+            return Reconnect(1000);
+        }
+        /// <summary>
+        /// Attempts to re-establish a connection with the currently selected xbox console.
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <remarks>Bugfix by xmt</remarks>
+        public bool Reconnect(int timeout)
+        {
+            Disconnect();   // close our old connection
+            DateTime Before = DateTime.Now;
+
+            while (!Ping(100))
+            {
+                try
+                {
+                    Connect();    // create a new one using the current connection information
+                }
+                catch
+                {
+                    TimeSpan Elapse = DateTime.Now - Before;
+                    if (Elapse.TotalMilliseconds > timeout)
+                    {
+                        Disconnect();
+                        //throw new TimeoutException("Connection lost - unable to reconnect.");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        private DoWorkEventHandler FindConsole_OnBackground()
+        {
+
+            while(on)
+            {
+                int i = 0;
+
+                for (; ; )
+                {
+                    if (i < 255)
+                    {
+                        XboxName = new TcpClient();
+                        if (XboxName.ConnectAsync(IPS() + i, 730).Wait(10))//keep calm just code..
+                        {
+                            IPAddress = IPS() + i;
+                            IP.Default["IPAddress"] = IPS() + i;
+                            IP.Default.Save(); // Saves settings in application configuration file
+                            Connected = true;
+                            on = false;
+                            return null;
+                        }
+                        else
+                        {
+                            i++;
+                        }
+
+                    }
+                    else
+                    {
+                        on = false;
+                        Connected = false;
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static string IPS()
+        {
+            return "192.168.0.";
+        }
+
+        BackgroundWorker FindConsoleBG = new BackgroundWorker();
         /// <summary>
         /// Connect to the  using port 730 using the given ip address
         /// </summary>
@@ -139,36 +241,44 @@ namespace XDevkit
         }
 
 
-        /// <summary>
-        /// Attemps To Find Console Via IPAddress.
-        /// </summary>
-        public bool FindConsole()
-        {
-            int i = 0;
 
-            for (; ; )
+        public bool FindConsole()//proper looping 
+        {
+            on = true;
+            FindConsoleBG.RunWorkerAsync();
+            int n = 0;
+            switch (n)
             {
-                if (i < 255)
-                {
-                    XboxName = new TcpClient();
-                    if (XboxName.ConnectAsync("192.168.0." + i, 730).Wait(15))//wait time can't be less than 15...
+                case 0:
+                    FindConsole_OnBackground();
+                    goto case 1;
+                case 1:
+                    if (Connected == true)
                     {
-                        IPAddress = "192.168.0." + i;
-                        IP.Default["IPAddress"] = "192.168.0." + i;
-                        IP.Default.Save(); // Saves settings in application configuration file
+                        on = false;
                         return true;
                     }
                     else
                     {
-                        i++;
+                        if(n < 3)
+                        {
+                            Console.WriteLine("Connection Fail Safe Activated...." );
+                            n++;
+                            FindConsole_OnBackground();
+                        }
+                        if (n < 6)
+                        {
+                            Console.WriteLine("Connection Must Not Be Available, Please Make Sure Your On the Same Network As Your Console Otherwise Please Try Again Later.....");
+                            Console.WriteLine("Connection Fail Safe Terminated, Reason: FindConsole Has Failed User Not Connected To Network....");
+                            on = false;
+                            return false;
+                        }
+                        n++;
+                        goto case 1;
                     }
-
-                }
-                else
-                {
-                    return true;
-                }
             }
+            on = false;
+            return false;
         }
 
 
@@ -201,54 +311,36 @@ namespace XDevkit
         /// </summary>
         public bool Connect(string XboxNameOrIP = "defualt")
         {
-            try
-            {
-
+           
                 //User Enter's Nothing
                 if (XboxNameOrIP == "defualt")
                 {
-                    try
-                    {
                         XboxName = new TcpClient();
-                        if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(15))//wait time can't be less than 15...
+                        if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(5))//wait time for this can be less..
                         {
                             IPAddress = IP.Default.IPAddress;
+                            Console.WriteLine("/Connection - I01/....(" + IPAddress + ")");
                             return Connected = true;
                         }
                         else if (FindConsole())//if true then continue
                         {
                             XboxName = new TcpClient(IPAddress, 730);
-                            sreader = new StreamReader(XboxName.GetStream());
+                            Reader = new StreamReader(XboxName.GetStream());
+                            Console.WriteLine("/Connection - F01/....(" + IPAddress + ")");
                             return Connected = true;
                         }
-                        else
+                        else// if top fails
                         {
-                            return Connected = false;
+                            return false;
                         }
-                    }
-                    catch
-                    {
-                        if (FindConsole())//if true then continue
-                        {
-                            XboxName = new TcpClient(IPAddress, 730);
-                            sreader = new StreamReader(XboxName.GetStream());
-                            return Connected = true;
-                        }
-                        else
-                        {
-                            return Connected = false;
-                        }
-                    }
-
-
-
                 }
                 // If User Supply's IP To US.
                 else if (XboxNameOrIP.ToCharArray().Any(char.IsDigit))
                 {
                     string IPAddress = XboxNameOrIP;
                     XboxName = new TcpClient(XboxNameOrIP, 730);
-                    sreader = new StreamReader(XboxName.GetStream());
+                    Reader = new StreamReader(XboxName.GetStream());
+                    Console.WriteLine("/Connection - Degits/....(" + "Manual Connection Mode" + ")");
                     return Connected = true;
                 }
                 //Get IP Via Name
@@ -258,36 +350,32 @@ namespace XDevkit
                     if (FindConsole())//if true then continue
                     {
                         XboxName = new TcpClient(IPAddress, 730);
-                        sreader = new StreamReader(XboxName.GetStream());
+                        Reader = new StreamReader(XboxName.GetStream());
+                        Console.WriteLine("/Connection - Letter/....(" + "Manual Connection Mode" + ")");
                         return Connected = true;
                     }
                     else
                     {
-                        return Connected = false;
+                        Console.WriteLine("/Connection - Letter/....(" + "Manual Connection Mode Failed" + ")");
+                        return false;
                     }
 
                 }
 
                 else
                 {
-                    return Connected = false;
+                    Console.WriteLine("/Connection - SkyFall/....(" + "Unknown Bug" + ")");
+                    return false;
                 }
 
 
-            }
-            catch (Exception)
-            {
-                return Connected = false;
-                throw;
-            }
         }
 
 
-        public void CloseConnection(uint Connection)
+        public void CloseConnection(uint Connection = 0)
         {
-            Connection = 0;
             SendTextCommand("bye");
-            sreader.Close();
+            Reader.Close();
             XboxName.Close();
         }
 
@@ -308,6 +396,243 @@ namespace XDevkit
             {
             }
         }
+        #region Yelo debug Networking
+
+
+        /// <summary>
+        /// Receives multiple lines of text from the xbox.
+        /// </summary>
+        /// <returns></returns>
+        public string ReceiveMultilineResponse()
+        {
+            StringBuilder response = new StringBuilder();
+            while (true)
+            {
+                string line = ReceiveSocketLine() + " ";//change here if any issue accurs
+                if (line[0] == '.')
+                    break;
+                else
+                    response.Append(line);
+            }
+            return response.ToString();
+        }
+
+        public string ReceiveSocketLine()
+        {
+            string Line;
+            byte[] textBuffer = new byte[256];  // buffer large enough to contain a line of text
+
+            Thread.Sleep(0);
+            _ = Stopwatch.StartNew();
+            while (true)
+            {
+                int avail = XboxName.Available;   // only get once
+                if (avail < textBuffer.Length)
+                {
+                    XboxName.Client.Receive(textBuffer, avail, SocketFlags.Peek);
+                    Line = Encoding.ASCII.GetString(textBuffer, 0, avail);
+                }
+                else
+                {
+                    XboxName.Client.Receive(textBuffer, textBuffer.Length, SocketFlags.Peek);
+                    Line = Encoding.ASCII.GetString(textBuffer);
+                }
+
+                int eolIndex = Line.IndexOf("\r\n");
+                if (eolIndex != -1)
+                {
+                    XboxName.Client.Receive(textBuffer, eolIndex + 2, SocketFlags.None);
+                    return Encoding.ASCII.GetString(textBuffer, 0, eolIndex);
+                }
+
+                // end of line not found yet, lets wait some more...
+                Thread.Sleep(0);
+            }
+        }
+
+        // todo: dont timeout if still receiving, currently it could timeout if receiving large information with small timeout...
+
+        /// <summary>
+        /// Waits for a specified amount of data to be received.  Use with file IO.
+        /// </summary>
+        /// <param name="targetLength">Amount of data to wait for</param>
+        public void Wait(int targetLength)
+        {
+            if (XboxName != null)
+            {
+                if (XboxName.Available < targetLength) // avoid waiting if we already have data in our buffer...
+                {
+                    Stopwatch sw = Stopwatch.StartNew();
+                    while (XboxName.Available < targetLength)
+                    {
+                        Thread.Sleep(0);
+                        if (sw.ElapsedMilliseconds > 5000)
+                        {
+                            if (!Ping(250))
+                                Disconnect();  // only disconnect if actually disconnected
+                            throw new TimeoutException();
+                        }
+                    }
+                }
+            }
+            else
+                throw new NoConnectionException();
+        }
+
+        /// <summary>
+        /// Waits for data to be received.  During execution this method will enter a spin-wait loop and appear to use
+        /// 100% cpu when in fact it is just a suspended thread.   This is much more efficient than waiting a
+        /// millisecond since most commands take fractions of a millisecond. It will either resume after the condition
+        /// is met or throw a timeout exception.
+        /// </summary>
+        /// <param name="type">Wait type</param>
+        public void Wait(WaitType type)
+        {
+            if (XboxName != null)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                switch (type)
+                {
+                    // waits for data to start being received
+                    case WaitType.Partial:
+                        while (XboxName.Available == 0)
+                        {
+                            Thread.Sleep(0);
+                            if (sw.ElapsedMilliseconds > 5000)
+                            {
+                                if (!Ping(250))
+                                    Disconnect();  // only disconnect if actually disconnected
+                                throw new TimeoutException();
+                            }
+                        }
+                        break;
+
+                    // waits for data to start and then stop being received
+                    case WaitType.Full:
+
+                        // do a partial wait first
+                        while (XboxName.Available == 0)
+                        {
+                            Thread.Sleep(0);
+                            if (sw.ElapsedMilliseconds > 5000)
+                            {
+                                if (!Ping(250))
+                                    Disconnect();  // only disconnect if actually disconnected
+                                throw new TimeoutException();
+                            }
+                        }
+
+                        // wait for rest of data to be received
+                        int avail = XboxName.Available;
+                        Thread.Sleep(0);
+                        while (XboxName.Available != avail)
+                        {
+                            avail = XboxName.Available;
+                            Thread.Sleep(0);
+                        }
+                        break;
+
+                    // waits for data to stop being received
+                    case WaitType.Idle:
+                        int before = XboxName.Available;
+                        Thread.Sleep(0);
+                        while (XboxName.Available != before)
+                        {
+                            before = XboxName.Available;
+                            Thread.Sleep(0);
+                            if (sw.ElapsedMilliseconds > 5000)
+                            {
+                                if (!Ping(250))
+                                    Disconnect();  // only disconnect if actually disconnected
+                                throw new TimeoutException();
+                            }
+                        }
+                        break;
+                }
+            }
+            else
+                throw new NoConnectionException();
+        }
+
+        /// <summary>
+        /// Waits for the receive buffer to stop receiving, then clears it. Call this before you send anything to the
+        /// xbox to help keep the channel in sync.
+        /// </summary>
+        public void FlushSocketBuffer()
+        {
+            Wait(WaitType.Idle);    // waits for the link to be idle...
+            try
+            {
+                if (XboxName.Available > 0)
+                    XboxName.Client.Receive(new byte[XboxName.Available]);
+            }
+            catch
+            {
+                Connected = false;
+            }
+        }
+
+        /// <summary>
+        /// Waits for a specified amount and then flushes it from the socket buffer.
+        /// </summary>
+        /// <param name="size">Size to flush</param>
+        public void FlushSocketBuffer(int size)
+        {
+            if (size > 0)
+            {
+                Wait(size);
+                try
+                {
+                    XboxName.Client.Receive(new byte[size]);
+                }
+                catch
+                {
+                    Connected = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
+        /// </summary>
+        /// <returns>Connection status</returns>
+        public bool Ping() { return Ping(Timeout); }
+
+        /// <summary>
+        /// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
+        /// </summary>
+        /// <param name="waitTime">Time to wait for a response</param>
+        /// <returns>Connection status</returns>
+        public bool Ping(int waitTime)
+        {
+            int oldTimeOut = 5000;
+            try
+            {
+                if (XboxName != null)
+                {
+                    if (XboxName.Available > 0)
+                        XboxName.Client.Receive(new byte[XboxName.Available]);
+
+                    XboxName.Client.Send(Encoding.ASCII.GetBytes(Environment.NewLine));
+                    Timeout = waitTime;
+                    FlushSocketBuffer(16);    // throw out garbage response "400- Unknown Command\r\n"
+                    Connected = true;
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                Connected = false;
+                XboxName.Close();
+                return false;
+            }
+            finally
+            {
+                Timeout = oldTimeOut;   // make sure to restore old timeout
+            }
+        }
+        #endregion
         #endregion
 
         #region SendCommands
@@ -340,7 +665,7 @@ namespace XDevkit
                 {
                     // Max packet size is 1026
                     byte[] Packet = new byte[1026];
-                    if (XboxName.Connected != false && Connected != false && XboxName != null)
+                    if (XboxName.Connected == true)
                     {
                         FlushSocketBuffer();
                         Console.WriteLine("SendTextCommand "+ Command +" ==> Sending Command... <==");
@@ -358,6 +683,7 @@ namespace XDevkit
                 }
                 catch
                 {
+
                 }
         }
 
@@ -399,6 +725,7 @@ namespace XDevkit
         {
             FlushSocketBuffer();
             return SendTextCommand("dmversion").Replace("200- ", string.Empty);
+
         }
 
         /// <summary>
@@ -542,24 +869,7 @@ namespace XDevkit
 
         #region Features
 
-        /// <summary>
-        /// Gets A Float From Address And Returns it as String.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public string ReadFloat(string text)
-        {
-            try
-            {
-                Console.WriteLine("ReadFloat Was Passed Threw Returning float to String");
-                return GetFloat(0x8 + uint.Parse(text.Substring(1))).ToString();
-            }
-            catch
-            {
-                Console.WriteLine("ReadFloat Failed Sending Empty String");
-                return string.Empty;
-            }
-        }
+
 
         public void NOP(uint address)
         {
@@ -601,7 +911,7 @@ namespace XDevkit
             uint Uint64 = 8;
             uint Uint64Array = 9;
             uint JRPCVersion = 2;
-            if (!Xbox_JRPC.IsValidReturnType(t))
+            if (!XboxExtention.IsValidReturnType(t))
                 throw new Exception("Invalid type " + t.Name + Environment.NewLine + "JRPC only supports: bool, byte, short, int, long, ushort, uint, ulong, float, double");
            ConnectTimeout = ConversationTimeout = 4000000U;
             object[] objArray1 = new object[13];
@@ -853,7 +1163,10 @@ namespace XDevkit
                     return (int)Type == (int)Void ? 0 : ulong.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
             }
         }
-
+        public void AvatarEditor()
+        {
+            Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", XboxRebootFlags.Title);
+        }
         /// <summary>
         /// Shortcuts To Guide
         /// </summary>
@@ -874,111 +1187,111 @@ namespace XDevkit
                         ShutDownConsole();
                         break;
                     case (int)XboxShortcuts.Account_Management:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Account_Management),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Account_Management),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Achievements:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Achievements),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Achievements),
                                       new object[]
                             { 0, 0, 0, 0 });//achievements
                         break;
                     case (int)XboxShortcuts.Active_Downloads:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Active_Downloads),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Active_Downloads),
                                       new object[]
                             { 0, 0, 0, 0 });//XamShowMarketplaceDownloadItemsUI
                         break;
                     case (int)XboxShortcuts.Awards:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Awards),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Awards),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Beacons_And_Activiy:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Beacons_And_Activiy),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Beacons_And_Activiy),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Family_Settings:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Family_Settings),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Family_Settings),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Friends:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Friends),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Friends),
                                       new object[]
                             { 0, 0, 0, 0 });//friends
                         break;
                     case (int)XboxShortcuts.Guide_Button:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Guide_Button),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Guide_Button),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Messages:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Messages), 0);//messages tab
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Messages), 0);//messages tab
                         break;
                     case (int)XboxShortcuts.My_Games:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.My_Games),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.My_Games),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Open_Tray:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Close_Tray:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Close_Tray),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Close_Tray),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Party:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Preferences:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Preferences),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Preferences),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Private_Chat:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Private_Chat),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Private_Chat),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Profile:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Profile),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Profile),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Recent:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Recent),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Recent),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Redeem_Code:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Redeem_Code),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Redeem_Code),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Select_Music:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Select_Music),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Select_Music),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Music_Player:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Music_Player),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.System_Music_Player),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Settings:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Settings),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.System_Settings),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.System_Video_Player:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.System_Video_Player),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.System_Video_Player),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
                     case (int)XboxShortcuts.Windows_Media_Center:
-                        Xbox_JRPC.CallVoid(ResolveFunction("xam.xex", (int)XboxShortcuts.Windows_Media_Center),
+                        XboxExtention.CallVoid(ResolveFunction(ModuleName, (int)XboxShortcuts.Windows_Media_Center),
                                       new object[]
                             { 0, 0, 0, 0 });
                         break;
@@ -1119,12 +1432,12 @@ namespace XDevkit
         private uint GetModuleHandle(string ModuleName)
         {
             object[] arguments = new object[] { ModuleName };
-            return Call<uint>("xam.xex", 0x44e, arguments);
+            return Call<uint>(ModuleName, 0x44e, arguments);
         }
         private uint LaunchSystemDLLThread(string ThreadPath)
         {
             object[] arguments = new object[] { ThreadPath, 8, 0, 0 };
-            return Call<uint>("xboxkrnl.exe", 0x199, arguments);
+            return Call<uint>(Module, 0x199, arguments);
         }
         private void UnloadImage(string ModuleName, bool isSysDll)
         {
@@ -1136,47 +1449,40 @@ namespace XDevkit
                     GetInt16(moduleHandle + 0x40, 1);
                 }
                 object[] arguments = new object[] { moduleHandle };
-                Xbox_JRPC.CallVoid("xboxkrnl.exe", 0x1a1, arguments);
+                XboxExtention.CallVoid(Module, 0x1a1, arguments);
             }
         }
-
-        //private void RefreshModuleList()
-        //{
-        //    if (dataGridModuleList.SelectedRows.Count > 0)
-        //        lastSelection = dataGridModuleList.SelectedRows[0].Index;
-        //    if (dataGridModuleList.Rows.Count > 0)
-        //        dataGridModuleList.Rows.Clear();
-        //    XboxModules modules = debugTarget.Modules;
-        //    foreach (IXboxModule xboxModule in modules)
-        //    {
-
-        //        dataGridModuleList.Rows.Add(new string[3] { "0x" + xboxModule.ModuleInfo.BaseAddress.ToString("X2"), xboxModule.ModuleInfo.Name, "0x" + xboxModule.OriginalSize.ToString("X2") });
-        //        dataGridModuleList.Sort(dataGridModuleList.Columns[0], ListSortDirection.Ascending);
-        //    }
-        //    if (lastSelection >= dataGridModuleList.Rows.Count)
-        //        return;
-        //    dataGridModuleList.Rows[lastSelection].Selected = true;
-        //    dataGridModuleList.FirstDisplayedScrollingRowIndex = dataGridModuleList.SelectedRows[0].Index;
-        //}
-
 
         private uint XexPcToFileHeader(uint baseAddress)
         {
             uint num3;
-            uint address = ResolveFunction("xboxkrnl.exe", 0x19c);
+            uint address = ResolveFunction(Module, 0x19c);
             if (address == 0)
             {
                 num3 = 0;
             }
             else
             {
-                uint num2 = ResolveFunction("xam.xex", 0xa29) + 0x3000;
+                uint num2 = ResolveFunction(ModuleName, 0xa29) + 0x3000;
                 object[] arguments = new object[] { baseAddress, num2 };
-                Xbox_JRPC.CallVoid(address, arguments);
+                XboxExtention.CallVoid(address, arguments);
                 num3 = GetUInt32(num2);
             }
             return num3;
         }
+        /// <summary>
+        /// Gets a list of modules loaded by the xbox.
+        /// </summary>
+        public List<ModuleInfo> Modules { get { return modules; } }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private List<ModuleInfo> modules;
+        /// <summary>
+        /// Gets the notification listener registered with the xbox that listens for incoming notification session requests.
+        /// </summary>
+        [Browsable(false)]
+        public TcpListener NotificationListener { get { return notificationListener; } }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private TcpListener notificationListener;
         /// <summary>
         ///
         /// </summary>
@@ -1650,247 +1956,81 @@ namespace XDevkit
         #endregion
         #endregion
 
-        #region Yelo debug stuff
 
+
+        #region Types {Get; Set;}
+        #region x
+        /// <summary>
+        /// Sends binary data to the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        public void SendBinaryData(byte[] data)
+        {
+            ConnectionCheck();
+            FlushSocketBuffer();
+            XboxName.Client.Send(data);
+        }
 
         /// <summary>
-        /// Receives multiple lines of text from the xbox.
+        /// Sends binary data of specified length to the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="length"></param>
+        public void SendBinaryData(byte[] data, int length)
+        {
+            ConnectionCheck();
+            FlushSocketBuffer();
+            XboxName.Client.Send(data, length, SocketFlags.None);
+        }
+
+        /// <summary>
+        /// Receives all available binary data sent from the xbox.
         /// </summary>
         /// <returns></returns>
-        public string ReceiveMultilineResponse()
+        public byte[] ReceiveBinaryData()
         {
-            StringBuilder response = new StringBuilder();
-            while (true)
+            if (XboxName.Available > 0)
             {
-                string line = ReceiveSocketLine() + " ";//change here if any issue accurs
-                if (line[0] == '.')
-                    break;
-                else
-                    response.Append(line);
+                byte[] binData = new byte[XboxName.Available];
+                XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+                return binData;
             }
-            return response.ToString();
-        }
-
-        public string ReceiveSocketLine()
-        {
-            string Line;
-            byte[] textBuffer = new byte[256];  // buffer large enough to contain a line of text
-
-            Thread.Sleep(0);
-            _ = Stopwatch.StartNew();
-            while (true)
-            {
-                int avail = XboxName.Available;   // only get once
-                if (avail < textBuffer.Length)
-                {
-                    XboxName.Client.Receive(textBuffer, avail, SocketFlags.Peek);
-                    Line = Encoding.ASCII.GetString(textBuffer, 0, avail);
-                }
-                else
-                {
-                    XboxName.Client.Receive(textBuffer, textBuffer.Length, SocketFlags.Peek);
-                    Line = Encoding.ASCII.GetString(textBuffer);
-                }
-
-                int eolIndex = Line.IndexOf("\r\n");
-                if (eolIndex != -1)
-                {
-                    XboxName.Client.Receive(textBuffer, eolIndex + 2, SocketFlags.None);
-                    return Encoding.ASCII.GetString(textBuffer, 0, eolIndex);
-                }
-
-                // end of line not found yet, lets wait some more...
-                Thread.Sleep(0);
-            }
-        }
-
-        // todo: dont timeout if still receiving, currently it could timeout if receiving large information with small timeout...
-
-        /// <summary>
-        /// Waits for a specified amount of data to be received.  Use with file IO.
-        /// </summary>
-        /// <param name="targetLength">Amount of data to wait for</param>
-        public void Wait(int targetLength)
-        {
-            if (XboxName != null)
-            {
-                if (XboxName.Available < targetLength) // avoid waiting if we already have data in our buffer...
-                {
-                    Stopwatch sw = Stopwatch.StartNew();
-                    while (XboxName.Available < targetLength)
-                    {
-                        Thread.Sleep(0);
-                        if (sw.ElapsedMilliseconds > 5000)
-                        {
-                            if (!Ping(250))
-                                Disconnect();  // only disconnect if actually disconnected
-                            throw new TimeoutException();
-                        }
-                    }
-                }
-            }
-            else
-                throw new NoConnectionException();
+            else return null;
         }
 
         /// <summary>
-        /// Waits for data to be received.  During execution this method will enter a spin-wait loop and appear to use
-        /// 100% cpu when in fact it is just a suspended thread.   This is much more efficient than waiting a
-        /// millisecond since most commands take fractions of a millisecond. It will either resume after the condition
-        /// is met or throw a timeout exception.
+        /// Receives binary data of specified size sent from the xbox.
         /// </summary>
-        /// <param name="type">Wait type</param>
-        public void Wait(WaitType type)
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public byte[] ReceiveBinaryData(int size)
         {
-            if (XboxName != null)
-            {
-                Stopwatch sw = Stopwatch.StartNew();
-                switch (type)
-                {
-                    // waits for data to start being received
-                    case WaitType.Partial:
-                        while (XboxName.Available == 0)
-                        {
-                            Thread.Sleep(0);
-                            if (sw.ElapsedMilliseconds > 5000)
-                            {
-                                if (!Ping(250))
-                                    Disconnect();  // only disconnect if actually disconnected
-                                throw new TimeoutException();
-                            }
-                        }
-                        break;
-
-                    // waits for data to start and then stop being received
-                    case WaitType.Full:
-
-                        // do a partial wait first
-                        while (XboxName.Available == 0)
-                        {
-                            Thread.Sleep(0);
-                            if (sw.ElapsedMilliseconds > 5000)
-                            {
-                                if (!Ping(250))
-                                    Disconnect();  // only disconnect if actually disconnected
-                                throw new TimeoutException();
-                            }
-                        }
-
-                        // wait for rest of data to be received
-                        int avail = XboxName.Available;
-                        Thread.Sleep(0);
-                        while (XboxName.Available != avail)
-                        {
-                            avail = XboxName.Available;
-                            Thread.Sleep(0);
-                        }
-                        break;
-
-                    // waits for data to stop being received
-                    case WaitType.Idle:
-                        int before = XboxName.Available;
-                        Thread.Sleep(0);
-                        while (XboxName.Available != before)
-                        {
-                            before = XboxName.Available;
-                            Thread.Sleep(0);
-                            if (sw.ElapsedMilliseconds > 5000)
-                            {
-                                if (!Ping(250))
-                                    Disconnect();  // only disconnect if actually disconnected
-                                throw new TimeoutException();
-                            }
-                        }
-                        break;
-                }
-            }
-            else
-                throw new NoConnectionException();
+            Wait(size);
+            byte[] binData = new byte[size];
+            XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+            return binData;
         }
 
         /// <summary>
-        /// Waits for the receive buffer to stop receiving, then clears it. Call this before you send anything to the
-        /// xbox to help keep the channel in sync.
+        /// Receives binary data of specified size sent from the xbox.
         /// </summary>
-        public void FlushSocketBuffer()
+        /// <param name="data"></param>
+        public void ReceiveBinaryData(byte[] data)
         {
-            Wait(WaitType.Idle);    // waits for the link to be idle...
-            try
-            {
-                if (XboxName.Available > 0)
-                    XboxName.Client.Receive(new byte[XboxName.Available]);
-            }
-            catch
-            {
-                Connected = false;
-            }
+            Wait(data.Length);
+            XboxName.Client.Receive(data, data.Length, SocketFlags.None);
         }
 
         /// <summary>
-        /// Waits for a specified amount and then flushes it from the socket buffer.
+        /// Receives binary data of specified size sent from the xbox.
         /// </summary>
-        /// <param name="size">Size to flush</param>
-        public void FlushSocketBuffer(int size)
+        /// <param name="data"></param>
+        public void ReceiveBinaryData(byte[] data, int offset, int size)
         {
-            if (size > 0)
-            {
-                Wait(size);
-                try
-                {
-                    XboxName.Client.Receive(new byte[size]);
-                }
-                catch
-                {
-                    Connected = false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
-        /// </summary>
-        /// <returns>Connection status</returns>
-        public bool Ping() { return Ping(Timeout); }
-
-        /// <summary>
-        /// Retrieves actual xbox connection status. Average execution time of 3600 executions per second.
-        /// </summary>
-        /// <param name="waitTime">Time to wait for a response</param>
-        /// <returns>Connection status</returns>
-        public bool Ping(int waitTime)
-        {
-            int oldTimeOut = 5000;
-            try
-            {
-                if (XboxName != null)
-                {
-                    if (XboxName.Available > 0)
-                        XboxName.Client.Receive(new byte[XboxName.Available]);
-
-                    XboxName.Client.Send(Encoding.ASCII.GetBytes(Environment.NewLine));
-                    Timeout = waitTime;
-                    FlushSocketBuffer(16);    // throw out garbage response "400- Unknown Command\r\n"
-                    Connected = true;
-                    return true;
-                }
-                return false;
-            }
-            catch
-            {
-                Connected = false;
-                XboxName.Close();
-                return false;
-            }
-            finally
-            {
-                Timeout = oldTimeOut;   // make sure to restore old timeout
-            }
+            Wait(size);
+            XboxName.Client.Receive(data, offset, size, SocketFlags.None);
         }
         #endregion
-
-        //TODO: add {Set;} Double,long etc
-        #region Types {Get; Set;}
-
         #region Bool {Get; Set;}
         public bool SetBool(uint Address) { return GetMemory(Address, 1)[0] != 0; }
 
@@ -1967,7 +2107,24 @@ namespace XDevkit
                 return 0;
             }
         }
-
+        /// <summary>
+        /// Gets A Float From Address And Returns it as String.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public string ReadFloat(string text)
+        {
+            try
+            {
+                Console.WriteLine("ReadFloat Was Passed Threw Returning float to String");
+                return GetFloat(0x8 + uint.Parse(text.Substring(1))).ToString();
+            }
+            catch
+            {
+                Console.WriteLine("ReadFloat Failed Sending Empty String");
+                return string.Empty;
+            }
+        }
         public float[] GetFloat(uint Address, uint ArraySize)
         {
             {
@@ -2299,7 +2456,6 @@ namespace XDevkit
             return Convert.ToUInt32(memory);
         }
 
-        public void Dispose() { ((IDisposable)XboxName).Dispose(); }
 
         public static byte[] ReadToEnd(System.IO.Stream stream)
         {
@@ -2352,29 +2508,17 @@ namespace XDevkit
                 }
             }
         }
-        internal void GetFileCommand(string Command)//TODO: 
+        #endregion
+
+        #endregion
+        /// <summary>
+        /// Takes a screenshot of the xbox display.
+        /// </summary>
+        public System.Drawing.Image Screenshot()
         {
-            if (XboxName.Connected == false && XboxName == null)
-            {
-                Console.WriteLine("SendingFileCommand ==> " +
-                    Assembly.GetEntryAssembly().GetName().Name +
-                    " Connection == null <==");
-                Console.WriteLine("Failed to SendingFileCommand ==> Not Connected <==");
-            }
-            else
-            {
-                FlushSocketBuffer();
-                SendTextCommand(Command);
-                FlushSocketBuffer();
-                ReceiveSocketLine();
-
-                Console.WriteLine("FileCommand ==> Sending Command... <==");
-            }
+            return null;
         }
-        #endregion
-
-        #endregion
-    }
+        }
 
 
 }

@@ -61,39 +61,30 @@
     <Compile Include="Controls\xex_value_file.designer.cs">
       <DependentUpon>xex_value_file.cs</DependentUpon>
     </Compile>
+    <Compile Include="Functions\ApiException.cs" />
     <Compile Include="Functions\ContentStorage.cs" />
     <Compile Include="Functions\Filesystem.cs" />
-    <Compile Include="Functions\ApiException.cs" />
     <Compile Include="Functions\Functions.cs" />
     <Compile Include="Functions\Items.cs" />
+    <Compile Include="Functions\IXboxAutomation.cs" />
     <Compile Include="Functions\RWStream.cs" />
     <Compile Include="Functions\Types.cs" />
     <Compile Include="Functions\XboxEnums.cs" />
+    <Compile Include="Functions\XboxExtention.cs" />
     <Compile Include="Functions\XboxStructs.cs" />
-    <Compile Include="Functions\Xbox_JRPC.cs" />
-    <Compile Include="Functions\XNotify.cs" />
-    <Compile Include="Functions\ActiveXMessageBoxes.cs" />
-    <Compile Include="Functions\XMessageBoxIcons.cs" />
-    <Compile Include="Functions\XMessageBoxTracking.cs" />
     <Compile Include="Functions\XMessageBoxUI.cs" />
-    <Compile Include="Functions\XMessageBoxUIProgress.cs" />
+    <Compile Include="Functions\XNotify.cs" />
     <Compile Include="IO\EndianIO.cs" />
     <Compile Include="IO\EndianReader.cs" />
     <Compile Include="IO\EndianType.cs" />
     <Compile Include="IO\EndianWriter.cs" />
-    <Compile Include="Functions\IXboxAutomation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Screenshot.cs" />
     <Compile Include="Xbox.cs" />
-    <Compile Include="Xbox1.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="About XDevkit.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -107,6 +98,9 @@
     <EmbeddedResource Include="Controls\Fan_Slider.resx">
       <DependentUpon>Fan_Slider.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="About XDevkit.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -27,6 +27,7 @@ namespace XDevkit
 	{
 		public string Text;
 	}
+
 	/// <summary>
 	/// Xbox debug connection information.
 	/// </summary>

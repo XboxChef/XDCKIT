@@ -9,10 +9,11 @@
 //------------------------------------------------------------------------------
 
 namespace XDevkit {
-    
-    
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+
     internal sealed partial class IP : global::System.Configuration.ApplicationSettingsBase {
         
         private static IP defaultInstance = ((IP)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new IP())));
@@ -25,7 +26,7 @@ namespace XDevkit {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.0.17")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string IPAddress {
             get {
                 return ((string)(this["IPAddress"]));
@@ -34,5 +35,7 @@ namespace XDevkit {
                 this["IPAddress"] = value;
             }
         }
+        Xbox XConsole = new Xbox();
     }
+
 }

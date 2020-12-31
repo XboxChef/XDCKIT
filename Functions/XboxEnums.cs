@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 namespace XDevkit
 {
 	#region Xbox Enums
+	public enum XMessageBoxIcons
+	{
+		XBM_NOICON,
+		XMB_ERRORICON,
+		XMB_WARNINGICON,
+		XMB_ALERTICON
+	}
 	/// <summary>
 	/// Xbox response type.
 	/// </summary>

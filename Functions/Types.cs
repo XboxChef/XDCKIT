@@ -11,7 +11,7 @@
     {
         public string Name { get; set; }
         public string ID { get; set; }
-        public string TitleUpdate { get; set; }
+        public string TitleID { get; set; }
         public CodeList CodeList { get; set; }
     }
 

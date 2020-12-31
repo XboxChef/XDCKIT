@@ -19,7 +19,7 @@ namespace XDevkit
         public string[] XMessageBoxButtons;
         public XMessageBoxIcons XMessageBoxIcon;
 
-        public event EventHandler<XMessageBoxUIProgress> MessageBoxUIResult;
+       //public event EventHandler<XMessageBoxUIProgress> MessageBoxUIResult;
 
         public XMessageBoxUI(
 
@@ -133,7 +133,7 @@ namespace XDevkit
                 Console.SetUInt32(Address4, num4);
                 num4 += (uint)source.ElementAt<byte[]>(index).Length;
             }
-            if (Console.Call<int>("xam.xex", 714, 0U, (object)Address1, (object)Address2, (object)source.Count<byte[]>(), (object)Address3, (object)SelectedButton, (uint)XMessageBoxIcon, (object)num3, (object)num2) == 997)
+            if (Console.Call<int>("xam.xex", 714, 0U, Address1, Address2, source.Count(), Address3, SelectedButton, (uint)XMessageBoxIcon, num3, num2) == 997)
             {
                 IsMessageBoxOpen = true;
                 XOverlappedAddr = num2;
@@ -149,6 +149,37 @@ namespace XDevkit
             else
                 IsMessageBoxOpen = false;
             return IsMessageBoxOpen;
+        }
+    }
+    public class XMessageBoxUIProgress : EventArgs
+    {
+        private XMessageBoxUIProgress()
+        {
+        }
+
+        public XMessageBoxUIProgress(uint result, uint code)
+        {
+            Result = result;
+            Code = code;
+        }
+
+        public uint Result { get; private set; }
+
+        public uint Code { get; private set; }
+    }
+    public static class XMessageBoxTracking
+    {
+        public static List<ActiveXMessageBoxes> ActiveMessageBoxes = new List<ActiveXMessageBoxes>();
+    }
+    public class ActiveXMessageBoxes
+    {
+        public uint Size;
+        public byte[] XOverlappedBytes;
+
+        public ActiveXMessageBoxes(uint size, byte[] xOverlappedBytes)
+        {
+            Size = size;
+            XOverlappedBytes = xOverlappedBytes;
         }
     }
 }
