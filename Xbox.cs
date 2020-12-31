@@ -3,6 +3,8 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
 
+using System;
+
 namespace XDevkit
 {
     //Main Xbox Class
@@ -13,6 +15,11 @@ namespace XDevkit
     public partial class Xbox
     {
         public Xbox()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
         {
 
         }
