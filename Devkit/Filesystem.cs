@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XDevkit
 {
@@ -34,7 +30,7 @@ namespace XDevkit
         /// <param name="name">Directory name.</param>
         public void GetDirectory(string name)
         {
-            DownloadDirectory("",name);
+            DownloadDirectory("", name);
         }
 
         /// <summary>

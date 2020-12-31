@@ -19,17 +19,17 @@
 
         public void SeekTo(long offset)
         {
-            this.SeekTo((int) offset, SeekOrigin.Begin);
+            this.SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int) offset, SeekOrigin.Begin);
+            this.SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.BaseStream.Seek((long) offset, SeekOrigin);
+            this.BaseStream.Seek(offset, SeekOrigin);
         }
 
         public override void Write(double value)
@@ -173,7 +173,7 @@
                     }
                     return;
                 }
-                byte num3 = (byte) String[num2];
+                byte num3 = (byte)String[num2];
                 this.Write(num3);
                 num2++;
             }

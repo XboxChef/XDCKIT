@@ -1,6 +1,5 @@
 ﻿namespace XDevkit
 {
-    using System;
     using System.IO;
 
     public class EndianIO
@@ -72,12 +71,12 @@
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int) offset, SeekOrigin.Begin);
+            this.SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.stream.Seek((long) offset, SeekOrigin);
+            this.stream.Seek(offset, SeekOrigin);
         }
 
         public bool Opened =>

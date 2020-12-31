@@ -200,7 +200,7 @@ namespace XDevkit
             return "192.168.0.";
         }
 
-        BackgroundWorker FindConsoleBG = new BackgroundWorker();
+        readonly BackgroundWorker FindConsoleBG = new BackgroundWorker();
         /// <summary>
         /// Connect to the  using port 730 using the given ip address
         /// </summary>

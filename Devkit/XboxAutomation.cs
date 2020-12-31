@@ -1,25 +1,23 @@
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace XDevkit
 {
-	public class XboxAutomation
-	{
+    public class XboxAutomation
+    {
         private uint eax2;
 
-        void BindController( uint UserIndex,  uint QueueLength)
-        {
-
-        }
-		
-
-		void ClearGamepadQueue( uint UserIndex)
+        void BindController(uint UserIndex, uint QueueLength)
         {
 
         }
 
-		uint ConnectController(uint UserIndex)
+
+        void ClearGamepadQueue(uint UserIndex)
+        {
+
+        }
+
+        uint ConnectController(uint UserIndex)
         {
             eax2 = DMSendCommand(UserIndex, 0x4654e0, out _);
             return eax2;
@@ -30,22 +28,22 @@ namespace XDevkit
             throw new NotImplementedException();
         }
 
-        void DisconnectController( uint UserIndex)
+        void DisconnectController(uint UserIndex)
         {
 
         }
 
-		void GetInputProcess(uint UserIndex, out bool SystemProcess)
+        void GetInputProcess(uint UserIndex, out bool SystemProcess)
         {
             SystemProcess = false;
         }
 
-		void GetUserDefaultProfile(out long Xuid)
+        void GetUserDefaultProfile(out long Xuid)
         {
             Xuid = 0;
         }
 
-		void QueryGamepadQueue(uint UserIndex, out uint QueueLength, out uint ItemsInQueue, out uint TimedDurationRemaining, out uint CountDurationRemaining)
+        void QueryGamepadQueue(uint UserIndex, out uint QueueLength, out uint ItemsInQueue, out uint TimedDurationRemaining, out uint CountDurationRemaining)
         {
             QueueLength = 0;
             ItemsInQueue = 0;
@@ -54,29 +52,29 @@ namespace XDevkit
 
         }
 
-		bool QueueGamepadState(uint UserIndex,  ref XBOX_AUTOMATION_GAMEPAD Gamepad,  uint TimedDuration,  uint CountDuration)
+        bool QueueGamepadState(uint UserIndex, ref XBOX_AUTOMATION_GAMEPAD Gamepad, uint TimedDuration, uint CountDuration)
         {
             return false;
         }
 
-		void QueueGamepadState_cpp(uint UserIndex,  ref XBOX_AUTOMATION_GAMEPAD GamepadArray,  ref uint TimedDurationArray,  ref uint CountDurationArray,  uint ItemCount, out uint ItemsAddedToQueue)
+        void QueueGamepadState_cpp(uint UserIndex, ref XBOX_AUTOMATION_GAMEPAD GamepadArray, ref uint TimedDurationArray, ref uint CountDurationArray, uint ItemCount, out uint ItemsAddedToQueue)
         {
             ItemsAddedToQueue = 0;
         }
 
-		void SetGamepadState( uint UserIndex,  ref XBOX_AUTOMATION_GAMEPAD Gamepad)
+        void SetGamepadState(uint UserIndex, ref XBOX_AUTOMATION_GAMEPAD Gamepad)
         {
 
         }
 
-		void SetUserDefaultProfile( long Xuid)
+        void SetUserDefaultProfile(long Xuid)
         {
 
         }
 
-		void UnbindController( uint UserIndex)
+        void UnbindController(uint UserIndex)
         {
 
         }
-	}
+    }
 }

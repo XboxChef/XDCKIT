@@ -19,7 +19,7 @@ namespace XDevkit
         public string[] XMessageBoxButtons;
         public XMessageBoxIcons XMessageBoxIcon;
 
-       //public event EventHandler<XMessageBoxUIProgress> MessageBoxUIResult;
+        //public event EventHandler<XMessageBoxUIProgress> MessageBoxUIResult;
 
         public XMessageBoxUI(
 

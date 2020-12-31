@@ -12,7 +12,7 @@
             this.endianstyle = endianstyle;
         }
 
-        public string ReadAsciiString(int Length) => 
+        public string ReadAsciiString(int Length) =>
             this.ReadAsciiString(Length, this.endianstyle);
 
         public string ReadAsciiString(int Length, EndianType EndianType)
@@ -24,7 +24,7 @@
             {
                 if (num2 < Length)
                 {
-                    char ch = (char) this.ReadByte();
+                    char ch = (char)this.ReadByte();
                     num++;
                     if (ch != '\0')
                     {
@@ -34,12 +34,12 @@
                     }
                 }
                 int num3 = Length - num;
-                this.BaseStream.Seek((long) num3, SeekOrigin.Current);
+                this.BaseStream.Seek(num3, SeekOrigin.Current);
                 return str;
             }
         }
 
-        public override double ReadDouble() => 
+        public override double ReadDouble() =>
             this.ReadDouble(this.endianstyle);
 
         public double ReadDouble(EndianType EndianType)
@@ -52,7 +52,7 @@
             return BitConverter.ToDouble(array, 0);
         }
 
-        public override short ReadInt16() => 
+        public override short ReadInt16() =>
             this.ReadInt16(this.endianstyle);
 
         public short ReadInt16(EndianType EndianType)
@@ -65,7 +65,7 @@
             return BitConverter.ToInt16(array, 0);
         }
 
-        public int ReadInt24() => 
+        public int ReadInt24() =>
             this.ReadInt24(this.endianstyle);
 
         public int ReadInt24(EndianType EndianType)
@@ -79,7 +79,7 @@
             return BitConverter.ToInt32(destinationArray, 0);
         }
 
-        public override int ReadInt32() => 
+        public override int ReadInt32() =>
             this.ReadInt32(this.endianstyle);
 
         public int ReadInt32(EndianType EndianType)
@@ -92,7 +92,7 @@
             return BitConverter.ToInt32(array, 0);
         }
 
-        public override long ReadInt64() => 
+        public override long ReadInt64() =>
             this.ReadInt64(this.endianstyle);
 
         public long ReadInt64(EndianType EndianType)
@@ -120,7 +120,7 @@
             }
         }
 
-        public override float ReadSingle() => 
+        public override float ReadSingle() =>
             this.ReadSingle(this.endianstyle);
 
         public float ReadSingle(EndianType EndianType)
@@ -139,22 +139,22 @@
             int num = 0;
             while (true)
             {
-                char ch = (char) this.ReadByte();
+                char ch = (char)this.ReadByte();
                 num++;
                 if (ch == '\0')
                 {
                     int num2 = str.Length - num;
-                    this.BaseStream.Seek((long) (num2 + 1), SeekOrigin.Current);
+                    this.BaseStream.Seek(num2 + 1, SeekOrigin.Current);
                     return str;
                 }
                 str = str + ch;
             }
         }
 
-        public string ReadString(int Length) => 
+        public string ReadString(int Length) =>
             this.ReadAsciiString(Length);
 
-        public override ushort ReadUInt16() => 
+        public override ushort ReadUInt16() =>
             this.ReadUInt16(this.endianstyle);
 
         public ushort ReadUInt16(EndianType EndianType)
@@ -167,7 +167,7 @@
             return BitConverter.ToUInt16(array, 0);
         }
 
-        public override uint ReadUInt32() => 
+        public override uint ReadUInt32() =>
             this.ReadUInt32(this.endianstyle);
 
         public uint ReadUInt32(EndianType EndianType)
@@ -180,7 +180,7 @@
             return BitConverter.ToUInt32(array, 0);
         }
 
-        public override ulong ReadUInt64() => 
+        public override ulong ReadUInt64() =>
             this.ReadUInt64(this.endianstyle);
 
         public ulong ReadUInt64(EndianType EndianType)
@@ -193,7 +193,7 @@
             return BitConverter.ToUInt64(array, 0);
         }
 
-        public string ReadUnicodeString(int Length) => 
+        public string ReadUnicodeString(int Length) =>
             this.ReadUnicodeString(Length, this.endianstyle);
 
         public string ReadUnicodeString(int Length, EndianType EndianType)
@@ -205,7 +205,7 @@
             {
                 if (num2 < Length)
                 {
-                    char ch = (char) this.ReadUInt16(EndianType);
+                    char ch = (char)this.ReadUInt16(EndianType);
                     num++;
                     if (ch != '\0')
                     {
@@ -215,7 +215,7 @@
                     }
                 }
                 int num3 = (Length - num) * 2;
-                this.BaseStream.Seek((long) num3, SeekOrigin.Current);
+                this.BaseStream.Seek(num3, SeekOrigin.Current);
                 return str;
             }
         }
@@ -227,17 +227,17 @@
 
         public void SeekTo(long offset)
         {
-            this.SeekTo((int) offset, SeekOrigin.Begin);
+            this.SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int) offset, SeekOrigin.Begin);
+            this.SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.BaseStream.Seek((long) offset, SeekOrigin);
+            this.BaseStream.Seek(offset, SeekOrigin);
         }
     }
 }

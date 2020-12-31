@@ -8,8 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Sockets;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 
 namespace XDevkit
@@ -139,7 +137,7 @@ namespace XDevkit
                     for (int index1 = 0; index1 < numArray.Length; ++index1)
                     {
                         byte[] bytes = BitConverter.GetBytes(numArray[index1]);
-                        Array.Reverse((Array)bytes);
+                        Array.Reverse(bytes);
                         for (int index2 = 0; index2 < 4; ++index2)
                             str3 += bytes[index2].ToString("X2");
                     }
@@ -308,7 +306,7 @@ namespace XDevkit
                         if (t == typeof(long))
                         {
                             long[] numArray5 = new long[ArraySize];
-                            for (int index2 = 0; (long)index2 < (long)ArraySize; ++index2)
+                            for (int index2 = 0; index2 < ArraySize; ++index2)
                                 numArray5[index2] = BitConverter.ToInt64(BitConverter.GetBytes(numArray4[index2]), 0);
                             return numArray5;
                         }
@@ -628,14 +626,14 @@ namespace XDevkit
         /// </summary>
         public List<ModuleInfo> Modules { get { return modules; } }
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private List<ModuleInfo> modules;
+        private readonly List<ModuleInfo> modules;
         /// <summary>
         /// Gets the notification listener registered with the xbox that listens for incoming notification session requests.
         /// </summary>
         [Browsable(false)]
         public TcpListener NotificationListener { get { return notificationListener; } }
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private TcpListener notificationListener;
+        private readonly TcpListener notificationListener;
         /// <summary>
         ///
         /// </summary>

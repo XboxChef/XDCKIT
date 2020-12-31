@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XDevkit;
+﻿using System.Text;
 
 namespace XDevkit
 {
 
-	#region XNotify
+    #region XNotify
     /// <summary>
     /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
     /// </summary>
-	public class XNotify
-	{
+    public class XNotify
+    {
         public static Xbox Con = new Xbox();
         public static void Show(string Message)
-		{
-             Show(Message, true);
-		}
+        {
+            Show(Message, true);
+        }
 
-		public static void Show(string Message, bool ISON)
-		{
+        public static void Show(string Message, bool ISON)
+        {
             if (ISON == true)
             {
                 Show(Message, XNotiyLogo.FLASHING_XBOX_LOGO);
@@ -30,7 +25,7 @@ namespace XDevkit
             {
 
             }
-		}
+        }
         public static void Show(string Message, XNotiyLogo Logo, bool ISON)
         {
             if (ISON == true)
@@ -44,7 +39,7 @@ namespace XDevkit
         }
 
         public static void Show(string message, XNotiyLogo Logo)
-		{
+        {
             int String = 2;
             int Int = 1;
             string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + String + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + Int + "\\";
@@ -259,6 +254,6 @@ namespace XDevkit
         }
 
 
-	}
-	#endregion
+    }
+    #endregion
 }

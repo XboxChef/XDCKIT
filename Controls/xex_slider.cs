@@ -10,7 +10,7 @@
     {
         public static Xbox Con;
         public Stream stream;
-        private IContainer components = null;
+        private readonly IContainer components = null;
         private Label label1;
         private uint Offset;
         private TrackBar trackBar1;

@@ -62,7 +62,7 @@ namespace XDevkit
                                        uint ArraySize,
                                        params object[] Arguments)
         {
-           
+
             {
                 object[] name;
                 int i;

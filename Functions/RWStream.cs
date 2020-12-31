@@ -191,7 +191,7 @@ namespace XDevkit
         public BindingList<SearchResults> SearchHexString(byte[] pattern, uint startDumpOffset)
         {
             var buffer = new byte[_fStream.Length];
-            _fStream.Read(buffer, 0, (int) _fStream.Length);
+            _fStream.Read(buffer, 0, (int)_fStream.Length);
             int i = IndexOfInt(buffer, pattern[0], 0);
             var positions = new BindingList<SearchResults>();
 
@@ -205,10 +205,12 @@ namespace XDevkit
 
                 if (ByteArrayCompare(segment, pattern))
                 {
-                    var results = new SearchResults();
-                    results.Offset = String.Format("{0:X}", startDumpOffset + (uint) i);
+                    var results = new SearchResults
+                    {
+                        Offset = String.Format("{0:X}", startDumpOffset + (uint)i)
+                    };
 
-                    var hex = new StringBuilder(segment.Length*2);
+                    var hex = new StringBuilder(segment.Length * 2);
                     foreach (byte b in segment)
                         hex.AppendFormat("{0:x2}", b);
 

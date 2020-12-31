@@ -33,7 +33,7 @@ namespace XDevkit
         {
             byte[] numArray = new byte[text.Length * 2 + 2];
             int index = 1;
-            numArray[0] = (byte)0;
+            numArray[0] = 0;
             foreach (char ch in text)
             {
                 numArray[index] = System.Convert.ToByte(ch);
@@ -48,8 +48,8 @@ namespace XDevkit
             foreach (long num in argument)
             {
                 byte[] bytes = BitConverter.GetBytes(num);
-                Array.Reverse((Array)bytes);
-                bytes.CopyTo((Array)numArray, index);
+                Array.Reverse(bytes);
+                bytes.CopyTo(numArray, index);
                 index += 8;
             }
             return numArray;
@@ -57,7 +57,7 @@ namespace XDevkit
         private static float[] toFloatArray(double[] arr)
         {
             if (arr == null)
-                return (float[])null;
+                return null;
             int length = arr.Length;
             float[] numArray = new float[length];
             for (int index = 0; index < length; ++index)
@@ -106,13 +106,13 @@ namespace XDevkit
             {
                 if ((bool)o)
                 {
-                    return (ulong)1;
+                    return 1;
                 }
-                return (ulong)0;
+                return 0;
             }
             if (o is byte)
             {
-                return (ulong)((byte)o);
+                return (byte)o;
             }
             if (o is short)
             {
@@ -140,7 +140,7 @@ namespace XDevkit
             }
             if (o is float)
             {
-                return (ulong)BitConverter.DoubleToInt64Bits((double)((float)o));
+                return (ulong)BitConverter.DoubleToInt64Bits((float)o);
             }
             if (!(o is double))
             {
