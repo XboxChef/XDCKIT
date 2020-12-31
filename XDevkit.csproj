@@ -63,21 +63,21 @@
     </Compile>
     <Compile Include="Functions\ApiException.cs" />
     <Compile Include="Functions\ContentStorage.cs" />
-    <Compile Include="Functions\Filesystem.cs" />
+    <Compile Include="Devkit\Filesystem.cs" />
     <Compile Include="Functions\Functions.cs" />
     <Compile Include="Functions\Items.cs" />
-    <Compile Include="Functions\IXboxAutomation.cs" />
+    <Compile Include="Devkit\XboxAutomation.cs" />
     <Compile Include="Functions\RWStream.cs" />
     <Compile Include="Functions\Types.cs" />
-    <Compile Include="Functions\XboxEnums.cs" />
-    <Compile Include="Functions\XboxExtention.cs" />
-    <Compile Include="Functions\XboxStructs.cs" />
-    <Compile Include="Functions\XMessageBoxUI.cs" />
-    <Compile Include="Functions\XNotify.cs" />
-    <Compile Include="IO\EndianIO.cs" />
-    <Compile Include="IO\EndianReader.cs" />
-    <Compile Include="IO\EndianType.cs" />
-    <Compile Include="IO\EndianWriter.cs" />
+    <Compile Include="Devkit\XboxEnums.cs" />
+    <Compile Include="Devkit\XboxExtention.cs" />
+    <Compile Include="Devkit\XboxStructs.cs" />
+    <Compile Include="Devkit\XMessageBoxUI.cs" />
+    <Compile Include="Devkit\XNotify.cs" />
+    <Compile Include="Functions\IO\EndianIO.cs" />
+    <Compile Include="Functions\IO\EndianReader.cs" />
+    <Compile Include="Functions\IO\EndianType.cs" />
+    <Compile Include="Functions\IO\EndianWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,6 +85,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Xbox.cs" />
+    <Compile Include="Devkit\XboxTypes.cs" />
+    <Compile Include="Devkit\XboxNetworking.cs" />
+    <Compile Include="Devkit\XboxMemoryEdits.cs" />
+    <Compile Include="Devkit\XboxFeatures.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
