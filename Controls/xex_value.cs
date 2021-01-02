@@ -10,7 +10,6 @@ namespace XDevkit.Controls
 {
     public partial class xex_value : UserControl
     {
-        public static Xbox Con;
         public string offset;
         private string origvalue;
         public Stream stream;
@@ -18,6 +17,10 @@ namespace XDevkit.Controls
         public xex_value()
         {
             InitializeComponent();
+            foreach (Control control in base.Controls)
+            {
+                control.ContextMenuStrip = contextMenuStrip1;
+            }
         }
         public void pokeXbox(uint offset, string poketype, string ammount)
         {

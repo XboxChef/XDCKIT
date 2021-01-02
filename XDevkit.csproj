@@ -52,6 +52,9 @@
     <Compile Include="Controls\xex_slider.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\xex_slider.Designer.cs">
+      <DependentUpon>xex_slider.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\xex_value.cs">
       <SubType>UserControl</SubType>
     </Compile>
