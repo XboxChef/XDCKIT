@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace XDevkit.Controls
+namespace XDevkit
 {
     public partial class xex_slider : UserControl
     {
