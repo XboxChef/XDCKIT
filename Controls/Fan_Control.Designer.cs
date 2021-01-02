@@ -1,7 +1,7 @@
 ﻿
-namespace XTest.DLL.Controls
+namespace XDevkit
 {
-    partial class Fan_Slider
+    partial class Fan_Control
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,33 +29,18 @@ namespace XTest.DLL.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
-            // trackBar1
-            // 
-            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar1.Location = new System.Drawing.Point(0, 0);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(150, 40);
-            this.trackBar1.TabIndex = 0;
-            // 
-            // Fan_Slider
+            // Fan_Control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.trackBar1);
-            this.Name = "Fan_Slider";
-            this.Size = new System.Drawing.Size(150, 40);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.Name = "Fan_Control";
+            this.Size = new System.Drawing.Size(307, 53);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TrackBar trackBar1;
     }
 }

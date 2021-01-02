@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace XDevkit.Controls
+namespace XDevkit
 {
     partial class xex_slider
     {

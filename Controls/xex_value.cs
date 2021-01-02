@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace XDevkit.Controls
+namespace XDevkit
 {
     public partial class xex_value : UserControl
     {

@@ -43,12 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\Fan_Slider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Fan_Slider.Designer.cs">
-      <DependentUpon>Fan_Slider.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\xex_slider.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -60,6 +54,12 @@
     </Compile>
     <Compile Include="Controls\xex_value.designer.cs">
       <DependentUpon>xex_value.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Fan_Control.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Fan_Control.Designer.cs">
+      <DependentUpon>Fan_Control.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\IO\ContentStorage.cs" />
     <Compile Include="Devkit\Filesystem.cs" />
@@ -96,14 +96,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Controls\Fan_Slider.resx">
-      <DependentUpon>Fan_Slider.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\xex_value.resx">
-      <DependentUpon>xex_value.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="About XDevkit.txt" />
