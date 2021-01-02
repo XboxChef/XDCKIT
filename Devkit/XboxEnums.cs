@@ -220,7 +220,7 @@
     /// <summary>
     /// Guide Shortcuts
     /// </summary>
-    public enum XboxShortcuts
+    public enum XboxShortcuts : int
     {
         //Main Shortcut
         Recent = 0x2C8,
@@ -260,7 +260,8 @@
         Family_Settings,
         System_Settings,
         Account_Management = 4,
-        Turn_Off_Console = 0x0295
+        Turn_Off_Console = 0x0295,
+        AvatarEditor = 0xB3A
         //End Of settings
 
     };
@@ -686,7 +687,7 @@
         System,
         Title
     }
-    public enum XNotiyLogo
+    public enum XNotiyLogo : int
     {
         XBOX_LOGO = 0,
         NEW_MESSAGE_LOGO = 1,

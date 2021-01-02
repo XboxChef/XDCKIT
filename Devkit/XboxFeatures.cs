@@ -18,6 +18,7 @@ namespace XDevkit
     /// </summary>
     public partial class Xbox
     {
+        private const string XAMModule = "xam.xex";
         #region Features
 
 
@@ -53,6 +54,536 @@ namespace XDevkit
             object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//todo
             SendTextCommand(string.Concat(Reboot));
         }
+
+        /// <summary>
+        /// Shortcuts To Guide
+        /// </summary>
+        /// <param name="Color"></param>
+        public void XboxShortcut(XboxShortcuts UI)
+        {
+            FlushSocketBuffer();
+            if (XboxName.Connected)
+                switch (UI)//works by getting the int of the UI and matches the numbers to execute things
+                {
+                    case XboxShortcuts.XboxHome:
+                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20445700\dash.xex", XboxRebootFlags.Title);
+                        break;
+                    case XboxShortcuts.AvatarEditor:
+                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", XboxRebootFlags.Title);
+
+                        break;
+
+                    case XboxShortcuts.Turn_Off_Console:
+                        ShutDownConsole();
+                        break;
+                    case XboxShortcuts.Account_Management:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Account_Management),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Achievements:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Achievements),
+                                      new object[]
+                            { 0, 0, 0, 0 });//achievements
+                        break;
+                    case XboxShortcuts.Active_Downloads:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Active_Downloads),
+                                      new object[]
+                            { 0, 0, 0, 0 });//XamShowMarketplaceDownloadItemsUI
+                        break;
+                    case XboxShortcuts.Awards:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Awards),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Beacons_And_Activiy:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Beacons_And_Activiy),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Family_Settings:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Family_Settings),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Friends:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Friends),
+                                      new object[]
+                            { 0, 0, 0, 0 });//friends
+                        break;
+                    case XboxShortcuts.Guide_Button:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Guide_Button),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Messages:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Messages), 0);//messages tab
+                        break;
+                    case XboxShortcuts.My_Games:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Open_Tray:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Close_Tray:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Close_Tray),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Party:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Preferences:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Preferences),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Private_Chat:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Private_Chat),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Profile:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Profile),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Recent:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Recent),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Redeem_Code:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Redeem_Code),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Select_Music:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Select_Music),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.System_Music_Player:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Music_Player),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.System_Settings:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Settings),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.System_Video_Player:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Video_Player),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                    case XboxShortcuts.Windows_Media_Center:
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Windows_Media_Center),
+                                      new object[]
+                            { 0, 0, 0, 0 });
+                        break;
+                }
+        }
+
+        /// <summary>
+        /// Get's Box Id.
+        /// </summary>
+        /// <param name="fileName">File to delete.</param>
+        public string GetBoxID()
+        {
+            FlushSocketBuffer();
+            return SendTextCommand("BOXID").Replace("200- ", string.Empty);
+        }
+
+        /// <summary>
+        /// Turns The Console's Default Neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar
+        /// , white) Also Changes The Type Of Console It Is.
+        /// </summary>
+        /// <param name="Color"></param>
+        public void SetConsoleColor(XboxColor Color)
+        {
+            FlushSocketBuffer();
+            SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
+        }
+
+        /// <summary>
+        /// Get's The Consoles ID.
+        /// </summary>
+        /// <returns></returns>
+        public string GetConsoleID()
+        {
+            FlushSocketBuffer();
+            return SendTextCommand(string.Concat("getconsoleid")).Replace("200- consoleid=", string.Empty);
+        }
+
+        /// <summary>
+        /// Gets the debug Monitor version Number.
+        /// </summary>
+        public string GetDMVersion()
+        {
+            FlushSocketBuffer();
+            return SendTextCommand("dmversion").Replace("200- ", string.Empty);
+
+        }
+
+        /// <summary>
+        /// Get's Consoles System Information.
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <returns>Type Is The System Type Of Information you Want To Retrieve</returns>
+        public string GetSystemInfo(Info Type)
+        {
+            if (XboxName == null)
+            {
+                Console.WriteLine("Console Is Not Connnected...");
+            }
+            else
+            {
+                Console.WriteLine("System Info Came Threw.. (Command Executed == " + Type + " )");
+                switch (Type)
+                {
+                    case Info.HDD:
+                        #region HDD
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"));
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                int Start = s.IndexOf("hdd=");
+                                int End = s.IndexOf("type=");
+                                return s.Substring(Start + 4, End - 4);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.Type:
+                        #region Console Type
+                        try
+                        {
+                            return SendTextCommand(string.Concat("consoletype")).Replace("200- ", string.Empty);
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.Platform:
+                        #region Platform
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"));
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                int Start = s.IndexOf("type=");
+                                int End = s.IndexOf(" p");
+                                return s.Substring(Start + 9, End - 1).Substring(Start);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.System:
+                        #region System
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"));
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                int Start = s.IndexOf("type=");
+                                int End = s.IndexOf(" p");
+                                return s.Substring(Start + End + 4, End - 4).Substring(Start);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.BaseKrnlVersion:
+                        #region BaseKrnlVersion
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"));
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                int Start = s.IndexOf(" krnl=");
+                                int End = s.IndexOf(" ");
+                                return s.Substring(Start - 10, End);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.KrnlVersion:
+                        #region Kernal Version
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"));
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                int Start = s.IndexOf(" krnl=");
+                                int End = s.IndexOf(" ");
+                                return s.Substring(Start + 6, End);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                    case Info.XDKVersion:
+                        #region XDK Version
+                        try
+                        {
+                            SendTextCommand(string.Concat("systeminfo"), out Response);
+                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            foreach (string s in Info)
+                            {
+                                return s.Substring(s.IndexOf("xdk=") + 4, 12);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        #endregion
+                        break;
+                }
+            }
+            return string.Empty;
+        }
+        /// <summary>
+        /// Reboot Method flag types cold or warm reboot.
+        /// </summary>
+        public void Reboot(XboxReboot Warm_or_Cold)
+        {
+            FlushSocketBuffer();
+            if (Warm_or_Cold == XboxReboot.Cold)
+            {
+                SendTextCommand("magicboot cold");
+            }
+            if (Warm_or_Cold == XboxReboot.Warm)
+            {
+                SendTextCommand("magicboot warm");
+            }
+        }
+
+        /// <summary>
+        /// Freezes/Stops Console.
+        /// </summary>
+        public void Freeze_Console(XboxSwitch Freeze)
+        {
+            FlushSocketBuffer();
+            if (Freeze == XboxSwitch.True)
+            {
+                SendTextCommand("stop");
+            }
+            else if (Freeze == XboxSwitch.False)
+            {
+                SendTextCommand("go");
+            }
+        }
+        /// <summary>
+        /// XBEINFO Console.
+        /// </summary>
+        public string XBEINFO()
+        {
+            FlushSocketBuffer();
+            SendTextCommand("XBEINFO RUNNING");
+            string str1 = ReceiveMultilineResponse();
+            return str1.Substring(str1.find("name"));
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public string ConsoleType()
+        {
+            FlushSocketBuffer();
+            string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
+            string str1 = SendTextCommand(str);
+            return str1.Substring(str1.find(" ") + 1);
+        }
+
+        /// <summary>
+        /// Retrieve's The Console's Central Processing Unit Key.
+        /// </summary>
+        public string GetCPUKey()
+        {
+            FlushSocketBuffer();
+            string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
+            return SendTextCommand(str).Replace("200- ", string.Empty);
+        }
+
+
+        /// <summary>
+        /// Version Of Kernal
+        /// </summary>
+        /// <returns></returns>
+        public uint GetKernalVersion()
+        {
+            FlushSocketBuffer();
+            string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
+            string str1 = SendTextCommand(str);
+            return uint.Parse(str1.Substring(str1.find(" ") + 1));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="TemperatureType"></param>
+        /// <returns></returns>
+        public uint GetTemperature(TemperatureFlag TemperatureType)
+        {
+            FlushSocketBuffer();
+            object[] jRPCVersion = new object[]
+            { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
+            string str = SendTextCommand(string.Concat(jRPCVersion));
+            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
+        }
+
+        #region Console Tempatures
+        public string CPUTEMP() { return GetTemperature(TemperatureFlag.CPU) + "\x00b0C".ToString() + "%"; }
+        public string GPUTEMP() { return GetTemperature(TemperatureFlag.GPU) + "\x00b0C".ToString() + "%"; }
+        public string RamTEMP() { return GetTemperature(TemperatureFlag.EDRAM) + "\x00b0C".ToString() + "%"; }
+        public string MOBOTEMP() { return GetTemperature(TemperatureFlag.MotherBoard) + "\x00b0C".ToString() + "%"; }
+        #endregion
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="Top_Left"></param>
+        /// <param name="Top_Right"></param>
+        /// <param name="Bottom_Left"></param>
+        /// <param name="Bottom_Right"></param>
+        public void SetLeds(LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
+        {
+            FlushSocketBuffer();
+            object[] Resolver = new object[]
+            {
+                "consolefeatures ver=",
+                2,
+                " type=14 params=\"A\\0\\A\\4\\",
+                1,
+                "\\",
+                (uint)Top_Left,
+                "\\",
+                1,
+                "\\",
+                (uint)Top_Right,
+                "\\",
+                1,
+                "\\",
+                (uint)Bottom_Left,
+                "\\",
+                1,
+                "\\",
+                (uint)Bottom_Right,
+                "\\\""
+            };
+            SendTextCommand(string.Concat(Resolver));
+        }
+        private uint GetModuleHandle(string ModuleName)
+        {
+            object[] arguments = new object[] { ModuleName };
+            return Call<uint>(ModuleName, 0x44e, arguments);
+        }
+        private uint LaunchSystemDLLThread(string ThreadPath)
+        {
+            object[] arguments = new object[] { ThreadPath, 8, 0, 0 };
+            return Call<uint>(krnlModule, 0x199, arguments);
+        }
+        private void UnloadImage(string ModuleName, bool isSysDll)
+        {
+            uint moduleHandle = GetModuleHandle(ModuleName);
+            if (moduleHandle != 0)
+            {
+                if (isSysDll)
+                {
+                    GetInt16(moduleHandle + 0x40, 1);
+                }
+                object[] arguments = new object[] { moduleHandle };
+                XboxExtention.CallVoid(krnlModule, 0x1a1, arguments);
+            }
+        }
+
+        private uint XexPcToFileHeader(uint baseAddress)
+        {
+            uint num3;
+            uint address = ResolveFunction(krnlModule, 0x19c);
+            if (address == 0)
+            {
+                num3 = 0;
+            }
+            else
+            {
+                uint num2 = ResolveFunction(XAMModule, 0xa29) + 0x3000;
+                object[] arguments = new object[] { baseAddress, num2 };
+                XboxExtention.CallVoid(address, arguments);
+                num3 = GetUInt32(num2);
+            }
+            return num3;
+        }
+        /// <summary>
+        /// Gets a list of modules loaded by the xbox.
+        /// </summary>
+        public List<ModuleInfo> Modules { get { return modules; } }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly List<ModuleInfo> modules;
+        /// <summary>
+        /// Gets the notification listener registered with the xbox that listens for incoming notification session requests.
+        /// </summary>
+        [Browsable(false)]
+        public TcpListener NotificationListener { get { return notificationListener; } }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly TcpListener notificationListener;
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public uint XamGetCurrentTitleId()
+        {
+            FlushSocketBuffer();
+            string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");
+            string str1 = SendTextCommand(str);
+            return uint.Parse(str1.Substring(str1.find(" ") + 1), NumberStyles.HexNumber);
+        }
+
+        /// <summary>
+        /// Turns Off Console.
+        /// </summary>
+        public void ShutDownConsole()
+        {
+            FlushSocketBuffer();
+            try
+            {
+                string str = string.Concat("consolefeatures ver=", 2, " type=11 params=\"A\\0\\A\\0\\\"");
+                SendTextCommand(str);
+            }
+            catch
+            {
+            }
+        }
+
+        #endregion
         private object CallArgs(bool SystemThread, uint Type, Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
         {
             uint Void = 0;
@@ -314,353 +845,27 @@ namespace XDevkit
                     return (int)Type == (int)Void ? 0 : ulong.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
             }
         }
-        public void AvatarEditor()
+        public T Call<T>(string module, int ordinal, params object[] Arguments) where T : struct
         {
-            Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", XboxRebootFlags.Title);
+            return (T)CallArgs(true, TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
         }
-        /// <summary>
-        /// Shortcuts To Guide
-        /// </summary>
-        /// <param name="Color"></param>
-        public void XboxShortcut(XboxShortcuts UI)
+        private uint TypeToType<T>(bool Array) where T : struct
         {
-            FlushSocketBuffer();
-            if (XboxName.Connected)
-                switch ((int)UI)//works by getting the int of the UI and matches the numbers to execute things
-                {
-                    case (int)XboxShortcuts.XboxHome:
-                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
-                               @"\Device\Harddisk0\SystemExtPartition\20449700\dash.xex",
-                               @"\Device\Harddisk0\SystemExtPartition\20445100\dash.xex",
-                               XboxRebootFlags.Title);
-                        break;
-                    case (int)XboxShortcuts.Turn_Off_Console:
-                        ShutDownConsole();
-                        break;
-                    case (int)XboxShortcuts.Account_Management:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Account_Management),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Achievements:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Achievements),
-                                      new object[]
-                            { 0, 0, 0, 0 });//achievements
-                        break;
-                    case (int)XboxShortcuts.Active_Downloads:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Active_Downloads),
-                                      new object[]
-                            { 0, 0, 0, 0 });//XamShowMarketplaceDownloadItemsUI
-                        break;
-                    case (int)XboxShortcuts.Awards:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Awards),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Beacons_And_Activiy:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Beacons_And_Activiy),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Family_Settings:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Family_Settings),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Friends:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Friends),
-                                      new object[]
-                            { 0, 0, 0, 0 });//friends
-                        break;
-                    case (int)XboxShortcuts.Guide_Button:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Guide_Button),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Messages:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Messages), 0);//messages tab
-                        break;
-                    case (int)XboxShortcuts.My_Games:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Open_Tray:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Close_Tray:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Close_Tray),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Party:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Party), new object[] { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Preferences:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Preferences),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Private_Chat:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Private_Chat),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Profile:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Profile),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Recent:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Recent),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Redeem_Code:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Redeem_Code),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Select_Music:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Select_Music),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.System_Music_Player:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Music_Player),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.System_Settings:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Settings),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.System_Video_Player:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.System_Video_Player),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                    case (int)XboxShortcuts.Windows_Media_Center:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Windows_Media_Center),
-                                      new object[]
-                            { 0, 0, 0, 0 });
-                        break;
-                }
+            uint Int = 1;
+            uint String = 2;
+            uint Float = 3;
+            uint Byte = 4;
+            uint IntArray = 5;
+            uint FloatArray = 6;
+            uint ByteArray = 7;
+            uint Uint64 = 8;
+            uint Uint64Array = 9;
+            Type type = typeof(T);
+            if (type == typeof(int) || type == typeof(uint) || (type == typeof(short) || type == typeof(ushort)))
+                return Array ? IntArray : Int;
+            if (type == typeof(string) || type == typeof(char[]))
+                return String;
+            return type == typeof(float) || type == typeof(double) ? (Array ? FloatArray : Float) : (type == typeof(byte) || type == typeof(char) ? (Array ? ByteArray : Byte) : ((type == typeof(ulong) || type == typeof(long)) && Array ? Uint64Array : Uint64));
         }
-
-        /// <summary>
-        /// Reboot Method flag types cold or warm reboot.
-        /// </summary>
-        public void Reboot(XboxReboot Warm_or_Cold)
-        {
-            FlushSocketBuffer();
-            if (Warm_or_Cold == XboxReboot.Cold)
-            {
-                SendTextCommand("magicboot cold");
-            }
-            if (Warm_or_Cold == XboxReboot.Warm)
-            {
-                SendTextCommand("magicboot warm");
-            }
-        }
-
-        /// <summary>
-        /// Freezes/Stops Console.
-        /// </summary>
-        public void Freeze_Console(XboxSwitch Freeze)
-        {
-            FlushSocketBuffer();
-            if (Freeze == XboxSwitch.True)
-            {
-                SendTextCommand("stop");
-            }
-            else if (Freeze == XboxSwitch.False)
-            {
-                SendTextCommand("go");
-            }
-        }
-        /// <summary>
-        /// XBEINFO Console.
-        /// </summary>
-        public string XBEINFO()
-        {
-            FlushSocketBuffer();
-            SendTextCommand("XBEINFO RUNNING");
-            string str1 = ReceiveMultilineResponse();
-            return str1.Substring(str1.find("name"));
-        }
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        public string ConsoleType()
-        {
-            FlushSocketBuffer();
-            string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendTextCommand(str);
-            return str1.Substring(str1.find(" ") + 1);
-        }
-
-        /// <summary>
-        /// Retrieve's The Console's Central Processing Unit Key.
-        /// </summary>
-        public string GetCPUKey()
-        {
-            FlushSocketBuffer();
-            string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
-            return SendTextCommand(str).Replace("200- ", string.Empty);
-        }
-
-
-        /// <summary>
-        /// Version Of Kernal
-        /// </summary>
-        /// <returns></returns>
-        public uint GetKernalVersion()
-        {
-            FlushSocketBuffer();
-            string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendTextCommand(str);
-            return uint.Parse(str1.Substring(str1.find(" ") + 1));
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="TemperatureType"></param>
-        /// <returns></returns>
-        public uint GetTemperature(TemperatureFlag TemperatureType)
-        {
-            FlushSocketBuffer();
-            object[] jRPCVersion = new object[]
-            { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
-            string str = SendTextCommand(string.Concat(jRPCVersion));
-            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
-        }
-
-        #region Console Tempatures
-        public string CPUTEMP() { return GetTemperature(TemperatureFlag.CPU) + "\x00b0C".ToString() + "%"; }
-        public string GPUTEMP() { return GetTemperature(TemperatureFlag.GPU) + "\x00b0C".ToString() + "%"; }
-        public string RamTEMP() { return GetTemperature(TemperatureFlag.EDRAM) + "\x00b0C".ToString() + "%"; }
-        public string MOBOTEMP() { return GetTemperature(TemperatureFlag.MotherBoard) + "\x00b0C".ToString() + "%"; }
-        #endregion
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="Top_Left"></param>
-        /// <param name="Top_Right"></param>
-        /// <param name="Bottom_Left"></param>
-        /// <param name="Bottom_Right"></param>
-        public void SetLeds(LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
-        {
-            FlushSocketBuffer();
-            object[] Resolver = new object[]
-            {
-                "consolefeatures ver=",
-                2,
-                " type=14 params=\"A\\0\\A\\4\\",
-                1,
-                "\\",
-                (uint)Top_Left,
-                "\\",
-                1,
-                "\\",
-                (uint)Top_Right,
-                "\\",
-                1,
-                "\\",
-                (uint)Bottom_Left,
-                "\\",
-                1,
-                "\\",
-                (uint)Bottom_Right,
-                "\\\""
-            };
-            SendTextCommand(string.Concat(Resolver));
-        }
-        private uint GetModuleHandle(string ModuleName)
-        {
-            object[] arguments = new object[] { ModuleName };
-            return Call<uint>(ModuleName, 0x44e, arguments);
-        }
-        private uint LaunchSystemDLLThread(string ThreadPath)
-        {
-            object[] arguments = new object[] { ThreadPath, 8, 0, 0 };
-            return Call<uint>(krnlModule, 0x199, arguments);
-        }
-        private void UnloadImage(string ModuleName, bool isSysDll)
-        {
-            uint moduleHandle = GetModuleHandle(ModuleName);
-            if (moduleHandle != 0)
-            {
-                if (isSysDll)
-                {
-                    GetInt16(moduleHandle + 0x40, 1);
-                }
-                object[] arguments = new object[] { moduleHandle };
-                XboxExtention.CallVoid(krnlModule, 0x1a1, arguments);
-            }
-        }
-
-        private uint XexPcToFileHeader(uint baseAddress)
-        {
-            uint num3;
-            uint address = ResolveFunction(krnlModule, 0x19c);
-            if (address == 0)
-            {
-                num3 = 0;
-            }
-            else
-            {
-                uint num2 = ResolveFunction(XAMModule, 0xa29) + 0x3000;
-                object[] arguments = new object[] { baseAddress, num2 };
-                XboxExtention.CallVoid(address, arguments);
-                num3 = GetUInt32(num2);
-            }
-            return num3;
-        }
-        /// <summary>
-        /// Gets a list of modules loaded by the xbox.
-        /// </summary>
-        public List<ModuleInfo> Modules { get { return modules; } }
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly List<ModuleInfo> modules;
-        /// <summary>
-        /// Gets the notification listener registered with the xbox that listens for incoming notification session requests.
-        /// </summary>
-        [Browsable(false)]
-        public TcpListener NotificationListener { get { return notificationListener; } }
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly TcpListener notificationListener;
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        public uint XamGetCurrentTitleId()
-        {
-            FlushSocketBuffer();
-            string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendTextCommand(str);
-            return uint.Parse(str1.Substring(str1.find(" ") + 1), NumberStyles.HexNumber);
-        }
-
-        /// <summary>
-        /// Turns Off Console.
-        /// </summary>
-        public void ShutDownConsole()
-        {
-            FlushSocketBuffer();
-            try
-            {
-                string str = string.Concat("consolefeatures ver=", 2, " type=11 params=\"A\\0\\A\\0\\\"");
-                SendTextCommand(str);
-            }
-            catch
-            {
-            }
-        }
-        #endregion
     }
 }

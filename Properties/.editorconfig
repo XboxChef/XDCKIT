@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# IDE0025: Use expression body for properties
+dotnet_diagnostic.IDE0025.severity = silent
+
+# IDE0025: Use expression body for properties
+csharp_style_expression_bodied_properties = true:silent
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = silent

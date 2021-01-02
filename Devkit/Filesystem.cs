@@ -22,7 +22,7 @@ namespace XDevkit
         public void CreateDirectory(string name)
         {
             string sdr = string.Concat("mkdir name=\"{0}\"", name);
-            XConsole.SendTextCommand(sdr, out Xbox.response);
+            XConsole.SendTextCommand(sdr, out Xbox.Response);
         }
         /// <summary>
         /// Creates a directory on the xbox.

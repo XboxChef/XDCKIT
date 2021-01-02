@@ -35,7 +35,6 @@ namespace XDevkit {
                 this["IPAddress"] = value;
             }
         }
-        Xbox XConsole = new Xbox();
     }
 
 }

@@ -11,3 +11,4 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.GenerateReso
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileInputs.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.pdb
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache

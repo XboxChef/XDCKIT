@@ -14,79 +14,6 @@ namespace XDevkit
     /// </summary>
     public partial class Xbox
     {
-        #region Types {Get; Set;}
-        #region x
-        /// <summary>
-        /// Sends binary data to the xbox.
-        /// </summary>
-        /// <param name="data"></param>
-        public void SendBinaryData(byte[] data)
-        {
-            ConnectionCheck();
-            FlushSocketBuffer();
-            XboxName.Client.Send(data);
-        }
-
-        /// <summary>
-        /// Sends binary data of specified length to the xbox.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="length"></param>
-        public void SendBinaryData(byte[] data, int length)
-        {
-            ConnectionCheck();
-            FlushSocketBuffer();
-            XboxName.Client.Send(data, length, SocketFlags.None);
-        }
-
-        /// <summary>
-        /// Receives all available binary data sent from the xbox.
-        /// </summary>
-        /// <returns></returns>
-        public byte[] ReceiveBinaryData()
-        {
-            if (XboxName.Available > 0)
-            {
-                byte[] binData = new byte[XboxName.Available];
-                XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
-                return binData;
-            }
-            else return null;
-        }
-
-        /// <summary>
-        /// Receives binary data of specified size sent from the xbox.
-        /// </summary>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public byte[] ReceiveBinaryData(int size)
-        {
-            Wait(size);
-            byte[] binData = new byte[size];
-            XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
-            return binData;
-        }
-
-        /// <summary>
-        /// Receives binary data of specified size sent from the xbox.
-        /// </summary>
-        /// <param name="data"></param>
-        public void ReceiveBinaryData(byte[] data)
-        {
-            Wait(data.Length);
-            XboxName.Client.Receive(data, data.Length, SocketFlags.None);
-        }
-
-        /// <summary>
-        /// Receives binary data of specified size sent from the xbox.
-        /// </summary>
-        /// <param name="data"></param>
-        public void ReceiveBinaryData(byte[] data, int offset, int size)
-        {
-            Wait(size);
-            XboxName.Client.Receive(data, offset, size, SocketFlags.None);
-        }
-        #endregion
         #region Bool {Get; Set;}
         public bool SetBool(uint Address) { return GetMemory(Address, 1)[0] != 0; }
 
@@ -159,7 +86,6 @@ namespace XDevkit
             }
             else
             {
-                Console.WriteLine(Connection_Error);
                 return 0;
             }
         }
@@ -211,6 +137,79 @@ namespace XDevkit
             }
             ReverseBytes(numArray, 4);
             SetMemory(Address, numArray);
+        }
+        #endregion
+
+        #region BinaryData
+        /// <summary>
+        /// Sends binary data to the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        public void SendBinaryData(byte[] data)
+        {
+            ConnectionCheck();
+            FlushSocketBuffer();
+            XboxName.Client.Send(data);
+        }
+
+        /// <summary>
+        /// Sends binary data of specified length to the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="length"></param>
+        public void SendBinaryData(byte[] data, int length)
+        {
+            ConnectionCheck();
+            FlushSocketBuffer();
+            XboxName.Client.Send(data, length, SocketFlags.None);
+        }
+
+        /// <summary>
+        /// Receives all available binary data sent from the xbox.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ReceiveBinaryData()
+        {
+            if (XboxName.Available > 0)
+            {
+                byte[] binData = new byte[XboxName.Available];
+                XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+                return binData;
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Receives binary data of specified size sent from the xbox.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public byte[] ReceiveBinaryData(int size)
+        {
+            Wait(size);
+            byte[] binData = new byte[size];
+            XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+            return binData;
+        }
+
+        /// <summary>
+        /// Receives binary data of specified size sent from the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        public void ReceiveBinaryData(byte[] data)
+        {
+            Wait(data.Length);
+            XboxName.Client.Receive(data, data.Length, SocketFlags.None);
+        }
+
+        /// <summary>
+        /// Receives binary data of specified size sent from the xbox.
+        /// </summary>
+        /// <param name="data"></param>
+        public void ReceiveBinaryData(byte[] data, int offset, int size)
+        {
+            Wait(size);
+            XboxName.Client.Receive(data, offset, size, SocketFlags.None);
         }
         #endregion
 
@@ -566,6 +565,6 @@ namespace XDevkit
         }
         #endregion
 
-        #endregion
+   
     }
 }

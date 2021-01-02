@@ -8,38 +8,20 @@ namespace XDevkit
 {
     public static class Functions
     {
-        public static byte[] HexStringToBytes(string hexString)
+        private static string DateToHex(DateTime theDate)
         {
-            List<byte> list = new List<byte>();
-            for (int i = 0; i < hexString.Length; i += 2)
+            string isoDate = theDate.ToString("yyyyMMddHHmmss");
+
+            string resultString = string.Empty;
+
+            for (int i = 0; i < isoDate.Length; i++)    // Amended
             {
-                if (hexString.Length > (i + 1))
-                {
-                    list.Add(byte.Parse(hexString[i] + hexString[i + 1].ToString(), NumberStyles.HexNumber));
-                }
+                int n = char.ConvertToUtf32(isoDate, i);
+                string hs = n.ToString("x");
+                resultString += hs;
+
             }
-            return list.ToArray();
-        }
-        public static bool IsAllDigits(string s)
-        {
-            foreach (char c in s)
-            {
-                if (!char.IsDigit(c))
-                    return false;
-            }
-            return true;
-        }
-        public static byte[] WideChar(string text)
-        {
-            byte[] numArray = new byte[text.Length * 2 + 2];
-            int index = 1;
-            numArray[0] = 0;
-            foreach (char ch in text)
-            {
-                numArray[index] = System.Convert.ToByte(ch);
-                index += 2;
-            }
-            return numArray;
+            return resultString;
         }
         private static byte[] getData(long[] argument)
         {
@@ -64,42 +46,7 @@ namespace XDevkit
                 numArray[index] = (float)arr[index];
             return numArray;
         }
-        public static string BytesToHexString(byte[] data)
-        {
-            string str = "";
-            int index = 0;
-            while (index < data.Length)
-            {
-                string str2 = data[index].ToString("X");
-                while (true)
-                {
-                    if (str2.Length == 2)
-                    {
-                        str = str + str2;
-                        index++;
-                        break;
-                    }
-                    str2 = "0" + str2;
-                }
-            }
-            return str;
-        }
-        public static byte[] ToWCHAR(this string String)
-        {
-            return WCHAR(String);
-        }
-        public static byte[] WCHAR(string String)
-        {
-            byte[] numArray = new byte[String.Length * 2 + 2];
-            int num = 1;
-            string str = String;
-            for (int i = 0; i < str.Length; i++)
-            {
-                numArray[num] = (byte)str[i];
-                num += 2;
-            }
-            return numArray;
-        }
+
         internal static ulong ConvertToUInt64(object o)
         {
             if (o is bool)
@@ -149,6 +96,63 @@ namespace XDevkit
             return (ulong)BitConverter.DoubleToInt64Bits((double)o);
         }
 
+        public static string ByteArrayToString(byte[] bytes)
+        {
+            var text = string.Empty;
+
+            foreach (byte t in bytes)
+            {
+                text += String.Format("{0,0:X2}", t);
+            }
+
+            return text;
+        }
+        public static string BytesToHexString(byte[] data)
+        {
+            string str = string.Empty;
+            int index = 0;
+            while (index < data.Length)
+            {
+                string str2 = data[index].ToString("X");
+                while (true)
+                {
+                    if (str2.Length == 2)
+                    {
+                        str = str + str2;
+                        index++;
+                        break;
+                    }
+                    str2 = "0" + str2;
+                }
+            }
+            return str;
+        }
+
+        public static string BytesToString(byte[] data) =>
+            RemoveWhiteSpacingFromString(Encoding.ASCII.GetString(data));
+        #region byte to sbyte to byte
+        /// <summary>
+        /// Converts a unsigned byte to a signed one
+        /// </summary>
+        /// <param name="b"> byte </param>
+        /// <returns>sbyte</returns>
+        public static sbyte ByteToSByte(byte b)
+        {
+            int signed = b - ((b & 0x80) << 1);
+            return (sbyte)signed;
+        }
+        #endregion
+
+        public static int CalculatePadding(int integer, int interval) =>
+            (interval - (integer % interval));
+
+        public static uint Convert(string value)
+        {
+            if (value.Contains("0x"))
+                return System.Convert.ToUInt32(value.Substring(2), 16);
+            return System.Convert.ToUInt32(value, 16);
+        }
+
         public static string ConvertHexToString(string hexInput, Encoding encoding)
         {
             int numberChars = hexInput.Length;
@@ -159,44 +163,12 @@ namespace XDevkit
             }
             return encoding.GetString(bytes);
         }
-        public static byte[] IntArrayToByte(int[] iArray)
+
+        public static int ConvertSigned(string value)
         {
-            byte[] bytes = new byte[iArray.Length * 4];
-            int num = 0;
-            int num1 = 0;
-            while (num < iArray.Length)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    bytes[num1 + i] = BitConverter.GetBytes(iArray[num])[i];
-                }
-                num++;
-                num1 += 4;
-            }
-            return bytes;
-        }
-        public static string ToHexString(this string String)//help it depend on it's own
-        {
-            string str = string.Empty;
-            string str1 = String;
-            for (int i = 0; i < str1.Length; i++)
-            {
-                byte num = (byte)str1[i];
-                str = string.Concat(str, num.ToString("X2"));
-            }
-            return str;
-        }
-        /// <summary>
-        /// Turn hex string to byte array
-        /// </summary>
-        /// <param name="text">The hex string</param>
-        public static byte[] StringToByteArray(String hex)
-        {
-            int NumberChars = hex.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
-                bytes[i / 2] = System.Convert.ToByte(hex.Substring(i, 2), 16);
-            return bytes;
+            if (value.Contains("0x"))
+                return System.Convert.ToInt32(value.Substring(2), 16);
+            return System.Convert.ToInt32(value, 16);
         }
 
 
@@ -210,23 +182,6 @@ namespace XDevkit
             }
             return sbBytes.ToString();
         }
-        private static string DateToHex(DateTime theDate)
-        {
-            string isoDate = theDate.ToString("yyyyMMddHHmmss");
-
-            string resultString = string.Empty;
-
-            for (int i = 0; i < isoDate.Length; i++)    // Amended
-            {
-                int n = char.ConvertToUtf32(isoDate, i);
-                string hs = n.ToString("x");
-                resultString += hs;
-
-            }
-            return resultString;
-        }
-        public static int UIntToInt(uint Value) =>
-    BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
         public static string CovertHexTime(string hexDate)
         {
             hexDate = DateToHex(DateTime.Now);
@@ -247,101 +202,6 @@ namespace XDevkit
 
             return DateTime.ParseExact(sDate, "yyyyMMddHHmmss", provider).ToString();
         }
-        /// <summary>Verifies if the given string is hex</summary>
-        /// <param name="value">The string value to check</param>
-        /// <returns>True if its hex and false if it isn't.</returns>
-        public static bool IsHex(string value)
-        {
-            if (value.Length % 2 != 0) return false;
-            //^ - Begin the match at the beginning of the line.
-            //$ - End the match at the end of the line.
-            return System.Text.RegularExpressions.Regex.IsMatch(value, @"\A\b[0-9a-fA-F]+\b\Z");
-        }
-
-        /// <summary>Convert Byte Array to String Hex</summary>
-        /// <param name="value">The byte array</param>
-        /// <returns>Returns an hex string value</returns>
-        public static string ToHexString(byte[] value)
-        {
-            try
-            {
-                return BitConverter.ToString(value).Replace("-", "");
-            }
-            catch (Exception exception)
-            {
-                throw new Exception(exception.Message);
-            }
-        }
-
-        public static uint Convert(string value)
-        {
-            if (value.Contains("0x"))
-                return System.Convert.ToUInt32(value.Substring(2), 16);
-            return System.Convert.ToUInt32(value, 16);
-        }
-
-        public static int ConvertSigned(string value)
-        {
-            if (value.Contains("0x"))
-                return System.Convert.ToInt32(value.Substring(2), 16);
-            return System.Convert.ToInt32(value, 16);
-        }
-        public static string ByteArrayToString(byte[] bytes)
-        {
-            var text = "";
-
-            foreach (byte t in bytes)
-            {
-                text += String.Format("{0,0:X2}", t);
-            }
-
-            return text;
-        }
-
-        /// <summary>Converts Unsigned Integer 32 to 4 Byte array</summary>
-        /// <param name="value">The value to be converted</param>
-        public static Byte[] UInt32ToBytes(UInt32 value)
-        {
-            var buffer = new Byte[4];
-            buffer[3] = (Byte)(value & 0xFF);
-            buffer[2] = (Byte)((value >> 8) & 0xFF);
-            buffer[1] = (Byte)((value >> 16) & 0xFF);
-            buffer[0] = (Byte)((value >> 24) & 0xFF);
-            return buffer;
-        }
-
-        /// <summary>Converts a Hex string to bytes</summary>
-        /// <param name="input">Is the String input</param>
-        public static byte[] HexToBytes(String input)
-        {
-            input = input.Replace(" ", "");
-            input = input.Replace("-", "");
-            input = input.Replace("0x", "");
-            input = input.Replace("0X", "");
-            if ((input.Length % 2) != 0)
-                input = "0" + input;
-            var output = new byte[(input.Length / 2)];
-
-            try
-            {
-                int index;
-                for (index = 0; index < output.Length; index++)
-                {
-                    output[index] = System.Convert.ToByte(input.Substring((index * 2), 2), 16);
-                }
-                return output;
-            }
-            catch
-            {
-                throw new Exception("Invalid byte Input");
-            }
-        }
-
-        public static string BytesToString(byte[] data) =>
-            RemoveWhiteSpacingFromString(Encoding.ASCII.GetString(data));
-
-        public static int CalculatePadding(int integer, int interval) =>
-            (interval - (integer % interval));
 
         public static void DeleteBytes(string filePath, int startOffset, int size)
         {
@@ -366,6 +226,45 @@ namespace XDevkit
         {
             br.BaseStream.Position = offset;
             return br.ReadBytes(size);
+        }
+        public static byte[] HexStringToBytes(string hexString)
+        {
+            List<byte> list = new List<byte>();
+            for (int i = 0; i < hexString.Length; i += 2)
+            {
+                if (hexString.Length > (i + 1))
+                {
+                    list.Add(byte.Parse(hexString[i] + hexString[i + 1].ToString(), NumberStyles.HexNumber));
+                }
+            }
+            return list.ToArray();
+        }
+
+        /// <summary>Converts a Hex string to bytes</summary>
+        /// <param name="input">Is the String input</param>
+        public static byte[] HexToBytes(String input)
+        {
+            input = input.Replace(" ", string.Empty);
+            input = input.Replace("-", string.Empty);
+            input = input.Replace("0x", string.Empty);
+            input = input.Replace("0X", string.Empty);
+            if ((input.Length % 2) != 0)
+                input = "0" + input;
+            var output = new byte[(input.Length / 2)];
+
+            try
+            {
+                int index;
+                for (index = 0; index < output.Length; index++)
+                {
+                    output[index] = System.Convert.ToByte(input.Substring((index * 2), 2), 16);
+                }
+                return output;
+            }
+            catch
+            {
+                throw new Exception("Invalid byte Input");
+            }
         }
 
 
@@ -408,9 +307,56 @@ namespace XDevkit
             input.Close();
             writer.Close();
         }
+        public static byte[] IntArrayToByte(int[] iArray)
+        {
+            byte[] bytes = new byte[iArray.Length * 4];
+            int num = 0;
+            int num1 = 0;
+            while (num < iArray.Length)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    bytes[num1 + i] = BitConverter.GetBytes(iArray[num])[i];
+                }
+                num++;
+                num1 += 4;
+            }
+            return bytes;
+        }
+        public static bool IsAllDigits(string s)
+        {
+            foreach (char c in s)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+            return true;
+        }
+        /// <summary>Verifies if the given string is hex</summary>
+        /// <param name="value">The string value to check</param>
+        /// <returns>True if its hex and false if it isn't.</returns>
+        public static bool IsHex(string value)
+        {
+            if (value.Length % 2 != 0) return false;
+            //^ - Begin the match at the beginning of the line.
+            //$ - End the match at the end of the line.
+            return System.Text.RegularExpressions.Regex.IsMatch(value, @"\A\b[0-9a-fA-F]+\b\Z");
+        }
 
         public static string RemoveWhiteSpacingFromString(string str) =>
-            str.Replace("\0", "");
+            str.Replace("\0", string.Empty);
+        /// <summary>
+        /// Turn hex string to byte array
+        /// </summary>
+        /// <param name="text">The hex string</param>
+        public static byte[] StringToByteArray(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = System.Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
 
         public static byte[] StringToBytes(string data) =>
             Encoding.ASCII.GetBytes(data);
@@ -441,6 +387,50 @@ namespace XDevkit
         {
             Array.Reverse(data);
         }
+        public static string ToHexString(this string String)//help it depend on it's own
+        {
+            string str = string.Empty;
+            string str1 = String;
+            for (int i = 0; i < str1.Length; i++)
+            {
+                byte num = (byte)str1[i];
+                str = string.Concat(str, num.ToString("X2"));
+            }
+            return str;
+        }
+
+        /// <summary>Convert Byte Array to String Hex</summary>
+        /// <param name="value">The byte array</param>
+        /// <returns>Returns an hex string value</returns>
+        public static string ToHexString(byte[] value)
+        {
+            try
+            {
+                return BitConverter.ToString(value).Replace("-", string.Empty);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(exception.Message);
+            }
+        }
+        public static byte[] ToWCHAR(this string String)
+        {
+            return WCHAR(String);
+        }
+
+        /// <summary>Converts Unsigned Integer 32 to 4 Byte array</summary>
+        /// <param name="value">The value to be converted</param>
+        public static Byte[] UInt32ToBytes(UInt32 value)
+        {
+            var buffer = new Byte[4];
+            buffer[3] = (Byte)(value & 0xFF);
+            buffer[2] = (Byte)((value >> 8) & 0xFF);
+            buffer[1] = (Byte)((value >> 16) & 0xFF);
+            buffer[0] = (Byte)((value >> 24) & 0xFF);
+            return buffer;
+        }
+        public static int UIntToInt(uint Value) =>
+    BitConverter.ToInt32(BitConverter.GetBytes(Value), 0);
 
         public static byte[] ValueToBytes(byte data) =>
             new byte[] { data };
@@ -512,18 +502,31 @@ namespace XDevkit
 
         public static byte[] ValueToBytes(string data, bool unicode) =>
             (!unicode ? StringToBytes(data) : StringToUnicodeBytes(data));
-        #region byte to sbyte to byte
-        /// <summary>
-        /// Converts a unsigned byte to a signed one
-        /// </summary>
-        /// <param name="b"> byte </param>
-        /// <returns>sbyte</returns>
-        public static sbyte ByteToSByte(byte b)
+        public static byte[] WCHAR(string String)
         {
-            int signed = b - ((b & 0x80) << 1);
-            return (sbyte)signed;
+            byte[] numArray = new byte[String.Length * 2 + 2];
+            int num = 1;
+            string str = String;
+            for (int i = 0; i < str.Length; i++)
+            {
+                numArray[num] = (byte)str[i];
+                num += 2;
+            }
+            return numArray;
         }
-        #endregion
+        public static byte[] WideChar(string text)
+        {
+            byte[] numArray = new byte[text.Length * 2 + 2];
+            int index = 1;
+            numArray[0] = 0;
+            foreach (char ch in text)
+            {
+                numArray[index] = System.Convert.ToByte(ch);
+                index += 2;
+            }
+            return numArray;
+        }
+
         #region (u)int to byte array to (u)int
         /// <summary>
         /// Converts a Byte array to Int16

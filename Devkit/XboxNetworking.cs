@@ -66,12 +66,6 @@ namespace XDevkit
         }
 
 
-
-
-
-
-
-
         #endregion
 
         #region Networking
@@ -81,30 +75,27 @@ namespace XDevkit
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public int Timeout { get => 5000; set => Timeout = value; }
 
-        private const string Connection_Error = "Console Not Connected";
-        private const string XAMModule = "xam.xex";
         private const string krnlModule = "xboxkrnl.exe";
-
-        public string Name { get; set; }
+        private const string IPS = "192.168.0.";
         public string IPAddress { get; set; }
         [Browsable(false)]
         public static TcpClient XboxName;
         [Browsable(false)]
         public StreamReader Reader;
-        public static string response;
+        public static string Response;
         [Browsable(false)]
         public bool Connected { get; set; }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly string xdkRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
+        private readonly string XDKRegistryPath = @"HKEY_CURRENT_USER\Software\Microsoft\XboxSDK";
         /// <summary>
         /// Gets or sets the last Xbox connection used. (PC Use Only)
         /// </summary>
         [Browsable(false)]
         public string LastConnectionUsed
         {
-            get { return (string)Microsoft.Win32.Registry.GetValue(xdkRegistryPath, "XboxName", string.Empty); }
-            set { Microsoft.Win32.Registry.SetValue(xdkRegistryPath, "XboxName", value); }
+            get { return (string)Microsoft.Win32.Registry.GetValue(XDKRegistryPath, "XboxName", string.Empty); }
+            set { Microsoft.Win32.Registry.SetValue(XDKRegistryPath, "XboxName", value); }
         }
         public object DefaultConsole { get; }
         public uint ConversationTimeout { get; private set; }
@@ -169,10 +160,10 @@ namespace XDevkit
                     if (i < 255)
                     {
                         XboxName = new TcpClient();
-                        if (XboxName.ConnectAsync(IPS() + i, 730).Wait(10))//keep calm just code..
+                        if (XboxName.ConnectAsync(IPS + i, 730).Wait(10))//keep calm just code..
                         {
-                            IPAddress = IPS() + i;
-                            IP.Default["IPAddress"] = IPS() + i;
+                            IPAddress = IPS + i;
+                            IP.Default["IPAddress"] = IPS + i;
                             IP.Default.Save(); // Saves settings in application configuration file
                             Connected = true;
                             on = false;
@@ -195,10 +186,8 @@ namespace XDevkit
             return null;
         }
 
-        public static string IPS()
-        {
-            return "192.168.0.";
-        }
+        
+        
 
         readonly BackgroundWorker FindConsoleBG = new BackgroundWorker();
         /// <summary>
@@ -223,7 +212,7 @@ namespace XDevkit
             }
             catch
             {
-                throw new FailedConnectionException();
+                throw new Exception("Failed To Connect!");
             }
         }
 
@@ -269,28 +258,7 @@ namespace XDevkit
         }
 
 
-        public T Call<T>(string module, int ordinal, params object[] Arguments) where T : struct
-        {
-            return (T)CallArgs(true, TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
-        }
-        private uint TypeToType<T>(bool Array) where T : struct
-        {
-            uint Int = 1;
-            uint String = 2;
-            uint Float = 3;
-            uint Byte = 4;
-            uint IntArray = 5;
-            uint FloatArray = 6;
-            uint ByteArray = 7;
-            uint Uint64 = 8;
-            uint Uint64Array = 9;
-            Type type = typeof(T);
-            if (type == typeof(int) || type == typeof(uint) || (type == typeof(short) || type == typeof(ushort)))
-                return Array ? IntArray : Int;
-            if (type == typeof(string) || type == typeof(char[]))
-                return String;
-            return type == typeof(float) || type == typeof(double) ? (Array ? FloatArray : Float) : (type == typeof(byte) || type == typeof(char) ? (Array ? ByteArray : Byte) : ((type == typeof(ulong) || type == typeof(long)) && Array ? Uint64Array : Uint64));
-        }
+
 
         /// <summary>
         /// Connects Local Tcp Connection From Device To Xbox Console
@@ -303,7 +271,7 @@ namespace XDevkit
             if (XboxNameOrIP == "defualt")
             {
                 XboxName = new TcpClient();
-                if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(5))//wait time for this can be less..
+                if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(5))//wait time for this can't be less..
                 {
                     IPAddress = IP.Default.IPAddress;
                     Console.WriteLine("/Connection - I01/....(" + IPAddress + ")");
@@ -463,7 +431,7 @@ namespace XDevkit
                 }
             }
             else
-                throw new NoConnectionException();
+                throw new Exception("No Connection Detected");
         }
 
         /// <summary>
@@ -538,7 +506,7 @@ namespace XDevkit
                 }
             }
             else
-                throw new NoConnectionException();
+                throw new Exception("No Connection Detected");
         }
 
         /// <summary>
@@ -631,7 +599,7 @@ namespace XDevkit
         {
             try
             {
-                SendTextCommand(Command, out response);
+                SendTextCommand(Command, out Response);
             }
             catch
             {
@@ -663,7 +631,7 @@ namespace XDevkit
                 else
                 {
                     Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection = " + Connected);
-                    Console.WriteLine("Failed to SendTextCommand ==> All Three Checks Failed.. <==");
+                    Console.WriteLine("Failed to SendTextCommand ==> All Checks Failed.. <==");
                 }
 
             }
@@ -673,184 +641,6 @@ namespace XDevkit
             }
         }
 
-        /// <summary>
-        /// Get's Box Id.
-        /// </summary>
-        /// <param name="fileName">File to delete.</param>
-        public string GetBoxID()
-        {
-            FlushSocketBuffer();
-            return SendTextCommand("BOXID").Replace("200- ", string.Empty);
-        }
-
-        /// <summary>
-        /// Turns The Console's Default Neighborhood Icon to any of the following...(black , blue , bluegray , nosidecar
-        /// , white) Also Changes The Type Of Console It Is.
-        /// </summary>
-        /// <param name="Color"></param>
-        public void SetConsoleColor(XboxColor Color)
-        {
-            FlushSocketBuffer();
-            SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
-        }
-
-        /// <summary>
-        /// Get's The Consoles ID.
-        /// </summary>
-        /// <returns></returns>
-        public string GetConsoleID()
-        {
-            FlushSocketBuffer();
-            return SendTextCommand(string.Concat("getconsoleid")).Replace("200- consoleid=", string.Empty);
-        }
-
-        /// <summary>
-        /// Gets the debug Monitor version Number.
-        /// </summary>
-        public string GetDMVersion()
-        {
-            FlushSocketBuffer();
-            return SendTextCommand("dmversion").Replace("200- ", string.Empty);
-
-        }
-
-        /// <summary>
-        /// Get's Consoles System Information.
-        /// </summary>
-        /// <param name="Type"></param>
-        /// <returns>Type Is The System Type Of Information you Want To Retrieve</returns>
-        public string GetSystemInfo(Info Type)
-        {
-            if (XboxName == null)
-            {
-                Console.WriteLine("Console Is Not Connnected...");
-            }
-            else
-            {
-                Console.WriteLine("System Info Came Threw.. (Command Executed == " + Type + " )");
-                switch ((int)Type)
-                {
-                    case (int)Info.HDD:
-                        #region HDD
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                int Start = s.IndexOf("hdd=");
-                                int End = s.IndexOf("type=");
-                                return s.Substring(Start + 4, End - 4);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.Type:
-                        #region Console Type
-                        try
-                        {
-                            return SendTextCommand(string.Concat("consoletype")).Replace("200- ", string.Empty);
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.Platform:
-                        #region Platform
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                int Start = s.IndexOf("type=");
-                                int End = s.IndexOf(" p");
-                                return s.Substring(Start + 9, End - 1).Substring(Start);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.System:
-                        #region System
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                int Start = s.IndexOf("type=");
-                                int End = s.IndexOf(" p");
-                                return s.Substring(Start + End + 4, End - 4).Substring(Start);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.BaseKrnlVersion:
-                        #region BaseKrnlVersion
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                int Start = s.IndexOf(" krnl=");
-                                int End = s.IndexOf(" ");
-                                return s.Substring(Start - 10, End);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.KrnlVersion:
-                        #region Kernal Version
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                int Start = s.IndexOf(" krnl=");
-                                int End = s.IndexOf(" ");
-                                return s.Substring(Start + 6, End);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                    case (int)Info.XDKVersion:
-                        #region XDK Version
-                        try
-                        {
-                            SendTextCommand(string.Concat("systeminfo"), out response);
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
-                            foreach (string s in Info)
-                            {
-                                return s.Substring(s.IndexOf("xdk=") + 4, 12);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                        #endregion
-                        break;
-                }
-            }
-            return string.Empty;
-        }
         #endregion
     }
 }

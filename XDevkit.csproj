@@ -55,20 +55,15 @@
     <Compile Include="Controls\xex_value.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\xex_value_file.cs">
-      <SubType>UserControl</SubType>
+    <Compile Include="Controls\xex_value.designer.cs">
+      <DependentUpon>xex_value.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\xex_value_file.designer.cs">
-      <DependentUpon>xex_value_file.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Functions\ApiException.cs" />
-    <Compile Include="Functions\ContentStorage.cs" />
+    <Compile Include="Functions\IO\ContentStorage.cs" />
     <Compile Include="Devkit\Filesystem.cs" />
     <Compile Include="Functions\Functions.cs" />
     <Compile Include="Functions\Items.cs" />
     <Compile Include="Devkit\XboxAutomation.cs" />
-    <Compile Include="Functions\RWStream.cs" />
-    <Compile Include="Functions\Types.cs" />
+    <Compile Include="Functions\IO\RWStream.cs" />
     <Compile Include="Devkit\XboxEnums.cs" />
     <Compile Include="Devkit\XboxExtention.cs" />
     <Compile Include="Devkit\XboxStructs.cs" />
@@ -91,6 +86,7 @@
     <Compile Include="Devkit\XboxFeatures.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\.editorconfig" />
     <None Include="Properties\app.config" />
     <None Include="Properties\packages.config" />
     <None Include="Properties\Settings.settings">
@@ -101,6 +97,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\Fan_Slider.resx">
       <DependentUpon>Fan_Slider.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\xex_value.resx">
+      <DependentUpon>xex_value.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

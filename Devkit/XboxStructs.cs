@@ -17,7 +17,7 @@
 
         public int RightThumbY;
     }
-    public struct wChar
+    public struct WChar
     {
         public string Text;
     }
