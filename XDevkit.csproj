@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ByteArray.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ByteArray.Designer.cs">
+      <DependentUpon>ByteArray.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MemDump.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MemDump.Designer.cs">
+      <DependentUpon>MemDump.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\xex_slider.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -61,17 +74,28 @@
     <Compile Include="Controls\Fan_Control.Designer.cs">
       <DependentUpon>Fan_Control.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\IO\ContentStorage.cs" />
     <Compile Include="Devkit\Filesystem.cs" />
-    <Compile Include="Functions\Functions.cs" />
-    <Compile Include="Functions\Items.cs" />
+    <Compile Include="Devkit\Xbox.Memory.cs" />
     <Compile Include="Devkit\XboxAutomation.cs" />
-    <Compile Include="Functions\IO\RWStream.cs" />
     <Compile Include="Devkit\XboxEnums.cs" />
     <Compile Include="Devkit\XboxExtention.cs" />
+    <Compile Include="Devkit\XboxFeatures.cs" />
+    <Compile Include="Devkit\XboxMemoryStream.cs" />
+    <Compile Include="Devkit\XboxNetworking.cs" />
     <Compile Include="Devkit\XboxStructs.cs" />
+    <Compile Include="Devkit\XboxTypes.cs" />
     <Compile Include="Devkit\XMessageBoxUI.cs" />
     <Compile Include="Devkit\XNotify.cs" />
+    <Compile Include="Functions\Bitmaps\BitmapFunctions.cs" />
+    <Compile Include="Functions\Bitmaps\BitmapInfo.cs" />
+    <Compile Include="Functions\Bitmaps\BitmapSubmap.cs" />
+    <Compile Include="Functions\Bitmaps\DDS.cs" />
+    <Compile Include="Functions\Bitmaps\DXTDecoder.cs" />
+    <Compile Include="Functions\Bitmaps\TextureFormat.cs" />
+    <Compile Include="Functions\IO\ContentStorage.cs" />
+    <Compile Include="Functions\Functions.cs" />
+    <Compile Include="Functions\Items.cs" />
+    <Compile Include="Functions\IO\RWStream.cs" />
     <Compile Include="Functions\IO\EndianIO.cs" />
     <Compile Include="Functions\IO\EndianReader.cs" />
     <Compile Include="Functions\IO\EndianType.cs" />
@@ -83,10 +107,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Xbox.cs" />
-    <Compile Include="Devkit\XboxTypes.cs" />
-    <Compile Include="Devkit\XboxNetworking.cs" />
-    <Compile Include="Devkit\XboxMemoryEdits.cs" />
-    <Compile Include="Devkit\XboxFeatures.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\.editorconfig" />
@@ -99,6 +119,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About XDevkit.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\ByteArray.resx">
+      <DependentUpon>ByteArray.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MemDump.resx">
+      <DependentUpon>MemDump.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\xex_value.resx">
+      <DependentUpon>xex_value.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

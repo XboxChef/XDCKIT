@@ -8,6 +8,12 @@
         XMB_WARNINGICON,
         XMB_ALERTICON
     }
+    public enum XboxConsoleFeatures
+    {
+        Debugging = 1,
+        SecondaryNIC = 2,
+        GB_RAM = 4
+    }
     /// <summary>
     /// Xbox response type.
     /// </summary>

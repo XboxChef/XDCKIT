@@ -24,10 +24,10 @@ namespace XDevkit
         }
         public void pokeXbox(uint offset, string poketype, string ammount)
         {
-            //if (!checkBox1.Checked)
-            //{
-            //    ammount = int.Parse(ammount).ToString("X");
-            //}
+            if (!checkBox1.Checked)
+            {
+                ammount = int.Parse(ammount).ToString("X");
+            }
             try
             {
                 EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
@@ -85,27 +85,27 @@ namespace XDevkit
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            pokeXbox(Convert.ToUInt32(offset, 0x10), label2.Text, textBox1.Text);
+            pokeXbox(Convert.ToUInt32(offset, 0x10), Type.Text, Value.Text);
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(textBox1.Text);
+            Clipboard.SetText(Value.Text);
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(offset);
+            Clipboard.SetText(Address.Text);
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            textBox1.Text = Clipboard.GetText();
+            Value.Text = Clipboard.GetText();
         }
 
         private void revertValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            textBox1.Text = origvalue;
+            Value.Text = origvalue;
         }
 
         public void setvalues(string o, string v, string t, Dictionary<string, Items> itmlst)
@@ -116,9 +116,25 @@ namespace XDevkit
             {
                 o = itmlst["0x" + o].Name;
             }
-            label1.Text = o;
-            textBox1.Text = v;
-            label2.Text = t;
+            Address.Text = o;
+            Value.Text = v;
+            Type.Text = t;
+        }
+        public void set(string ADDR, string value, string type)
+        {
+            Address.Text = ADDR;
+            Value.Text = value;
+            Type.Text = type;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            //if checked it will set to 99999999 else change it to 1 then add a revert option
         }
     }
 }

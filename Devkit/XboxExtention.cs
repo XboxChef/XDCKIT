@@ -8,7 +8,7 @@ namespace XDevkit
 {
     public static class XboxExtention
     {
-        public static Xbox Con;
+        public static Xbox Con = new Xbox();
         private static HashSet<Type> ValidReturnTypes { get; set; }
         public static void CallVoid(string module, int ordinal, params object[] Arguments)
         {

@@ -8,11 +8,9 @@ namespace XDevkit
     {
         public static Xbox XConsole;
 
-        public string Name { get; set; }
-
         public FileSystem()
         {
-
+            XConsole = new Xbox();
         }
         #region XboxFile System
         /// <summary>

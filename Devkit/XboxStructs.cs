@@ -1,6 +1,6 @@
 ﻿namespace XDevkit
 {
-    #region Xbox Structs
+
     public struct XBOX_AUTOMATION_GAMEPAD
     {
         public XboxAutomationButtonFlags Buttons;
@@ -161,5 +161,4 @@
     {
         public float x, y, z;
     }
-    #endregion
 }

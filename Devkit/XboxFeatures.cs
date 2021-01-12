@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace XDevkit
@@ -20,7 +22,120 @@ namespace XDevkit
     {
         private const string XAMModule = "xam.xex";
         #region Features
+        public string GetAvatarURL(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<img src=\"(.*)\" alt=\"(.*)\" title=\"(.*)\" class=\"avatarBig\" />";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value.Split(new char[]
+            {
+                '"'
+            })[0];
+        }
 
+        public string GetGamerPicture(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2) 
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<img src=\"(.*)\" alt=\"(.*)\" title=\"(.*)\" class=\"avatarTile\"/>";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value.Split(new char[]
+            {
+                '"'
+            })[0];
+        }
+
+        public string TotalGames(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<p class=\"\">Total Games Played: (.*)</p>";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value;
+        }
+
+        public string GamesCompleted(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<p class=\"\">Games Completed: (.*)</p>";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value;
+        }
+
+        public string AverageCompleted(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<p class=\"\">Average Completion: (.*)</p>";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value;
+        }
+
+        public string LastSeen(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "Last seen (.*)";
+            return Regex.Matches(input, pattern)[0].Groups[1].Value;
+        }
+
+        public string Gamerscore(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<p class=\"rightGS\"><img src=\"/resources/images/gamerscore_icon.png\" alt=\"(.*)\" title=\"(.*)\">(.*)</p>";
+            return Regex.Matches(input, pattern)[0].Groups[3].Value.Replace(" ", string.Empty);
+        }
+
+        public List<string> GetRecentGames(string gamertag)
+        {
+            bool flag = gamertag.Contains(" ");
+            bool flag2 = flag;
+            if (flag2)
+            {
+                gamertag.Replace(" ", "+");
+            }
+            List<string> list = new List<string>();
+            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
+            string pattern = "<p class=\"gameName\"><a href=\"(.*)\">(.*)</a></p>";
+            foreach (Match match in new Regex(pattern).Matches(input))
+            {
+                list.Add(match.Groups[2].Value);
+            }
+            return list;
+        }
 
 
         public void NOP(uint address)
@@ -454,9 +569,9 @@ namespace XDevkit
         public uint GetTemperature(TemperatureFlag TemperatureType)
         {
             FlushSocketBuffer();
-            object[] jRPCVersion = new object[]
+            object[] Version = new object[]
             { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
-            string str = SendTextCommand(string.Concat(jRPCVersion));
+            string str = SendTextCommand(string.Concat(Version));
             return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
         }
 
@@ -592,13 +707,13 @@ namespace XDevkit
             uint ByteArray = 7;
             uint Uint64 = 8;
             uint Uint64Array = 9;
-            uint JRPCVersion = 2;
+            uint Version = 2;
             if (!XboxExtention.IsValidReturnType(t))
-                throw new Exception("Invalid type " + t.Name + Environment.NewLine + "JRPC only supports: bool, byte, short, int, long, ushort, uint, ulong, float, double");
+                throw new Exception("Invalid type " + t.Name + Environment.NewLine + "supports Only: bool, byte, short, int, long, ushort, uint, ulong, float, double");
             ConnectTimeout = ConversationTimeout = 4000000U;
             object[] objArray1 = new object[13];
             objArray1[0] = "consolefeatures ver=";
-            objArray1[1] = JRPCVersion;
+            objArray1[1] = Version;
             objArray1[2] = " type=";
             objArray1[3] = Type;
             objArray1[4] = SystemThread ? " system" : "";

@@ -14,6 +14,15 @@ namespace XDevkit
     /// </summary>
     public partial class Xbox
     {
+        private static readonly byte[] myBuff = new byte[0x20];
+        private static uint outInt;
+        private static uint uTemp32;
+        private static UInt16 uTemp16;
+        private static UInt64 uTemp64;
+        private static Int16 Temp16;
+        private static Int32 Temp32;
+        private static Int64 Temp64;
+
         #region Bool {Get; Set;}
         public bool SetBool(uint Address) { return GetMemory(Address, 1)[0] != 0; }
 
@@ -137,6 +146,12 @@ namespace XDevkit
             }
             ReverseBytes(numArray, 4);
             SetMemory(Address, numArray);
+        }
+        public void WriteFloat(uint Offset, float input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 4);
+            SetMemory(Offset, 4, myBuff, out outInt);
         }
         #endregion
 
@@ -565,6 +580,272 @@ namespace XDevkit
         }
         #endregion
 
-   
+
+        public sbyte ReadSByte(uint Offset)
+        {
+            GetMemory(Offset, 1, myBuff, out outInt);
+            return (sbyte)myBuff[0];
+        }
+        public bool ReadBool(uint Offset)
+        {
+            GetMemory(Offset, 1, myBuff, out outInt);
+            return myBuff[0] != 0;
+        }
+
+        public short ReadInt16(uint Offset)
+        {
+            GetMemory(Offset, 2, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 2);
+            return BitConverter.ToInt16(myBuff, 0);
+        }
+
+        public int ReadInt32(uint Offset)
+        {
+            GetMemory(Offset, 4, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 4);
+            return BitConverter.ToInt32(myBuff, 0);
+        }
+
+        public long ReadInt64(uint Offset)
+        {
+            GetMemory(Offset, 8, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 8);
+            return BitConverter.ToInt64(myBuff, 0);
+        }
+
+        public byte ReadByte(uint Offset)
+        {
+            GetMemory(Offset, 1, myBuff, out outInt);
+            return myBuff[0];
+        }
+
+        public ushort ReadUInt16(uint Offset)
+        {
+            GetMemory(Offset, 2, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 2);
+            return BitConverter.ToUInt16(myBuff, 0);
+        }
+
+        public uint ReadUInt32(uint Offset)
+        {
+            GetMemory(Offset, 4, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 4);
+            return BitConverter.ToUInt32(myBuff, 0);
+        }
+
+        public ulong ReadUInt64(uint Offset)
+        {
+            GetMemory(Offset, 8, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 8);
+            return BitConverter.ToUInt64(myBuff, 0);
+        }
+
+        public float ReadFloat(uint Offset)
+        {
+            GetMemory(Offset, 4, myBuff, out outInt);
+            Array.Reverse(myBuff, 0, 4);
+            return BitConverter.ToSingle(myBuff, 0);
+        }
+
+        public string ReadString(uint Offset, byte[] readBuffer)
+        {
+            GetMemory(Offset, (uint)readBuffer.Length, readBuffer, out outInt);
+            return new string(System.Text.Encoding.ASCII.GetChars(readBuffer)).Split('\0')[0];
+        }
+
+        public string ReadString(uint Offset)
+        {
+            return ReadString(Offset, myBuff);
+        }
+
+        public void WriteSByte(uint Offset, sbyte input)
+        {
+            myBuff[0] = (byte)input;
+            SetMemory(Offset, 1, myBuff, out outInt);
+        }
+
+        public void WriteBool(uint Offset, bool input)
+        {
+            myBuff[0] = input ? (byte)1 : (byte)0;
+            SetMemory(Offset, 1, myBuff, out outInt);
+        }
+
+
+
+        public void WriteInt16(uint Offset, short input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 2);
+            SetMemory(Offset, 2, myBuff, out outInt);
+        }
+
+        public void WriteInt32(uint Offset, int input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 4);
+            SetMemory(Offset, 4, myBuff, out outInt);
+        }
+
+        public void WriteInt64(uint Offset, long input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 8);
+            SetMemory(Offset, 8, myBuff, out outInt);
+        }
+
+        public void WriteByte(uint Offset, byte input)
+        {
+            myBuff[0] = input;
+            SetMemory(Offset, 1, myBuff, out outInt);
+        }
+
+        public void WriteUInt16(uint Offset, ushort input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 2);
+            SetMemory(Offset, 2, myBuff, out outInt);
+        }
+
+        public void WriteUInt32(uint Offset, uint input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 4);
+            SetMemory(Offset, 4, myBuff, out outInt);
+        }
+
+        public void WriteUInt64(uint Offset, ulong input)
+        {
+            BitConverter.GetBytes(input).CopyTo(myBuff, 0);
+            Array.Reverse(myBuff, 0, 8);
+            SetMemory(Offset, 8, myBuff, out outInt);
+        }
+
+
+        public void XOR_Uint16(uint Offset, ushort input)
+        {
+            uTemp16 = ReadUInt16(Offset);
+            uTemp16 ^= input;
+            WriteUInt16(Offset, input);
+        }
+
+        public void XOR_UInt32(uint Offset, uint input)
+        {
+            uTemp32 = ReadUInt32(Offset);
+            uTemp32 ^= input;
+            WriteUInt32(Offset, uTemp32);
+        }
+
+        public void XOR_UInt64(uint Offset, ulong input)
+        {
+            uTemp64 = ReadUInt64(Offset);
+            uTemp64 ^= input;
+            WriteUInt64(Offset, uTemp64);
+        }
+
+        public void XOR_Int16(uint Offset, Int16 input)
+        {
+            Temp16 = ReadInt16(Offset);
+            Temp16 ^= input;
+            WriteInt16(Offset, Temp16);
+        }
+
+        public void XOR_Int32(uint Offset, int input)
+        {
+            Temp32 = ReadInt32(Offset);
+            Temp32 ^= input;
+            WriteInt32(Offset, Temp32);
+        }
+
+        public void XOR_Int64(uint Offset, long input)
+        {
+            Temp64 = ReadInt64(Offset);
+            Temp64 ^= input;
+            WriteInt64(Offset, Temp64);
+        }
+
+        public void AND_UInt16(uint Offset, ushort input)
+        {
+            uTemp16 = ReadUInt16(Offset);
+            uTemp16 &= input;
+            WriteUInt16(Offset, uTemp16);
+        }
+
+        public void AND_UInt32(uint Offset, uint input)
+        {
+            uTemp32 = ReadUInt32(Offset);
+            uTemp32 &= input;
+            WriteUInt32(Offset, uTemp32);
+        }
+
+        public void AND_UInt64(uint Offset, ulong input)
+        {
+            uTemp64 = ReadUInt64(Offset);
+            uTemp64 &= input;
+            WriteUInt64(Offset, uTemp64);
+        }
+
+        public void AND_Int16(uint Offset, short input)
+        {
+            Temp16 = ReadInt16(Offset);
+            Temp16 &= input;
+            WriteInt16(Offset, Temp16);
+        }
+
+        public void AND_Int32(uint Offset, int input)
+        {
+            Temp32 = ReadInt32(Offset);
+            Temp32 &= input;
+            WriteInt32(Offset, Temp32);
+        }
+
+        public void AND_Int64(uint Offset, long input)
+        {
+            Temp64 = ReadInt64(Offset);
+            Temp64 &= input;
+            WriteInt64(Offset, Temp64);
+        }
+
+        public void OR_UInt16(uint Offset, ushort input)
+        {
+            uTemp16 = ReadUInt16(Offset);
+            uTemp16 |= input;
+            WriteUInt16(Offset, uTemp16);
+        }
+
+        public void OR_UInt32(uint Offset, uint input)
+        {
+            uTemp32 = ReadUInt32(Offset);
+            uTemp32 |= input;
+            WriteUInt32(Offset, uTemp32);
+        }
+
+        public void OR_UInt64(uint Offset, ulong input)
+        {
+            uTemp64 = ReadUInt64(Offset);
+            uTemp64 |= input;
+            WriteUInt64(Offset, uTemp64);
+        }
+
+        public void OR_Int16(uint Offset, short input)
+        {
+            Temp16 = ReadInt16(Offset);
+            Temp16 |= input;
+            WriteInt16(Offset, Temp16);
+        }
+
+        public void OR_Int32(uint Offset, int input)
+        {
+            Temp32 = ReadInt32(Offset);
+            Temp32 |= input;
+            WriteInt32(Offset, Temp32);
+        }
+
+        public void OR_Int64(uint Offset, long input)
+        {
+            Temp64 = ReadInt64(Offset);
+            Temp64 |= input;
+            WriteInt64(Offset, Temp64);
+        }
+
     }
 }

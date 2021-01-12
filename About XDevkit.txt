@@ -23,7 +23,6 @@ No One...
 ___________________________________________________________________________________________________________________________________________________
 Code Sourced From: (Special Thanks For The Devs Who Actually Wrote The Code For These They Have Been The Core Of This Project)
 Yelo.Debug Project
-JRPC Class
 PeekPoker
 Accension Tool
 ___________________________________________________________________________________________________________________________________________________

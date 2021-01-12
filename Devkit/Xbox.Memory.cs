@@ -18,9 +18,43 @@ namespace XDevkit
     /// </summary>
     public partial class Xbox
     {
-        #region MemoryEdits {Get; Set;}
-        #region PeekPoker
-        #region Methods
+
+        /// <summary>
+        /// Determines whether or not the specified address exists in xbox memory.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public bool IsValidAddress(uint address)
+        {
+            SendCommand("getmem addr=0x{0} length=1", Convert.ToString(address, 16));
+            string mem = ReceiveSocketLine();
+            ReceiveSocketLine();
+            return mem != "??";
+        }
+
+        public void SendCommand(string command, params object[] args)
+        {
+            if (XboxName != null)
+            {
+                FlushSocketBuffer();
+
+                try
+                {
+                    XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
+                }
+                catch (Exception /*ex*/)
+                {
+                    Disconnect();
+                    throw new Exception("No Connection Detected");
+                }
+
+               // StatusResponse response = ReceiveStatusResponse();
+
+                //if (response.Success) return response;
+               // else throw new ApiException(response.Full);
+            }
+            else throw new Exception("No Connection Detected");
+        }
 
         /// <summary>
         /// Poke the Memory
@@ -48,11 +82,6 @@ namespace XDevkit
             {
                 throw new Exception(ex.Message);
             }
-            finally
-            {
-                XboxName.Close(); //close connection
-                Connected = false;
-            }
         }
 
         /// <summary>
@@ -65,10 +94,7 @@ namespace XDevkit
         /// <returns>Return the hex string of the value</returns>
         public string Peek(string startDumpAddress, string dumpLength, string memoryAddress, string peekSize)
         {
-            return Peek(Functions.Convert(startDumpAddress),
-                        Functions.Convert(dumpLength),
-                        Functions.Convert(memoryAddress),
-                        Functions.ConvertSigned(peekSize));
+            return Peek(Functions.Convert(startDumpAddress),Functions.Convert(dumpLength),Functions.Convert(memoryAddress),Functions.ConvertSigned(peekSize));
         }
 
         /// <summary>
@@ -87,8 +113,6 @@ namespace XDevkit
 
             if (!CheckConnection())
                 return null; //Call function - If not connected return
-            if (!GetMemory2(startDumpAddress, dumpLength))
-                return null; //call function - If not connected or if somethign wrong return
 
             var readWriter = new RwStream();
             try
@@ -125,14 +149,8 @@ namespace XDevkit
             {
                 throw new Exception(ex.Message);
             }
-            finally
-            {
-                readWriter.Close(true);
-                XboxName.Close(); //close connection
-                Connected = false;
-                ValidConnection = false;
-            }
         }
+
 
         /// <summary>
         /// Find pointer offset
@@ -149,8 +167,6 @@ namespace XDevkit
                 throw new Exception(string.Format("{0} is not a valid Hex string.", pointer));
             if (!CheckConnection())
                 return null; //Call function - If not connected return
-            if (!GetMeMex())
-                return null; //call function - If not connected or if something wrong return
             BindingList<SearchResults> values;
             try
             {
@@ -202,34 +218,8 @@ namespace XDevkit
             {
                 throw new Exception(ex.Message);
             }
-            finally
-            {
-                _readWriter.Close(true);
-                XboxName.Close(); //close connection
-                Connected = false;
-                ValidConnection = false;
-            }
         }
-        #endregion
-        #endregion
-        private bool GetMeMex() { return GetMemory2(_startDumpOffset, DumpLength); }
 
-        private bool GetMemory2(uint Address, uint length)
-        {
-            FlushSocketBuffer();
-            if (ValidConnection)
-                return true;
-            //ADDR=0xDA1D0000 - The start offset in the physical memory I want the dump to start
-            //LENGTH = Length of the dump
-            XboxName.Client
-                .Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR={0} LENGTH={1}\r\n", Address, length)));
-            var response = new byte[1024];
-            XboxName.Client.Receive(response);
-            string reponseString = Encoding.ASCII.GetString(response).Replace("\0", string.Empty);
-            //validate connection
-            ValidConnection = reponseString.Substring(0, 3) == "203";
-            return ValidConnection;
-        }
 
         public void constantMemorySet(uint Address, uint Value)
         { constantMemorySetting(Address, Value, false, 0, false, 0); }
@@ -242,7 +232,7 @@ namespace XDevkit
 
         public void constantMemorySetting(uint Address, uint Value, bool useIfValue, uint IfValue, bool usetitleID, uint TitleID)
         {
-            object[] jRPCVersion = new object[]
+            object[] Version = new object[]
             {
                 "consolefeatures ver=",
                 2,
@@ -270,11 +260,12 @@ namespace XDevkit
                 Functions.UIntToInt(TitleID),
                 "\\\""
             };
-            SendTextCommand(string.Concat(jRPCVersion));
+            SendTextCommand(string.Concat(Version));
         }
 
         public void SetMemory(uint address, string data)
         {
+            FlushSocketBuffer();
             int sent = 0;
             try
             {
@@ -318,6 +309,7 @@ namespace XDevkit
                 throw new Exception("A problem occurred while writing bytes. 0 bytes set");
         }
 
+
         public byte[] GetMemory(uint Address, uint Length)
         {
             FlushSocketBuffer();
@@ -327,7 +319,6 @@ namespace XDevkit
             return numArray;
 
         }
-
         public void GetMemory(uint Address, uint BytesToRead, byte[] Data, out uint BytesRead)
         {
             FlushSocketBuffer();
@@ -380,10 +371,9 @@ namespace XDevkit
         /// <param name="dumpLength">The dump length</param>
         public void Dump(string filename, uint startDumpAddress, uint dumpLength)
         {
+            FlushSocketBuffer();
             if (!CheckConnection())
                 return; //Call function - If not connected return
-            if (!GetMemory2(startDumpAddress, dumpLength))
-                return; //call function - If not connected or if something wrong return
 
             var readWriter = new RwStream(filename);
             try
@@ -411,13 +401,6 @@ namespace XDevkit
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-            }
-            finally
-            {
-                readWriter.Close(false);
-                XboxName.Close(); //close connection
-                Connected = false;
-                ValidConnection = false;
             }
         }
 
@@ -459,6 +442,5 @@ namespace XDevkit
                 }
             }
         }
-        #endregion
     }
 }

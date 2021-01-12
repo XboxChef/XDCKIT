@@ -22,7 +22,6 @@ namespace XDevkit
     {
         #region Property's
         public FileSystem FileSystem { get; }
-        private bool ValidConnection;
         private RwStream _readWriter;
         private uint _startDumpOffset;
         private bool _stopSearch;

@@ -5,7 +5,7 @@ namespace XDevkit
     /// <summary>
     /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
     /// </summary>
-    public class XNotify
+    public class XNotify 
     {
         public static Xbox Con = new Xbox();
         public static void Show(string Message)
