@@ -132,7 +132,7 @@ namespace XDevkit
             {
                 try
                 {
-                    Connect();    // create a new one using the current connection information
+                    Connect("default");    // create a new one using the current connection information
                 }
                 catch
                 {
@@ -260,11 +260,11 @@ namespace XDevkit
         /// Connects Local Tcp Connection From Device To Xbox Console
         /// 
         /// </summary>
-        public bool Connect(string XboxNameOrIP = "defualt")
+        public bool Connect(string XboxNameOrIP = "default")
         {
 
             //User Enter's Nothing
-            if (XboxNameOrIP == "defualt")
+            if (XboxNameOrIP == "default")
             {
                 XboxName = new TcpClient();
                 if (XboxName.ConnectAsync(IP.Default.IPAddress, 730).Wait(5))//wait time for this can't be less..
