@@ -185,8 +185,8 @@ namespace XDevkit
             return null;
         }
 
-        
-        
+
+
 
         readonly BackgroundWorker FindConsoleBG = new BackgroundWorker();
         /// <summary>
@@ -256,9 +256,6 @@ namespace XDevkit
             return false;
         }
 
-
-
-
         /// <summary>
         /// Connects Local Tcp Connection From Device To Xbox Console
         /// 
@@ -321,8 +318,70 @@ namespace XDevkit
                 Console.WriteLine("/Connection - SkyFall/....(" + "Unknown Bug" + ")");
                 return false;
             }
+        }
 
+        /// <summary>
+        /// Connects Local Tcp Connection From Device To Xbox Console
+        /// 
+        /// </summary>
+        public bool Connect(string XboxNameOrIP = "default", int Port = 730)
+        {
 
+            //User Enter's Nothing
+            if (XboxNameOrIP == "default")
+            {
+                XboxName = new TcpClient();
+                if (XboxName.ConnectAsync(IP.Default.IPAddress, Port).Wait(5))//wait time for this can't be less..
+                {
+                    IPAddress = IP.Default.IPAddress;
+                    Console.WriteLine("/Connection - I01/....(" + IPAddress + ")");
+                    return Connected = true;
+                }
+                else if (FindConsole())//if true then continue
+                {
+                    XboxName = new TcpClient(IPAddress, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+                    Console.WriteLine("/Connection - F01/....(" + IPAddress + ")");
+                    return Connected = true;
+                }
+                else// if top fails
+                {
+                    return false;
+                }
+            }
+            // If User Supply's IP To US.
+            else if (XboxNameOrIP.ToCharArray().Any(char.IsDigit))
+            {
+                string IPAddress = XboxNameOrIP;
+                XboxName = new TcpClient(XboxNameOrIP, Port);
+                Reader = new StreamReader(XboxName.GetStream());
+                Console.WriteLine("/Connection - Degits/....(" + "Manual Connection Mode" + ")");
+                return Connected = true;
+            }
+            //Get IP Via Name
+            else if (XboxNameOrIP.ToCharArray().Any(char.IsLetter))//uses ip to find console makes user think it finds it via name 
+            {
+
+                if (FindConsole())//if true then continue
+                {
+                    XboxName = new TcpClient(IPAddress, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+                    Console.WriteLine("/Connection - Letter/....(" + "Manual Connection Mode" + ")");
+                    return Connected = true;
+                }
+                else
+                {
+                    Console.WriteLine("/Connection - Letter/....(" + "Manual Connection Mode Failed" + ")");
+                    return false;
+                }
+
+            }
+
+            else
+            {
+                Console.WriteLine("/Connection - SkyFall/....(" + "Unknown Bug" + ")");
+                return false;
+            }
         }
 
 
