@@ -44,39 +44,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\ByteArray.cs">
+    <Compile Include="Devkit\Controls\ByteArray.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ByteArray.Designer.cs">
+    <Compile Include="Devkit\Controls\ByteArray.Designer.cs">
       <DependentUpon>ByteArray.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MemDump.cs">
+    <Compile Include="Devkit\Controls\Fan_Control.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\MemDump.Designer.cs">
-      <DependentUpon>MemDump.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\xex_slider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\xex_slider.Designer.cs">
-      <DependentUpon>xex_slider.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\xex_value.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\xex_value.designer.cs">
-      <DependentUpon>xex_value.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Fan_Control.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Fan_Control.Designer.cs">
+    <Compile Include="Devkit\Controls\Fan_Control.Designer.cs">
       <DependentUpon>Fan_Control.cs</DependentUpon>
     </Compile>
+    <Compile Include="Devkit\Controls\MemDump.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devkit\Controls\MemDump.Designer.cs">
+      <DependentUpon>MemDump.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devkit\Controls\xex_slider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devkit\Controls\xex_slider.Designer.cs">
+      <DependentUpon>xex_slider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devkit\Controls\xex_value.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devkit\Controls\xex_value.designer.cs">
+      <DependentUpon>xex_value.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devkit\DevkitPlusPlus\Functions.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\IO\EndianIO.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\IO\EndianReader.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\IO\EndianType.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\IO\EndianWriter.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\IO\RWStream.cs" />
+    <Compile Include="Devkit\DevkitPlusPlus\Items.cs" />
     <Compile Include="Devkit\Filesystem.cs" />
     <Compile Include="Devkit\Xbox.Memory.cs" />
-    <Compile Include="Devkit\XboxAutomation.cs" />
     <Compile Include="Devkit\XboxEnums.cs" />
     <Compile Include="Devkit\XboxExtention.cs" />
     <Compile Include="Devkit\XboxFeatures.cs" />
@@ -84,22 +90,7 @@
     <Compile Include="Devkit\XboxNetworking.cs" />
     <Compile Include="Devkit\XboxStructs.cs" />
     <Compile Include="Devkit\XboxTypes.cs" />
-    <Compile Include="Devkit\XMessageBoxUI.cs" />
     <Compile Include="Devkit\XNotify.cs" />
-    <Compile Include="Functions\Bitmaps\BitmapFunctions.cs" />
-    <Compile Include="Functions\Bitmaps\BitmapInfo.cs" />
-    <Compile Include="Functions\Bitmaps\BitmapSubmap.cs" />
-    <Compile Include="Functions\Bitmaps\DDS.cs" />
-    <Compile Include="Functions\Bitmaps\DXTDecoder.cs" />
-    <Compile Include="Functions\Bitmaps\TextureFormat.cs" />
-    <Compile Include="Functions\IO\ContentStorage.cs" />
-    <Compile Include="Functions\Functions.cs" />
-    <Compile Include="Functions\Items.cs" />
-    <Compile Include="Functions\IO\RWStream.cs" />
-    <Compile Include="Functions\IO\EndianIO.cs" />
-    <Compile Include="Functions\IO\EndianReader.cs" />
-    <Compile Include="Functions\IO\EndianType.cs" />
-    <Compile Include="Functions\IO\EndianWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -121,13 +112,13 @@
     <Content Include="About XDevkit.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\ByteArray.resx">
+    <EmbeddedResource Include="Devkit\Controls\ByteArray.resx">
       <DependentUpon>ByteArray.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MemDump.resx">
+    <EmbeddedResource Include="Devkit\Controls\MemDump.resx">
       <DependentUpon>MemDump.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\xex_value.resx">
+    <EmbeddedResource Include="Devkit\Controls\xex_value.resx">
       <DependentUpon>xex_value.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
