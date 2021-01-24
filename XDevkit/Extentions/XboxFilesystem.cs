@@ -4,10 +4,41 @@ using System.Net.Sockets;
 
 namespace XDevkit
 {
-    public class FileSystem
+    public class XboxFileSystem//TODO:
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string  Drives { get;  set; } = Xbox.SendTextCommand("drivelist", "");
 
-        #region XboxFile System
+        /// <summary>
+        /// Creates a directory on the xbox.
+        /// </summary>
+        /// <param name="name">Directory name.</param>
+        public void MakeDirectory(string Directory)
+        {
+            string sdr = string.Concat("mkdir name=\"{0}\"", Directory);
+            Xbox.SendTextCommand(sdr, out Xbox.Response);
+        }
+        /// <summary>
+        /// Delete's Directory Folder
+        /// </summary>
+        /// <param name="Directory"></param>
+        public void RemoveDirectory(string Directory)
+        {
+            string sdr = string.Concat("delete name=\"{0}\"", Directory);
+            Xbox.SendTextCommand(sdr, out Xbox.Response);
+        }/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Directory"></param>
+        /// <returns></returns>
+        public string[] DirectoryFiles(string Directory)
+        {
+            return new[] { Xbox.SendTextCommand("", "") };
+        }
+
+
         /// <summary>
         /// Creates a directory on the xbox.
         /// </summary>
@@ -18,12 +49,12 @@ namespace XDevkit
             Xbox.SendTextCommand(sdr, out Xbox.Response);
         }
         /// <summary>
-        /// Creates a directory on the xbox.
+        /// Gets The directory on the xbox.
         /// </summary>
         /// <param name="name">Directory name.</param>
         public void GetDirectory(string name)
         {
-            DownloadDirectory("", name);
+
         }
 
         /// <summary>
@@ -47,6 +78,11 @@ namespace XDevkit
             string ren = string.Concat("rename name=\"{0}\" newname=\"{1}\"", OldFileName, NewFileName);
             Xbox.SendTextCommand(ren);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localFolder"></param>
+        /// <param name="remoteFolderToSaveIn"></param>
         public void UploadDirectory(string localFolder, string remoteFolderToSaveIn)
         {
             string str4;
@@ -78,8 +114,11 @@ namespace XDevkit
             }
         }
 
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localName"></param>
+        /// <param name="remoteName"></param>
         public void UploadFile(string localName, string remoteName)
         {
             SendFile(localName, remoteName);
@@ -91,7 +130,7 @@ namespace XDevkit
         /// <param name="length"></param>
         public void SendBinaryData(byte[] data, int length)
         {
-            Xbox.XboxName.Client.Send(data, length, SocketFlags.None);
+            XboxClient.XboxName.Client.Send(data, length, SocketFlags.None);
         }
         /// <summary>
         /// Receives all available binary data sent from the xbox.
@@ -99,10 +138,10 @@ namespace XDevkit
         /// <returns></returns>
         public byte[] ReceiveBinaryData()
         {
-            if (Xbox.XboxName.Available > 0)
+            if (XboxClient.XboxName.Available > 0)
             {
-                byte[] binData = new byte[Xbox.XboxName.Available];
-                Xbox.XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+                byte[] binData = new byte[XboxClient.XboxName.Available];
+                XboxClient.XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
                 return binData;
             }
             else return null;
@@ -117,7 +156,7 @@ namespace XDevkit
         {
             Xbox.Wait(size);
             byte[] binData = new byte[size];
-            Xbox.XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
+            XboxClient.XboxName.Client.Receive(binData, binData.Length, SocketFlags.None);
             return binData;
         }
         /// <summary>
@@ -127,7 +166,7 @@ namespace XDevkit
         public void ReceiveBinaryData(byte[] data)
         {
             Xbox.Wait(data.Length);
-            Xbox.XboxName.Client.Receive(data, data.Length, SocketFlags.None);
+            XboxClient.XboxName.Client.Receive(data, data.Length, SocketFlags.None);
         }
 
         /// <summary>
@@ -137,7 +176,7 @@ namespace XDevkit
         public void ReceiveBinaryData(byte[] data, int offset, int size)
         {
             Xbox.Wait(size);
-            Xbox.XboxName.Client.Receive(data, offset, size, SocketFlags.None);
+            XboxClient.XboxName.Client.Receive(data, offset, size, SocketFlags.None);
         }
         /// <summary>
         /// Sends a file to the xbox.
@@ -147,11 +186,11 @@ namespace XDevkit
         public void SendFile(string localName, string remoteName)
         {
             FileStream lfs = new FileStream(localName, FileMode.Open);
-            byte[] fileData = new byte[Xbox.XboxName.Client.SendBufferSize];
+            byte[] fileData = new byte[XboxClient.XboxName.Client.SendBufferSize];
             Xbox.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
 
-            int mainIterations = (int)lfs.Length / Xbox.XboxName.Client.SendBufferSize;
-            int remainder = (int)lfs.Length % Xbox.XboxName.Client.SendBufferSize;
+            int mainIterations = (int)lfs.Length / XboxClient.XboxName.Client.SendBufferSize;
+            int remainder = (int)lfs.Length % XboxClient.XboxName.Client.SendBufferSize;
 
             for (int i = 0; i < mainIterations; i++)
             {
@@ -170,9 +209,13 @@ namespace XDevkit
         /// <param name="data"></param>
         public void SendBinaryData(byte[] data)
         {
-            Xbox.XboxName.Client.Send(data);
+            XboxClient.XboxName.Client.Send(data);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localName"></param>
+        /// <param name="remoteName"></param>
         public void DownloadFile(string localName, string remoteName)
         {
             ReceiveFile(localName, remoteName);
@@ -189,10 +232,10 @@ namespace XDevkit
             int fileSize = BitConverter.ToInt32(ReceiveBinaryData(4), 0);
             using (var lfs = new System.IO.FileStream(localName, FileMode.Create))
             {
-                byte[] fileData = new byte[Xbox.XboxName.Client.ReceiveBufferSize];
+                byte[] fileData = new byte[XboxClient.XboxName.Client.ReceiveBufferSize];
 
-                int mainIterations = fileSize / Xbox.XboxName.Client.ReceiveBufferSize;
-                int remainder = fileSize % Xbox.XboxName.Client.ReceiveBufferSize;
+                int mainIterations = fileSize / XboxClient.XboxName.Client.ReceiveBufferSize;
+                int remainder = fileSize % XboxClient.XboxName.Client.ReceiveBufferSize;
 
                 for (int i = 0; i < mainIterations; i++)
                 {
@@ -203,7 +246,11 @@ namespace XDevkit
                 lfs.Write(fileData, 0, remainder);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localFolderToSaveIn"></param>
+        /// <param name="remoteFolderPath"></param>
         public void DownloadDirectory(string localFolderToSaveIn, string remoteFolderPath)
         {
             string str4;
@@ -237,16 +284,32 @@ namespace XDevkit
                 this.DownloadDirectory(path, str5);
             }
         }
-
-        private string[] GetDirectories(string remoteFolderPath)//todo
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="remoteFolderPath"></param>
+        /// <returns></returns>
+        public string[] GetDirectories(string remoteFolderPath)//todo
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="remoteFolderPath"></param>
+        /// <returns></returns>
         private string[] GetFiles(string remoteFolderPath)//todo
         {
-            throw new NotImplementedException();
+            return new[] { Xbox.SendTextCommand("", "") };
         }
-        #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
+        public  bool DirectoryExists(string folderPath)
+        {
+            return false;
+        }
     }
 }

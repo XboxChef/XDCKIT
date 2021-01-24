@@ -16,9 +16,7 @@ namespace XDevkit
     {
         #region Fields
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Xbox Xbox;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Xbox xbox = new Xbox();
         int bufferSize = 0x20000; // 128kb
         public int BufferSize { get { return bufferSize; } set { bufferSize = value; } }
 
@@ -35,9 +33,9 @@ namespace XDevkit
             get { return position; }
             set { position = (uint)value; }
         }
-        public override bool CanRead { get { return Xbox.Connected; } }
-        public override bool CanSeek { get { return Xbox.Connected; } }
-        public override bool CanWrite { get { return Xbox.Connected; } }
+        public override bool CanRead { get { return XboxClient.Connected; } }
+        public override bool CanSeek { get { return XboxClient.Connected; } }
+        public override bool CanWrite { get { return XboxClient.Connected; } }
         #endregion
 
         #region Constructor
@@ -45,10 +43,9 @@ namespace XDevkit
         /// Creates a new memory stream using a client connection to a debug xbox.
         /// </summary>
         /// <param name="client">Connection to use.</param>
-        public XboxMemoryStream(Xbox client)
+        public XboxMemoryStream()
         {
-            Xbox = client;
-            if (client == null || !Xbox.Connected)
+            if (XboxClient.XboxName == null || !XboxClient.Connected)
                 throw new Exception("Not Connected!");
             position = 0x10000; // start at a valid memory address
         }
@@ -90,17 +87,17 @@ namespace XDevkit
 
             for (int i = 0; i < iterations; i++)
             {
-                Xbox.SendCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), bufferSize);
+                xbox.SendTextCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), bufferSize);
                 Xbox.Wait(bufferSize);
-                Xbox.XboxName.Client.Receive(buffer, (int)(offset + read), bufferSize, SocketFlags.None);
+                XboxClient.XboxName.Client.Receive(buffer, (int)(offset + read), bufferSize, SocketFlags.None);
                 read += bufferSize;
             }
 
             if (remainder > 0)
             {
-                Xbox.SendCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), remainder);
+                xbox.SendTextCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), remainder);
                 Xbox.Wait(remainder);
-                Xbox.XboxName.Client.Receive(buffer, (int)(offset + read), remainder, SocketFlags.None);
+                XboxClient.XboxName.Client.Receive(buffer, (int)(offset + read), remainder, SocketFlags.None);
                 read += remainder;
             }
         }
@@ -129,7 +126,7 @@ namespace XDevkit
                 // hack: hijacked writefile routine in xbdm v7887 so that we can send binary data to memory instead of length-limited ascii
                 Xbox.SendTextCommand("writefile name=| offset=0x" + Convert.ToString(address, 16) + " length=" + bufferSize);
                 //reponse here
-                    Xbox.XboxName.Client.Send(buffer, offset, bufferSize, SocketFlags.None);
+                XboxClient.XboxName.Client.Send(buffer, offset, bufferSize, SocketFlags.None);
                     // check for failure
                     index += bufferSize;
             }
@@ -138,7 +135,7 @@ namespace XDevkit
             {
                 Xbox.SendTextCommand("writefile name=| offset=0x" + Convert.ToString(address, 16) + " length=" + remainder);
                 //response here
-                    Xbox.XboxName.Client.Send(buffer, offset, remainder, SocketFlags.None);
+                XboxClient.XboxName.Client.Send(buffer, offset, remainder, SocketFlags.None);
                     // check for failure - parse message and determine bytes written, then return 
                     index += bufferSize;
             }

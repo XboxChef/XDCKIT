@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -17,11 +18,21 @@ namespace XDevkit
     /// Xbox Emulation Class
     /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox
+    public partial class Xbox //XboxMemory Commands
     {
+
         private uint _startDumpOffset { set; get; }
         private bool _stopSearch { set; get; }
         private RwStream _readWriter { set; get; }
+        public XboxMemoryStream ReturnXboxMemoryStream()
+        {
+            return new XboxMemoryStream();
+        }
+        [Browsable(false)]
+        /// <summary>
+        /// Set or Get the start dump offset
+        /// </summary>
+        public uint DumpOffset { set { _startDumpOffset = value; } }
 
 
         [Browsable(false)]
@@ -32,23 +43,143 @@ namespace XDevkit
 
         public void SendCommand(string command, params object[] args)
         {
-            if (XboxName != null)
+            if (XboxClient.XboxName != null)
             {
                 
 
                 try
                 {
-                    XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
+                }
+                catch (SocketException ex)
+                {
+                    throw new Exception("No Connection Detected -" + ex.Message);
+                }
+            }
+            else throw new Exception("No Connection Detected");
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <returns></returns>
+        public static string SendTextCommand(string Command)
+        {
+            try
+            {
+                SendTextCommand(Command, out Response);
+            }
+            catch
+            {
+            }
+            return Response;
+        }
+
+        public void InvalidateMemoryCache(bool ExecutablePages, uint Address, uint Size)
+        {
+
+        }//TODO:
+        void SetBreakpoint(uint Address)
+        {
+
+        }
+        void RemoveBreakpoint(uint Address)
+        {
+
+        }
+        void RemoveAllBreakpoints()
+        {
+
+        }
+        void SetInitialBreakpoint()
+        {
+
+        }
+        void SetDataBreakpoint(uint Address, XboxBreakpointType Type, uint Size)
+        {
+
+        }
+        void IsBreakpoint(uint Address, out XboxBreakpointType Type)
+        {
+            Type = XboxBreakpointType.NoBreakpoint;
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <param name="response"></param>
+        public static string SendTextCommand(string Command, string c = "")
+        {
+            
+            try
+            {
+                // Max packet size is 1026
+                byte[] Packet = new byte[1026];
+                if (XboxClient.XboxName.Connected == true)
+                {
+                    Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+                    XboxClient.XboxName.Client.Receive(Packet);
+                    return Encoding.ASCII.GetString(Packet);
+
+                }
+                else
+                {
+                    Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection = " + XboxClient.XboxName.Connected);
+                    return string.Empty;
+                }
+
+            }
+            catch (SocketException ex)
+            {
+                return ex.Message;
+            }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <param name="response"></param>
+        public static void SendTextCommand(string Command, out string response)
+        {
+            response = string.Empty;
+            try
+            {
+                // Max packet size is 1026
+                byte[] Packet = new byte[1026];
+                if (XboxClient.XboxName.Connected == true)
+                {
+                    Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+                    XboxClient.XboxName.Client.Receive(Packet);
+                    response = Encoding.ASCII.GetString(Packet);
+
+                }
+                else
+                {
+                    Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection = " + XboxClient.XboxName.Connected);
+                }
+
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void SendTextCommand(string command, params object[] args)
+        {
+            if (XboxClient.XboxName != null)
+            {
+
+                try
+                {
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
                 }
                 catch (Exception /*ex*/)
                 {
-                    throw new Exception("No Connection Detected");
+
                 }
-
-               // StatusResponse response = ReceiveStatusResponse();
-
-                //if (response.Success) return response;
-               // else throw new ApiException(response.Full);
             }
             else throw new Exception("No Connection Detected");
         }
@@ -69,7 +200,7 @@ namespace XDevkit
         {
             if (!Functions.IsHex(value))
                 throw new Exception("Not a valid Hex String!");
-            if (!Connected)
+            if (!XboxClient.Connected)
                 return; //Call function - If not connected return
             try
             {
@@ -108,7 +239,7 @@ namespace XDevkit
             if (memoryAddress > (startDumpAddress + dumpLength) || memoryAddress < startDumpAddress)
                 throw new Exception("Memory Address Out of Bounds");
 
-            if (!Connected)
+            if (!XboxClient.Connected)
                 return null; //Call function - If not connected return
 
             var readWriter = new RwStream();
@@ -119,14 +250,14 @@ namespace XDevkit
                 //Writing each byte chuncks========
                 for (int i = 0; i < dumpLength / 1024; i++)
                 {
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     readWriter.WriteBytes(data, 2, 1024);
                 }
                 //Write whatever is left
                 var extra = (int)(dumpLength % 1024);
                 if (extra > 0)
                 {
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     readWriter.WriteBytes(data, 2, extra);
                 }
                 readWriter.Flush();
@@ -162,7 +293,7 @@ namespace XDevkit
                 throw new Exception("Empty Search string!");
             if (!Functions.IsHex(pointer))
                 throw new Exception(string.Format("{0} is not a valid Hex string.", pointer));
-            if (!Connected)
+            if (!XboxClient.Connected)
                 return null; //Call function - If not connected return
             BindingList<SearchResults> values;
             try
@@ -178,7 +309,7 @@ namespace XDevkit
                 {
                     if (_stopSearch)
                         return new BindingList<SearchResults>();
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     _readWriter.WriteBytes(data, 2, 1024);
                 }
                 //Write whatever is left
@@ -187,7 +318,7 @@ namespace XDevkit
                 {
                     if (_stopSearch)
                         return new BindingList<SearchResults>();
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     _readWriter.WriteBytes(data, 2, extra);
                 }
                 _readWriter.Flush();
@@ -267,7 +398,7 @@ namespace XDevkit
             try
             {
                 // Send the setmem command
-                XboxName.Client
+                XboxClient.XboxName.Client
                     .Send(Encoding.ASCII
                         .GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", address.ToString("X2"), data)));
             }
@@ -289,9 +420,9 @@ namespace XDevkit
 
         public void SetMemory(uint Address, uint BytesToWrite, byte[] Data, out uint BytesWritten)//aka response
         {
-            
+
             // Send the setmem command
-            XboxName.Client
+            XboxClient.XboxName.Client
                 .Send(Encoding.ASCII
                     .GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n",
                                             Address.ToString("X2"),
@@ -299,7 +430,7 @@ namespace XDevkit
 
             // Check to see our response
             byte[] Packet = new byte[1026];
-            XboxName.Client.Receive(Packet);
+            XboxClient.XboxName.Client.Receive(Packet);
             BytesWritten = 0;
             //BytesWritten = Convert.ToUInt32(Encoding.ASCII.GetString(Packet));
             if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 11) == "0 bytes set")
@@ -325,14 +456,14 @@ namespace XDevkit
 
             // Send getmemex command.
 
-            XboxName.Client
+            XboxClient.XboxName.Client
                 .Send(Encoding.ASCII
                     .GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n",
                                             Address.ToString("X2"),
                                             BytesToRead.ToString("X2"))));
 
             // Receieve the 203 response to verify we are going to recieve raw data in packets
-            XboxName.Client.Receive(Packet);
+            XboxClient.XboxName.Client.Receive(Packet);
 
             if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 3) != "203")
                 throw new Exception("GETMEMEX 203 response not recieved. Cannot read memory.");
@@ -341,7 +472,7 @@ namespace XDevkit
             // Length / 1024 will get how many packets there are to recieve
             for (uint i = 0; i < BytesToRead / 1024; i++)
             {
-                XboxName.Client.Receive(Packet);
+                XboxClient.XboxName.Client.Receive(Packet);
 
                 // Store the data minus the first two bytes
                 // This was a cheap way of removing the 2 byte header
@@ -356,12 +487,12 @@ namespace XDevkit
         /// <param name="targetLength">Amount of data to wait for</param>
         public static void Wait(int targetLength)
         {
-            if (XboxName != null)
+            if (XboxClient.XboxName != null)
             {
-                if (XboxName.Available < targetLength) // avoid waiting if we already have data in our buffer...
+                if (XboxClient.XboxName.Available < targetLength) // avoid waiting if we already have data in our buffer...
                 {
                     Stopwatch sw = Stopwatch.StartNew();
-                    while (XboxName.Available < targetLength)
+                    while (XboxClient.XboxName.Available < targetLength)
                     {
                         Thread.Sleep(0);
                         if (sw.ElapsedMilliseconds > 5000)
@@ -384,14 +515,14 @@ namespace XDevkit
         /// <param name="type">Wait type</param>
         public void Wait(WaitType type)
         {
-            if (XboxName != null)
+            if (XboxClient.XboxName != null)
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 switch (type)
                 {
                     // waits for data to start being received
                     case WaitType.Partial:
-                        while (XboxName.Available == 0)
+                        while (XboxClient.XboxName.Available == 0)
                         {
                             Thread.Sleep(0);
                             if (sw.ElapsedMilliseconds > 5000)
@@ -405,7 +536,7 @@ namespace XDevkit
                     case WaitType.Full:
 
                         // do a partial wait first
-                        while (XboxName.Available == 0)
+                        while (XboxClient.XboxName.Available == 0)
                         {
                             Thread.Sleep(0);
                             if (sw.ElapsedMilliseconds > 5000)
@@ -415,22 +546,22 @@ namespace XDevkit
                         }
 
                         // wait for rest of data to be received
-                        int avail = XboxName.Available;
+                        int avail = XboxClient.XboxName.Available;
                         Thread.Sleep(0);
-                        while (XboxName.Available != avail)
+                        while (XboxClient.XboxName.Available != avail)
                         {
-                            avail = XboxName.Available;
+                            avail = XboxClient.XboxName.Available;
                             Thread.Sleep(0);
                         }
                         break;
 
                     // waits for data to stop being received
                     case WaitType.Idle:
-                        int before = XboxName.Available;
+                        int before = XboxClient.XboxName.Available;
                         Thread.Sleep(0);
-                        while (XboxName.Available != before)
+                        while (XboxClient.XboxName.Available != before)
                         {
-                            before = XboxName.Available;
+                            before = XboxClient.XboxName.Available;
                             Thread.Sleep(0);
                             if (sw.ElapsedMilliseconds > 5000)
                             {
@@ -453,12 +584,12 @@ namespace XDevkit
             Wait(WaitType.Idle);    // waits for the link to be idle...
             try
             {
-                if (XboxName.Available > 0)
-                    XboxName.Client.Receive(new byte[XboxName.Available]);
+                if (XboxClient.XboxName.Available > 0)
+                    XboxClient.XboxName.Client.Receive(new byte[XboxClient.XboxName.Available]);
             }
             catch
             {
-                Connected = false;
+                XboxClient.Connected = false;
             }
         }
 
@@ -473,11 +604,11 @@ namespace XDevkit
                 Wait(size);
                 try
                 {
-                    XboxName.Client.Receive(new byte[size]);
+                    XboxClient.XboxName.Client.Receive(new byte[size]);
                 }
                 catch
                 {
-                    Connected = false;
+                    XboxClient.Connected = false;
                 }
             }
         }
@@ -500,7 +631,7 @@ namespace XDevkit
         public void Dump(string filename, uint startDumpAddress, uint dumpLength)
         {
             
-            if (!Connected)
+            if (!XboxClient.Connected)
                 return; //Call function - If not connected return
 
             var readWriter = new RwStream(filename);
@@ -510,14 +641,14 @@ namespace XDevkit
                 //Writing each byte chuncks========
                 for (int i = 0; i < dumpLength / 1024; i++)
                 {
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     readWriter.WriteBytes(data, 2, 1024);
                 }
                 //Write whatever is left
                 var extra = (int)(dumpLength % 1024);
                 if (extra > 0)
                 {
-                    XboxName.Client.Receive(data);
+                    XboxClient.XboxName.Client.Receive(data);
                     readWriter.WriteBytes(data, 2, extra);
                 }
                 readWriter.Flush();
@@ -540,11 +671,12 @@ namespace XDevkit
         /// <returns></returns>
         public uint ResolveFunction(string ModuleName, uint Ordinal)
         {
-            
-            object[] XBDMVersion = new object[] { "consolefeatures ver= 2", " type=9 params=\"A\\0\\A\\2\\0",  "/",  ModuleName.Length,  "\\", ModuleName.ToHexString(), "\\0", "\\", Ordinal,  "\\\""
-            };
-            string str = SendTextCommand(string.Concat(XBDMVersion));
-            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
+
+            string Command = "consolefeatures ver=" + (uint)2 + " type=9 params=\"A\\0\\A\\2\\" + (uint)2 + "/" + ModuleName.Length + "\\" + ModuleName.ToHexString() + "\\" + (uint)1 + "\\" + Ordinal + "\\\"";
+            SendTextCommand(Command);
+            string String = SendTextCommand(Command);
+
+            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
         /// <summary>
         /// Receives multiple lines of text from the xbox.
@@ -555,7 +687,7 @@ namespace XDevkit
             StringBuilder response = new StringBuilder();
             while (true)
             {
-                string line = ReceiveSocketLine() + " ";//change here if any issue accurs
+                string line = ReceiveSocketLine() + " ";//change here if any issue occurs
                 if (line[0] == '.')
                     break;
                 else
@@ -572,22 +704,22 @@ namespace XDevkit
             Thread.Sleep(0);
             while (true)
             {
-                int avail = XboxName.Available;   // only get once
+                int avail = XboxClient.XboxName.Available;   // only get once
                 if (avail < textBuffer.Length)
                 {
-                    XboxName.Client.Receive(textBuffer, avail, SocketFlags.Peek);
+                    XboxClient.XboxName.Client.Receive(textBuffer, avail, SocketFlags.Peek);
                     Line = Encoding.ASCII.GetString(textBuffer, 0, avail);
                 }
                 else
                 {
-                    XboxName.Client.Receive(textBuffer, textBuffer.Length, SocketFlags.Peek);
+                    XboxClient.XboxName.Client.Receive(textBuffer, textBuffer.Length, SocketFlags.Peek);
                     Line = Encoding.ASCII.GetString(textBuffer);
                 }
 
                 int eolIndex = Line.IndexOf("\r\n");
                 if (eolIndex != -1)
                 {
-                    XboxName.Client.Receive(textBuffer, eolIndex + 2, SocketFlags.None);
+                    XboxClient.XboxName.Client.Receive(textBuffer, eolIndex + 2, SocketFlags.None);
                     return Encoding.ASCII.GetString(textBuffer, 0, eolIndex);
                 }
 

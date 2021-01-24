@@ -6,7 +6,6 @@ C:\Users\Serenity\source\repos\XDevkit\XDevkit\obj\Debug\XDevkit.pdb
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.dll.config
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Controls.ByteArray.resources
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Controls.MemDump.resources
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.xex_value.resources
@@ -14,3 +13,9 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.GenerateReso
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileInputs.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.pdb
+C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.dll.config
+C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.dll
+C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.pdb
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.XDevkit.Controls.XboxMessagebox.resources
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CopyComplete
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache

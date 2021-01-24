@@ -2,6 +2,7 @@
 //Made By TeddyHammer on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,6 @@ using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace XDevkit
 {
@@ -18,11 +18,13 @@ namespace XDevkit
     /// Xbox Emulation Class
     /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox
+    public partial class Xbox //XboxFeatures
     {
         private const string XAMModule = "xam.xex";
         private const string krnlModule = "xboxkrnl.exe";
-        #region Features
+
+        public bool IsTrayOpen { get; set; } = false;
+
         public string GetAvatarURL(string gamertag)
         {
             bool flag = gamertag.Contains(" ");
@@ -79,8 +81,14 @@ namespace XDevkit
             string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
             string pattern = "<p class=\"\">Games Completed: (.*)</p>";
             return Regex.Matches(input, pattern)[0].Groups[1].Value;
+
+
         }
 
+        public string ProfileID()
+        {
+            return BitConverter.ToString(GetMemory(0xc02c0148, 8)).Replace("-", null);
+        }
         public string AverageCompleted(string gamertag)
         {
             bool flag = gamertag.Contains(" ");
@@ -178,7 +186,7 @@ namespace XDevkit
         public void XboxShortcut(XboxShortcuts UI)
         {
             
-            if (XboxName.Connected)
+            if (XboxClient.Connected)
                 switch (UI)//works by getting the int of the UI and matches the numbers to execute things
                 {
                     case XboxShortcuts.XboxHome:
@@ -189,12 +197,18 @@ namespace XDevkit
                     case XboxShortcuts.AvatarEditor:
                         Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex",
                                @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex",
-                               @"\Device\Harddisk0\SystemExtPartition\20449700\AvatarEditor.xex", XboxRebootFlags.Title);
+                               @"\Device\Harddisk0\SystemExtPartition\20445700\AvatarEditor.xex", XboxRebootFlags.Title);
+
+                        break;
+                    case XboxShortcuts.DriveSelector:
+                        Reboot(@"\Device\Harddisk0\SystemExtPartition\20449700\signin.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20449700\signin.xex",
+                               @"\Device\Harddisk0\SystemExtPartition\20445700\signin.xex", XboxRebootFlags.Title);
 
                         break;
 
                     case XboxShortcuts.Turn_Off_Console:
-                        ShutDownConsole();
+                        ShutDown();
                         break;
                     case XboxShortcuts.Account_Management:
                         XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Account_Management),
@@ -240,9 +254,7 @@ namespace XDevkit
                         XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Messages), 0);//messages tab
                         break;
                     case XboxShortcuts.My_Games:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games),
-                                      new object[]
-                            { 0, 0, 0, 0 });
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games),new object[] { 0, 0, 0, 0 });
                         break;
                     case XboxShortcuts.Open_Tray:
                         XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
@@ -356,7 +368,7 @@ namespace XDevkit
         /// <returns>Type Is The System Type Of Information you Want To Retrieve</returns>
         public string GetSystemInfo(Info Type)
         {
-            if (XboxName == null)
+            if (XboxClient.XboxName == null)
             {
                 Console.WriteLine("Console Is Not Connnected...");
             }
@@ -375,7 +387,7 @@ namespace XDevkit
                             {
                                 int Start = s.IndexOf("hdd=");
                                 int End = s.IndexOf("type=");
-                                return s.Substring(Start + 4, End - 4);
+                                return s.Substring(4, End - 4);
                             }
                         }
                         catch
@@ -505,7 +517,7 @@ namespace XDevkit
         /// <summary>
         /// Freezes/Stops Console.
         /// </summary>
-        public void Freeze_Console(XboxSwitch Freeze)
+        public void FreezeConsole(XboxSwitch Freeze)
         {
             
             if (Freeze == XboxSwitch.True)
@@ -531,12 +543,17 @@ namespace XDevkit
         ///
         /// </summary>
         /// <returns></returns>
-        public string ConsoleType()
+        public string GetConsoleType()
         {
             
             string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return str1.Substring(str1.find(" ") + 1);
+        }
+
+        public void ScreenShot(string Filename)
+        {
+
         }
 
         /// <summary>
@@ -569,18 +586,31 @@ namespace XDevkit
         /// <returns></returns>
         public uint GetTemperature(TemperatureFlag TemperatureType)
         {
-            
-            object[] Version = new object[]
-            { "consolefeatures ver=", 2, " type=15 params=\"A\\0\\A\\1\\", 1, "\\", (int)TemperatureType, "\\\"" };
-            string str = SendTextCommand(string.Concat(Version));
-            return uint.Parse(str.Substring(str.find(" ") + 1), NumberStyles.HexNumber);
+            string Command = "consolefeatures ver=" + (uint)2 + " type=15 params=\"A\\0\\A\\1\\" + (uint)1 + "\\" + (int)TemperatureType + "\\\"";
+            string String = SendTextCommand(Command);
+            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
+        }
+        public float Temperature(TemperatureFlag type)
+        {
+            byte[] byte_0 = new byte[0x10];
+            byte[] byte_1 = new byte[0x10];
+            ResolveFunction("xboxkrnl.exe", 0x29);
+            uint address = ResolveFunction("xam.xex", 0xa29) + 0x3000;
+            Array.Clear(byte_0, 0, byte_0.Length);
+            Array.Clear(byte_1, 0, byte_1.Length);
+            byte_0[0] = 7;
+            object[] arguments = new object[] { byte_0, address };
+            XboxExtention.Call<uint>("xboxkrnl.exe", 0x29, arguments);
+            byte[] buffer = GetMemory(address, 12);
+            float num2 = (float)((buffer[((int)type * (int)TemperatureFlag.EDRAM) + 1] | (buffer[((int)type * 2) + 2] << 8)) / 256.0);
+            return ((1.8f * num2) + 32f);
         }
 
         #region Console Tempatures
-        public string CPUTEMP() { return GetTemperature(TemperatureFlag.CPU) + "\x00b0C".ToString() + "%"; }
-        public string GPUTEMP() { return GetTemperature(TemperatureFlag.GPU) + "\x00b0C".ToString() + "%"; }
-        public string RamTEMP() { return GetTemperature(TemperatureFlag.EDRAM) + "\x00b0C".ToString() + "%"; }
-        public string MOBOTEMP() { return GetTemperature(TemperatureFlag.MotherBoard) + "\x00b0C".ToString() + "%"; }
+        public string CPUTEMP() { return Temperature(TemperatureFlag.CPU).ToString("0.0") + "\x00b0F"; }
+        public string GPUTEMP() { return Temperature(TemperatureFlag.GPU).ToString("0.0") + "\x00b0F"; }
+        public string RAMTEMP() { return Temperature(TemperatureFlag.EDRAM).ToString("0.0") + "\x00b0F"; }
+        public string MOBOTEMP() { return Temperature(TemperatureFlag.MotherBoard).ToString("0.0") + "\x00b0F"; }
         #endregion
 
         /// <summary>
@@ -620,12 +650,12 @@ namespace XDevkit
         private uint GetModuleHandle(string ModuleName)
         {
             object[] arguments = new object[] { ModuleName };
-            return Call<uint>(ModuleName, 0x44e, arguments);
+            return XboxExtention.Call<uint>(ModuleName, 0x44e, arguments);
         }
         private uint LaunchSystemDLLThread(string ThreadPath)
         {
             object[] arguments = new object[] { ThreadPath, 8, 0, 0 };
-            return Call<uint>(krnlModule, 0x199, arguments);
+            return XboxExtention.Call<uint>(krnlModule, 0x199, arguments);
         }
         private void UnloadImage(string ModuleName, bool isSysDll)
         {
@@ -689,7 +719,7 @@ namespace XDevkit
         /// <summary>
         /// Turns Off Console.
         /// </summary>
-        public void ShutDownConsole()
+        public void ShutDown()
         {
             try
             {
@@ -700,290 +730,79 @@ namespace XDevkit
             {
             }
         }
-
-        #endregion
-        private object CallArgs(bool SystemThread, uint Type, Type t, string module, int ordinal, uint Address, uint ArraySize, params object[] Arguments)
+        public void QuickSignIn()
         {
-            uint Void = 0;
-            uint Int = 1;
-            uint Float = 3;
-            uint ByteArray = 7;
-            uint Uint64 = 8;
-            uint Uint64Array = 9;
-            uint Version = 2;
-            if (!XboxExtention.IsValidReturnType(t))
-                throw new Exception("Invalid type " + t.Name + Environment.NewLine + "supports Only: bool, byte, short, int, long, ushort, uint, ulong, float, double");
-            ConnectTimeout = ConversationTimeout = 4000000U;
-            object[] objArray1 = new object[13];
-            objArray1[0] = "consolefeatures ver=";
-            objArray1[1] = Version;
-            objArray1[2] = " type=";
-            objArray1[3] = Type;
-            objArray1[4] = SystemThread ? " system" : "";
-            object[] objArray2 = objArray1;
-            string str1;
-            if (module == null)
-                str1 = "";
+
+                XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxSignIn.QuickSignin), new object[]{ 0, 0, 0, 0 });
+
+        }
+        /// <summary>
+        /// User Can Open/Close There Console's Disc Tray
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        public bool Tray(TRAY_STATE state)
+        {
+
+            switch (state)//works by getting the int of the UI and matches the numbers to execute things
+            {
+                case TRAY_STATE.OPEN:
+                    XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
+                    IsTrayOpen =  true;
+                    break;
+                case TRAY_STATE.CLOSED:
+                    XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Close_Tray), new object[] { 0, 0, 0, 0 });
+                    IsTrayOpen = false;
+                    break;
+            }
+            return IsTrayOpen;
+        }
+        /// <summary>
+        /// Controls The Fan Speed.
+        /// </summary>
+        /// <param name="Value_1"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public bool FanSpeed(int Value_1, int input)
+        {
+            uint uint_0 = ResolveFunction("xboxkrnl.exe", 0x29);
+            byte[] byte_0 = new byte[0x10];
+            byte[] byte_1 = new byte[0x10];
+            Array.Clear(byte_0, 0, byte_0.Length);
+            Array.Clear(byte_1, 0, byte_1.Length);
+            if (Value_1 == 1)
+            {
+                byte_0[0] = 0x94;
+            }
             else
-                str1 = " module=\"" + module + "\" ord=" + ordinal;
-            objArray2[5] = str1;
-            objArray1[6] = " as=";
-            objArray1[7] = ArraySize;
-            objArray1[8] = " params=\"A\\";
-            objArray1[9] = Address.ToString("X");
-            objArray1[10] = "\\A\\";
-            objArray1[11] = Arguments.Length;
-            objArray1[12] = "\\";
-            string str2 = string.Concat(objArray1);
-            if (Arguments.Length > 37)
-                throw new Exception("Can not use more than 37 paramaters in a call");
-            foreach (object o in Arguments)
             {
-                bool flag1 = false;
-                if (o is uint num)
+                if (Value_1 != 2)
                 {
+                    return false;
+                }
+                byte_0[0] = 0x89;
+            }
+            if (input > 100)
+            {
+                input = 100;
+            }
+            if (input <= 0)
+            {
+                input = 10;
+            }
+            if (input < 0x2d)
+            {
+                byte_0[1] = 0x7f;
+            }
+            else
+            {
+                byte_0[1] = (byte)(input | 0x80);
+            }
+            object[] arguments = new object[2];
+            arguments[0] = byte_0;
+            XboxExtention.CallVoid(uint_0, arguments);
+            return true;
+        }
 
-                    str2 = str2 + Int + "\\" + Functions.UIntToInt(num) + "\\";
-                    flag1 = true;
-                }
-                if (o is int || o is bool || o is byte)
-                {
-                    if (o is bool flag)
-                        str2 = str2 + Int + "/" + Convert.ToInt32(flag) + "\\";
-                    else
-                        str2 = str2 + Int + "\\" + (o is byte ? Convert.ToByte(o).ToString() : Convert.ToInt32(o).ToString()) + "\\";
-                    flag1 = true;
-                }
-                else if (o is int[] || o is uint[])
-                {
-                    byte[] numArray = Functions.IntArrayToByte((int[])o);
-                    string str3 = str2 + ByteArray.ToString() + "/" + numArray.Length + "\\";
-                    for (int index = 0; index < numArray.Length; ++index)
-                        str3 += numArray[index].ToString("X2");
-                    str2 = str3 + "\\";
-                    flag1 = true;
-                }
-                else if (o is string)
-                {
-                    string str3 = (string)o;
-                    str2 = str2 + ByteArray.ToString() + "/" + str3.Length + "\\" + ((string)o).ToHexString() + "\\";
-                    flag1 = true;
-                }
-                else if (o is double)
-                {
-                    str2 = str2 + Float.ToString() + "\\" + o.ToString() + "\\";
-                    flag1 = true;
-                }
-                else if (o is float)
-                {
-                    str2 = str2 + Float.ToString() + "\\" + o.ToString() + "\\";
-                    flag1 = true;
-                }
-                else if (o is float[])
-                {
-                    float[] numArray = (float[])o;
-                    string str3 = str2 + ByteArray.ToString() + "/" + (numArray.Length * 4).ToString() + "\\";
-                    for (int index1 = 0; index1 < numArray.Length; ++index1)
-                    {
-                        byte[] bytes = BitConverter.GetBytes(numArray[index1]);
-                        Array.Reverse(bytes);
-                        for (int index2 = 0; index2 < 4; ++index2)
-                            str3 += bytes[index2].ToString("X2");
-                    }
-                    str2 = str3 + "\\";
-                    flag1 = true;
-                }
-                else if (o is byte[])
-                {
-                    byte[] numArray = (byte[])o;
-                    string str3 = str2 + ByteArray.ToString() + "/" + numArray.Length + "\\";
-                    for (int index = 0; index < numArray.Length; ++index)
-                        str3 += numArray[index].ToString("X2");
-                    str2 = str3 + "\\";
-                    flag1 = true;
-                }
-                if (!flag1)
-                    str2 = str2 + Uint64.ToString() + "\\" + Functions.ConvertToUInt64(o).ToString() + "\\";
-            }
-            string Command = str2 + "\"";
-            string String = SendTextCommand(Command);
-            uint num1;
-            for (string _Ptr = "buf_addr="; String.Contains(_Ptr); String = SendTextCommand("consolefeatures " + _Ptr + "0x" + num1.ToString("X")))
-            {
-                Thread.Sleep(250);
-                num1 = uint.Parse(String.Substring(String.find(_Ptr) + _Ptr.Length), NumberStyles.HexNumber);
-            }
-            ConversationTimeout = 2000U;
-            ConnectTimeout = 5000U;
-            switch (Type)
-            {
-                case 1:
-                    uint num2 = uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    if (t == typeof(uint))
-                        return num2;
-                    if (t == typeof(int))
-                        return Functions.UIntToInt(num2);
-                    if (t == typeof(short))
-                        return short.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    if (t == typeof(ushort))
-                        return ushort.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    break;
-                case 2:
-                    string str4 = String.Substring(String.find(" ") + 1);
-                    if (t == typeof(string))
-                        return str4;
-                    if (t == typeof(char[]))
-                        return str4.ToCharArray();
-                    break;
-                case 3:
-                    if (t == typeof(double))
-                        return double.Parse(String.Substring(String.find(" ") + 1));
-                    if (t == typeof(float))
-                        return float.Parse(String.Substring(String.find(" ") + 1));
-                    break;
-                case 4:
-                    byte num3 = byte.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    if (t == typeof(byte))
-                        return num3;
-                    if (t == typeof(char))
-                        return (char)num3;
-                    break;
-                case 8:
-                    if (t == typeof(long))
-                        return long.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    if (t == typeof(ulong))
-                        return ulong.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-                    break;
-            }
-            switch (Type)
-            {
-                case 5:
-                    string str5 = String.Substring(String.find(" ") + 1);
-                    int index3 = 0;
-                    string s1 = "";
-                    uint[] numArray1 = new uint[8];
-                    foreach (char ch in str5)
-                    {
-                        switch (ch)
-                        {
-                            case ',':
-                            case ';':
-                                numArray1[index3] = uint.Parse(s1, NumberStyles.HexNumber);
-                                ++index3;
-                                s1 = "";
-                                break;
-                            default:
-                                s1 += ch.ToString();
-                                break;
-                        }
-                        if (ch == ';')
-                            break;
-                    }
-                    return numArray1;
-                case 6:
-                    string str6 = String.Substring(String.find(" ") + 1);
-                    int index4 = 0;
-                    string s2 = "";
-                    float[] numArray2 = new float[ArraySize];
-                    foreach (char ch in str6)
-                    {
-                        switch (ch)
-                        {
-                            case ',':
-                            case ';':
-                                numArray2[index4] = float.Parse(s2);
-                                ++index4;
-                                s2 = "";
-                                break;
-                            default:
-                                s2 += ch.ToString();
-                                break;
-                        }
-                        if (ch == ';')
-                            break;
-                    }
-                    return numArray2;
-                case 7:
-                    string str7 = String.Substring(String.find(" ") + 1);
-                    int index5 = 0;
-                    string s3 = "";
-                    byte[] numArray3 = new byte[ArraySize];
-                    foreach (char ch in str7)
-                    {
-                        switch (ch)
-                        {
-                            case ',':
-                            case ';':
-                                numArray3[index5] = byte.Parse(s3);
-                                ++index5;
-                                s3 = "";
-                                break;
-                            default:
-                                s3 += ch.ToString();
-                                break;
-                        }
-                        if (ch == ';')
-                            break;
-                    }
-                    return numArray3;
-                default:
-                    if ((int)Type == (int)Uint64Array)
-                    {
-                        string str3 = String.Substring(String.find(" ") + 1);
-                        int index1 = 0;
-                        string s4 = "";
-                        ulong[] numArray4 = new ulong[ArraySize];
-                        foreach (char ch in str3)
-                        {
-                            switch (ch)
-                            {
-                                case ',':
-                                case ';':
-                                    numArray4[index1] = ulong.Parse(s4);
-                                    ++index1;
-                                    s4 = "";
-                                    break;
-                                default:
-                                    s4 += ch.ToString();
-                                    break;
-                            }
-                            if (ch == ';')
-                                break;
-                        }
-                        if (t == typeof(ulong))
-                            return numArray4;
-                        if (t == typeof(long))
-                        {
-                            long[] numArray5 = new long[ArraySize];
-                            for (int index2 = 0; index2 < ArraySize; ++index2)
-                                numArray5[index2] = BitConverter.ToInt64(BitConverter.GetBytes(numArray4[index2]), 0);
-                            return numArray5;
-                        }
-                    }
-                    return (int)Type == (int)Void ? 0 : ulong.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
-            }
-        }
-        public T Call<T>(string module, int ordinal, params object[] Arguments) where T : struct
-        {
-            return (T)CallArgs(true, TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);
-        }
-        private uint TypeToType<T>(bool Array) where T : struct
-        {
-            uint Int = 1;
-            uint String = 2;
-            uint Float = 3;
-            uint Byte = 4;
-            uint IntArray = 5;
-            uint FloatArray = 6;
-            uint ByteArray = 7;
-            uint Uint64 = 8;
-            uint Uint64Array = 9;
-            Type type = typeof(T);
-            if (type == typeof(int) || type == typeof(uint) || (type == typeof(short) || type == typeof(ushort)))
-                return Array ? IntArray : Int;
-            if (type == typeof(string) || type == typeof(char[]))
-                return String;
-            return type == typeof(float) || type == typeof(double) ? (Array ? FloatArray : Float) : (type == typeof(byte) || type == typeof(char) ? (Array ? ByteArray : Byte) : ((type == typeof(ulong) || type == typeof(long)) && Array ? Uint64Array : Uint64));
-        }
     }
 }

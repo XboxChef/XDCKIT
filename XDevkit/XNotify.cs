@@ -8,6 +8,90 @@ namespace XDevkit
     /// </summary>
     public class XNotify 
     {
+
+        public static void XMessage(int int_4, string string_11, string string_12, int int_5, string[] string_13, int int_6, int int_7)
+        {
+            Xbox Xconsole = new Xbox();
+            try
+            {
+                uint address = Xconsole.ResolveFunction("xam.xex", 0x2ca);
+                uint num2 = 0x81b01480;
+                byte[] data = new byte[6];
+                byte[] buffer2 = new byte[0x1c];
+                byte[] buffer3 = new byte[0];
+                byte[] buffer4 = new byte[0];
+                byte[] buffer5 = new byte[0];
+                uint num3 = 0;
+                uint num4 = 0;
+                uint num5 = 0;
+                uint num6 = 0;
+                Xconsole.SetMemory(0x81b01480, data);
+                Xconsole.SetMemory(0x81b01486, buffer2);
+                uint num7 = 0x22;
+                byte[] buffer6 = string_11.ToWCHAR();
+                byte[] buffer7 = string_12.ToWCHAR();
+                if (int_5 >= 1)
+                {
+                    buffer3 = string_13[0].ToWCHAR();
+                }
+                if (int_5 >= 2)
+                {
+                    buffer4 = string_13[1].ToWCHAR();
+                }
+                if (int_5 == 3)
+                {
+                    buffer5 = string_13[2].ToWCHAR();
+                }
+                Xconsole.SetMemory(num2 + num7, buffer6);
+                uint num8 = num2 + num7;
+                num7 += (uint)buffer6.Length;
+                Xconsole.SetMemory(num2 + num7, buffer7);
+                uint num9 = num2 + num7;
+                num7 += (uint)buffer7.Length;
+                if (int_5 >= 1)
+                {
+                    Xconsole.SetMemory(num2 + num7, buffer3);
+                    num3 = num2 + num7;
+                    num7 += (uint)buffer3.Length;
+                }
+                if (int_5 >= 2)
+                {
+                    Xconsole.SetMemory(num2 + num7, buffer4);
+                    num4 = num2 + num7;
+                    num7 += (uint)buffer4.Length;
+                }
+                if (int_5 == 3)
+                {
+                    Xconsole.SetMemory(num2 + num7, buffer5);
+                    num5 = num2 + num7;
+                    num7 += (uint)buffer5.Length;
+                }
+                if (int_5 >= 1)
+                {
+                    Xconsole.WriteInt32(num2 + num7, (int)num3);
+                    num6 = num2 + num7;
+                    num7 += 4;
+                }
+                if (int_5 >= 2)
+                {
+                    Xconsole.WriteInt32(num2 + num7, (int)num4);
+                    num7 += 4;
+                }
+                if (int_5 == 3)
+                {
+                    Xconsole.WriteInt32(num2 + num7, (int)num5);
+                    num7 += 4;
+                }
+                object[] arguments = new object[] { int_4, num8, num9, int_5, num6, int_6, int_7, num2, num2 + 0x1c };
+                XboxExtention.Call<uint>(address, arguments);
+                byte[] buffer8 = new byte[num7];
+                Xconsole.SetMemory(num2, buffer8);
+            }
+            catch
+            {
+
+            }
+        }
         public static void Show(string Message)
         {
             Show(Message, true);
@@ -38,9 +122,7 @@ namespace XDevkit
 
         public static void Show(string message, XNotiyLogo Logo)
         {
-            int String = 2;
-            int Int = 1;
-            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + String + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + Int + "\\";
+            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + (int)2 + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + (int)1 + "\\";
             switch (Logo)
             {
                 case XNotiyLogo.XBOX_LOGO:

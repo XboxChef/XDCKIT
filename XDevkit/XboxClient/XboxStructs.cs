@@ -21,7 +21,20 @@
     {
         public string Text;
     }
+    public struct IXboxFile
+    {
+        public string Name { get; set; }
 
+        public object CreationTime { get; set; }
+
+        public object ChangeTime { get; set; }
+
+        public ulong Size { get; set; }
+
+        public bool IsReadOnly { get; set; }
+
+        public bool IsDirectory { get; }
+    }
     public struct XBOX_SECTION_INFO
     {
         public string Name;

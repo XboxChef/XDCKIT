@@ -131,8 +131,13 @@
     public enum XboxDrive
     {
         HDD,
+        HDD0,
         INTUSB,
         USB0,
+        USB1,
+        USB2,
+        USB3,
+        USB4,
         CdRom0,
         DVD,
         GAME,
@@ -223,6 +228,10 @@
         InvitePlayer = 0xb15,
 
     }
+    public enum XboxSignIn : int
+    {
+        QuickSignin = 700
+    }
     /// <summary>
     /// Guide Shortcuts
     /// </summary>
@@ -261,6 +270,7 @@
         //End Of Media
 
         //settings
+        DriveSelector = 5,
         Profile = 0x2c4,
         Preferences,
         Family_Settings,
@@ -598,6 +608,7 @@
         Force = 1,
         MonitorOnly = 2
     }
+
     public enum XboxMemoryRegionFlags
     {
         NoAccess = 1,
