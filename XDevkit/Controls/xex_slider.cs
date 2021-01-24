@@ -31,41 +31,41 @@ namespace XDevkit
         public void streampoke(uint offset, string poketype, string ammount)
         {
 
-                EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
-                nio.Open();
-                nio.Out.BaseStream.Position = offset;
-                if (poketype == "Float")
-                {
-                    nio.Out.Write(float.Parse(ammount));
-                }
-                if (poketype == "Double")
-                {
-                    nio.Out.Write(double.Parse(ammount));
-                }
-                if (poketype == "String")
-                {
-                    nio.Out.Write(ammount);
-                }
-                if (poketype == "Short")
-                {
-                    nio.Out.Write((short)Convert.ToUInt32(ammount, 0x10));
-                }
-                if (poketype == "Byte")
-                {
-                    nio.Out.Write((byte)Convert.ToUInt32(ammount, 0x10));
-                }
-                if (poketype == "Long")
-                {
-                    nio.Out.Write((long)Convert.ToUInt32(ammount, 0x10));
-                }
-                if (poketype == "Quad")
-                {
-                    nio.Out.Write((long)Convert.ToUInt64(ammount, 0x10));
-                }
-                if (poketype == "Int")
-                {
-                    nio.Out.Write(Convert.ToUInt32(ammount, 0x10));
-                }
+            EndianIO nio = new EndianIO(stream, EndianType.BigEndian);
+            nio.Open();
+            nio.Out.BaseStream.Position = offset;
+            if (poketype == "Float")
+            {
+                nio.Out.Write(float.Parse(ammount));
+            }
+            if (poketype == "Double")
+            {
+                nio.Out.Write(double.Parse(ammount));
+            }
+            if (poketype == "String")
+            {
+                nio.Out.Write(ammount);
+            }
+            if (poketype == "Short")
+            {
+                nio.Out.Write((short)Convert.ToUInt32(ammount, 0x10));
+            }
+            if (poketype == "Byte")
+            {
+                nio.Out.Write((byte)Convert.ToUInt32(ammount, 0x10));
+            }
+            if (poketype == "Long")
+            {
+                nio.Out.Write((long)Convert.ToUInt32(ammount, 0x10));
+            }
+            if (poketype == "Quad")
+            {
+                nio.Out.Write((long)Convert.ToUInt64(ammount, 0x10));
+            }
+            if (poketype == "Int")
+            {
+                nio.Out.Write(Convert.ToUInt32(ammount, 0x10));
+            }
         }
     }
 }

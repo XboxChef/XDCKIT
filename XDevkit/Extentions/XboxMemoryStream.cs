@@ -2,6 +2,7 @@
 //Made By TeddyHammer on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace XDevkit
     {
         #region Fields
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Xbox xbox = new Xbox();
+        readonly Xbox xbox = new Xbox();
         int bufferSize = 0x20000; // 128kb
         public int BufferSize { get { return bufferSize; } set { bufferSize = value; } }
 
@@ -80,8 +81,8 @@ namespace XDevkit
             //if (safeMode & !Xbox.IsValidAddress(address))
             //    throw new Exception("Safe Mode detected invalid base address");
 
-            int iterations = (int)length / bufferSize;
-            int remainder = (int)length % bufferSize;
+            int iterations = length / bufferSize;
+            int remainder = length % bufferSize;
             read = 0;
 
 
@@ -89,7 +90,7 @@ namespace XDevkit
             {
                 xbox.SendTextCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), bufferSize);
                 Xbox.Wait(bufferSize);
-                XboxClient.XboxName.Client.Receive(buffer, (int)(offset + read), bufferSize, SocketFlags.None);
+                XboxClient.XboxName.Client.Receive(buffer, offset + read, bufferSize, SocketFlags.None);
                 read += bufferSize;
             }
 
@@ -97,7 +98,7 @@ namespace XDevkit
             {
                 xbox.SendTextCommand("getmem2 addr=0x{0} length={1}", Convert.ToString(address + read, 16).PadLeft(8, '0'), remainder);
                 Xbox.Wait(remainder);
-                XboxClient.XboxName.Client.Receive(buffer, (int)(offset + read), remainder, SocketFlags.None);
+                XboxClient.XboxName.Client.Receive(buffer, offset + read, remainder, SocketFlags.None);
                 read += remainder;
             }
         }
@@ -127,8 +128,8 @@ namespace XDevkit
                 Xbox.SendTextCommand("writefile name=| offset=0x" + Convert.ToString(address, 16) + " length=" + bufferSize);
                 //reponse here
                 XboxClient.XboxName.Client.Send(buffer, offset, bufferSize, SocketFlags.None);
-                    // check for failure
-                    index += bufferSize;
+                // check for failure
+                index += bufferSize;
             }
 
             if (remainder > 0)
@@ -136,8 +137,8 @@ namespace XDevkit
                 Xbox.SendTextCommand("writefile name=| offset=0x" + Convert.ToString(address, 16) + " length=" + remainder);
                 //response here
                 XboxClient.XboxName.Client.Send(buffer, offset, remainder, SocketFlags.None);
-                    // check for failure - parse message and determine bytes written, then return 
-                    index += bufferSize;
+                // check for failure - parse message and determine bytes written, then return 
+                index += bufferSize;
             }
         }
 

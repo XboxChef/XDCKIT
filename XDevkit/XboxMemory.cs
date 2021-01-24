@@ -2,6 +2,7 @@
 //Made By TeddyHammer on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,7 +46,7 @@ namespace XDevkit
         {
             if (XboxClient.XboxName != null)
             {
-                
+
 
                 try
                 {
@@ -110,7 +111,7 @@ namespace XDevkit
         /// <param name="response"></param>
         public static string SendTextCommand(string Command, string c = "")
         {
-            
+
             try
             {
                 // Max packet size is 1026
@@ -222,7 +223,7 @@ namespace XDevkit
         /// <returns>Return the hex string of the value</returns>
         public string Peek(string startDumpAddress, string dumpLength, string memoryAddress, string peekSize)
         {
-            return Peek(Functions.Convert(startDumpAddress),Functions.Convert(dumpLength),Functions.Convert(memoryAddress),Functions.ConvertSigned(peekSize));
+            return Peek(Functions.Convert(startDumpAddress), Functions.Convert(dumpLength), Functions.Convert(memoryAddress), Functions.ConvertSigned(peekSize));
         }
 
         /// <summary>
@@ -393,7 +394,7 @@ namespace XDevkit
 
         public void SetMemory(uint address, string data)
         {
-            
+
             int sent = 0;
             try
             {
@@ -448,7 +449,7 @@ namespace XDevkit
         }
         public void GetMemory(uint Address, uint BytesToRead, byte[] Data, out uint BytesRead)
         {
-            
+
             BytesRead = 0;
             List<byte> ReturnData = new List<byte>();
             byte[] Packet = new byte[1026];
@@ -630,7 +631,7 @@ namespace XDevkit
         /// <param name="dumpLength">The dump length</param>
         public void Dump(string filename, uint startDumpAddress, uint dumpLength)
         {
-            
+
             if (!XboxClient.Connected)
                 return; //Call function - If not connected return
 

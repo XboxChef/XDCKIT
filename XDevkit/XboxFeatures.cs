@@ -45,7 +45,7 @@ namespace XDevkit
         {
             bool flag = gamertag.Contains(" ");
             bool flag2 = flag;
-            if (flag2) 
+            if (flag2)
             {
                 gamertag.Replace(" ", "+");
             }
@@ -149,7 +149,7 @@ namespace XDevkit
 
         public void NOP(uint address)
         {
-            
+
             byte[] buffer1 = new byte[4];
             buffer1[0] = 0x60;
             byte[] data = buffer1;
@@ -171,7 +171,7 @@ namespace XDevkit
         /// <param name="Flags"></param>
         public void Reboot(string Name, string MediaDirectory, string CmdLine, XboxRebootFlags Flags)
         {
-            
+
             string[] lines = Name.Split("\\".ToCharArray());
             for (int i = 0; i < lines.Length - 1; i++)
                 MediaDirectory += lines[i] + "\\";
@@ -185,7 +185,7 @@ namespace XDevkit
         /// <param name="Color"></param>
         public void XboxShortcut(XboxShortcuts UI)
         {
-            
+
             if (XboxClient.Connected)
                 switch (UI)//works by getting the int of the UI and matches the numbers to execute things
                 {
@@ -254,7 +254,7 @@ namespace XDevkit
                         XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Messages), 0);//messages tab
                         break;
                     case XboxShortcuts.My_Games:
-                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games),new object[] { 0, 0, 0, 0 });
+                        XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.My_Games), new object[] { 0, 0, 0, 0 });
                         break;
                     case XboxShortcuts.Open_Tray:
                         XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
@@ -326,7 +326,7 @@ namespace XDevkit
         /// <param name="fileName">File to delete.</param>
         public string GetBoxID()
         {
-            
+
             return SendTextCommand("BOXID").Replace("200- ", string.Empty);
         }
 
@@ -337,7 +337,7 @@ namespace XDevkit
         /// <param name="Color"></param>
         public void SetConsoleColor(XboxColor Color)
         {
-            
+
             SendTextCommand("setcolor name=" + Enum.GetName(typeof(int), Color).ToLower());
         }
 
@@ -347,7 +347,7 @@ namespace XDevkit
         /// <returns></returns>
         public string GetConsoleID()
         {
-            
+
             return SendTextCommand(string.Concat("getconsoleid")).Replace("200- consoleid=", string.Empty);
         }
 
@@ -356,7 +356,7 @@ namespace XDevkit
         /// </summary>
         public string GetDMVersion()
         {
-            
+
             return SendTextCommand("dmversion").Replace("200- ", string.Empty);
 
         }
@@ -503,7 +503,7 @@ namespace XDevkit
         /// </summary>
         public void Reboot(XboxReboot Warm_or_Cold)
         {
-            
+
             if (Warm_or_Cold == XboxReboot.Cold)
             {
                 SendTextCommand("magicboot cold");
@@ -519,7 +519,7 @@ namespace XDevkit
         /// </summary>
         public void FreezeConsole(XboxSwitch Freeze)
         {
-            
+
             if (Freeze == XboxSwitch.True)
             {
                 SendTextCommand("stop");
@@ -534,7 +534,7 @@ namespace XDevkit
         /// </summary>
         public string XBEINFO()
         {
-            
+
             SendTextCommand("XBEINFO RUNNING");
             string str1 = ReceiveMultilineResponse();
             return str1.Substring(str1.find("name"));
@@ -545,7 +545,7 @@ namespace XDevkit
         /// <returns></returns>
         public string GetConsoleType()
         {
-            
+
             string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return str1.Substring(str1.find(" ") + 1);
@@ -561,7 +561,7 @@ namespace XDevkit
         /// </summary>
         public string GetCPUKey()
         {
-            
+
             string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
             return SendTextCommand(str).Replace("200- ", string.Empty);
         }
@@ -573,7 +573,7 @@ namespace XDevkit
         /// <returns></returns>
         public uint GetKernalVersion()
         {
-            
+
             string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return uint.Parse(str1.Substring(str1.find(" ") + 1));
@@ -622,7 +622,7 @@ namespace XDevkit
         /// <param name="Bottom_Right"></param>
         public void SetLeds(LEDState Top_Left, LEDState Top_Right, LEDState Bottom_Left, LEDState Bottom_Right)
         {
-            
+
             object[] Resolver = new object[]
             {
                 "consolefeatures ver=",
@@ -710,7 +710,7 @@ namespace XDevkit
         /// <returns></returns>
         public uint XamGetCurrentTitleId()
         {
-            
+
             string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");
             string str1 = SendTextCommand(str);
             return uint.Parse(str1.Substring(str1.find(" ") + 1), NumberStyles.HexNumber);
@@ -733,7 +733,7 @@ namespace XDevkit
         public void QuickSignIn()
         {
 
-                XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxSignIn.QuickSignin), new object[]{ 0, 0, 0, 0 });
+            XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxSignIn.QuickSignin), new object[] { 0, 0, 0, 0 });
 
         }
         /// <summary>
@@ -748,7 +748,7 @@ namespace XDevkit
             {
                 case TRAY_STATE.OPEN:
                     XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Open_Tray), new object[] { 0, 0, 0, 0 });
-                    IsTrayOpen =  true;
+                    IsTrayOpen = true;
                     break;
                 case TRAY_STATE.CLOSED:
                     XboxExtention.CallVoid(ResolveFunction(XAMModule, (int)XboxShortcuts.Close_Tray), new object[] { 0, 0, 0, 0 });

@@ -1,4 +1,9 @@
-﻿#region Misc
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+
+#region Misc
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -156,7 +161,7 @@ namespace XDevkit
                 Thread.Sleep(250);
                 num1 = uint.Parse(String.Substring(String.find(_Ptr) + _Ptr.Length), NumberStyles.HexNumber);
             }
-            Xbox.ConnectTimeout  = (int)2000U;
+            Xbox.ConnectTimeout = (int)2000U;
             Xbox.ConversationTimeout = (int)5000U;
             switch (Type)
             {
@@ -306,7 +311,7 @@ namespace XDevkit
                     return (int)Type == (int)Void ? 0 : ulong.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
             }
         }
-        public static T Call<T>(uint Address, params object[] Arguments) where T : struct => (T)CallArgs(true, TypeToType<T>(false), typeof(T), (string)null, 0, Address, 0U, Arguments);
+        public static T Call<T>(uint Address, params object[] Arguments) where T : struct => (T)CallArgs(true, TypeToType<T>(false), typeof(T), null, 0, Address, 0U, Arguments);
         public static T Call<T>(string module, int ordinal, params object[] Arguments) where T : struct
         {
             return (T)CallArgs(true, TypeToType<T>(false), typeof(T), module, ordinal, 0U, 0U, Arguments);

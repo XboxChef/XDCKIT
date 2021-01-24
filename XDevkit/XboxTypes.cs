@@ -22,9 +22,9 @@ namespace XDevkit
         private static UInt64 uTemp64;
         private static Int16 Temp16;
         private static Int32 Temp32;
-        private static Int64 Temp64; 
+        private static Int64 Temp64;
         #endregion
-        
+
         #region Bool {Get; Set;}
         public bool SetBool(uint Address) { return GetMemory(Address, 1)[0] != 0; }
         public bool ReadBool(uint Offset)
@@ -34,7 +34,7 @@ namespace XDevkit
         }
         public void WriteBool(uint Offset, bool input)
         {
-            myBuff[0] = input ? (byte)1 : (byte)0;
+            myBuff[0] = input ? 1 : 0;
             SetMemory(Offset, 1, myBuff, out outInt);
         }
 
@@ -700,7 +700,7 @@ namespace XDevkit
             }
         }
         #endregion
-        
+
         #region Random Types
         public void XOR_Uint16(uint Offset, ushort input)
         {
@@ -826,7 +826,7 @@ namespace XDevkit
             Temp64 = ReadInt64(Offset);
             Temp64 |= input;
             WriteInt64(Offset, Temp64);
-        } 
+        }
         #endregion
 
     }

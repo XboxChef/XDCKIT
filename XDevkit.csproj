@@ -95,7 +95,6 @@
     <Compile Include="XDevkit\Devkit\Functions.cs" />
     <Compile Include="XDevkit\Devkit\IO\EndianIO.cs" />
     <Compile Include="XDevkit\Devkit\IO\EndianReader.cs" />
-    <Compile Include="XDevkit\Devkit\IO\EndianType.cs" />
     <Compile Include="XDevkit\Devkit\IO\EndianWriter.cs" />
     <Compile Include="XDevkit\Devkit\IO\RWStream.cs" />
     <Compile Include="XDevkit\Devkit\Items.cs" />

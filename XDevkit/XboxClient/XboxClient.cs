@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using XDevkit;
 
 namespace XDevkit
 {
@@ -21,7 +21,7 @@ namespace XDevkit
         public static int Port { get; set; } = 730;
         public static string IPAddress { get; set; } = "000.000.000.000";
         [Browsable(false)]
-        public static StreamReader Reader; 
+        public static StreamReader Reader;
         #endregion
 
 

@@ -1,4 +1,9 @@
-﻿using System;
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+
+using System;
 using System.IO;
 using System.Net.Sockets;
 
@@ -9,7 +14,7 @@ namespace XDevkit
         /// <summary>
         /// 
         /// </summary>
-        public string  Drives { get;  set; } = Xbox.SendTextCommand("drivelist", "");
+        public string Drives { get; set; } = Xbox.SendTextCommand("drivelist", "");
 
         /// <summary>
         /// Creates a directory on the xbox.
@@ -29,10 +34,10 @@ namespace XDevkit
             string sdr = string.Concat("delete name=\"{0}\"", Directory);
             Xbox.SendTextCommand(sdr, out Xbox.Response);
         }/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Directory"></param>
-        /// <returns></returns>
+         /// 
+         /// </summary>
+         /// <param name="Directory"></param>
+         /// <returns></returns>
         public string[] DirectoryFiles(string Directory)
         {
             return new[] { Xbox.SendTextCommand("", "") };
@@ -307,7 +312,7 @@ namespace XDevkit
         /// </summary>
         /// <param name="folderPath"></param>
         /// <returns></returns>
-        public  bool DirectoryExists(string folderPath)
+        public bool DirectoryExists(string folderPath)
         {
             return false;
         }

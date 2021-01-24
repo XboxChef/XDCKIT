@@ -1,4 +1,8 @@
-﻿using System;
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+
 using System.Text;
 
 namespace XDevkit
@@ -6,7 +10,7 @@ namespace XDevkit
     /// <summary>
     /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
     /// </summary>
-    public class XNotify 
+    public class XNotify
     {
 
         public static void XMessage(int int_4, string string_11, string string_12, int int_5, string[] string_13, int int_6, int int_7)
@@ -122,7 +126,7 @@ namespace XDevkit
 
         public static void Show(string message, XNotiyLogo Logo)
         {
-            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + (int)2 + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + (int)1 + "\\";
+            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + 2 + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + 1 + "\\";
             switch (Logo)
             {
                 case XNotiyLogo.XBOX_LOGO:
