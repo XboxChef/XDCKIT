@@ -4,6 +4,7 @@
 //Thank You for looking love you guys...
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
 
@@ -11,19 +12,18 @@ namespace XDevkit
 {
     public class XboxFileSystem//TODO:
     {
+        public string Name {  get; set; }
+        public object CreationTime { get; set; }
+        public object ChangeTime {  get; set; }
+        public ulong Size {  get; set; }
+        public bool IsReadOnly {  get; set; }
+        public bool IsDirectory { get; }
+        [Browsable(false)]
+        public static StreamReader Reader;
         /// <summary>
         /// Get the console drive names.
         /// </summary>
-        public string Drives { get => GetDrives(); }
-
-        /// <summary>
-        /// Get the console drive names Function.
-        /// </summary>
-        public string GetDrives()
-        {
-
-            return "";
-        }
+        public string Drives => Xbox.SendTextCommand("drivelist").Replace("drivename=", string.Empty);
 
         /// <summary>
         /// Create the specified directory on the console.
@@ -312,20 +312,20 @@ namespace XDevkit
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="remoteFolderPath"></param>
+        /// <param name="FolderPath"></param>
         /// <returns></returns>
-        private string[] GetFiles(string remoteFolderPath)//todo
+        private string[] GetFiles(string FolderPath)//todo
         {
-            return new[] { ""/*Xbox.DMSendCommand("")*/ };
+            return new[] { Xbox.SendTextCommand("DIRLIST NAME=" + FolderPath + "\"") };
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="folderPath"></param>
         /// <returns></returns>
-        public bool DirectoryExists(string folderPath)
+        public bool DirectoryExists(string FolderPath)
         {
-            return false;
+            return File.Exists(Xbox.SendTextCommand("DIRLIST NAME=" + FolderPath+"\""));
         }
     }
 }

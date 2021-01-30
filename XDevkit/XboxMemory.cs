@@ -41,26 +41,8 @@ namespace XDevkit
         /// Set or Get the dump length
         /// </summary>
         public uint DumpLength { set; get; }
-
-        public void SendCommand(string command, params object[] args)
-        {
-            if (XboxClient.XboxName != null)
-            {
-
-
-                try
-                {
-                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
-                }
-                catch (SocketException ex)
-                {
-                    throw new Exception("No Connection Detected -" + ex.Message);
-                }
-            }
-            else throw new Exception("No Connection Detected");
-        }
         /// <summary>
-        ///
+        /// Sends COmmands Based On User's Input
         /// </summary>
         /// <param name="Command"></param>
         /// <returns></returns>
@@ -120,13 +102,16 @@ namespace XDevkit
                 {
                     Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+                    Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Receive(Packet);
-                    response = Encoding.ASCII.GetString(Packet);
+                    response = Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r", string.Empty).Replace("\"", string.Empty).Replace("\n.", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n",string.Empty.Replace("200-", string.Empty));//
+                    response = response.Substring(0, response.Length - 1);
+                    Response = response;
 
                 }
                 else
                 {
-                    Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection = " + XboxClient.XboxName.Connected);
+                    XboxClient.XboxName = new TcpClient(XboxClient.IPAddress, XboxClient.Port);
                 }
 
             }

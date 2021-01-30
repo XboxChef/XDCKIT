@@ -55,11 +55,18 @@ namespace XDevkit
             // If User Supply's IP To US.
             else if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
             {
-                IPAddress = ConsoleNameOrIP;
-                xboxConsole.IPAddress = IPAddress;
-                XboxName = new TcpClient(ConsoleNameOrIP, Port);
-                Reader = new StreamReader(XboxName.GetStream());
-                Connected = true;
+                try
+                {
+                    IPAddress = ConsoleNameOrIP;
+                    xboxConsole.IPAddress = IPAddress;
+                    XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+                    Connected = true;
+                }
+                catch (SocketException)
+                {
+                  
+                }
             }
 
             return Connected;

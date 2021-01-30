@@ -3,6 +3,7 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
 
+using System;
 using System.ComponentModel;
 
 namespace XDevkit
@@ -11,11 +12,19 @@ namespace XDevkit
     {
 
         #region Properties
-
+        /// <summary>
+        /// Get's or Set's Console's Current Name
+        /// </summary>
         public string Name
         {
-            get => XboxClient.XboxName.Connected ? SendTextCommand("dbgname") : "Error";
-            set => SendTextCommand("dbgname = " + value);
+            get => XboxClient.XboxName.Connected ? SendTextCommand("dbgname").Replace("200- ", string.Empty) : "Error";
+            set
+            {
+                if(XboxClient.XboxName.Connected == true)
+                {
+                    SendTextCommand("dbgname name=" + value);
+                }
+            }
         }
         public bool IsTrayOpen { get; set; } = false;
         [Browsable(false)]
@@ -25,28 +34,27 @@ namespace XDevkit
         }
         public string SystemTime
         {
-            get;
-            set;
+            get => XboxClient.XboxName.Connected ? SendTextCommand("systime").Replace("200- ", string.Empty) : "Error";
+            set
+            {
+                if (XboxClient.XboxName.Connected == true)
+                {
+                    SendTextCommand("setsystime" + value);
+                }
+            }
         }
         public static string Response;
         public XBOX_PROCESS_INFO RunningProcessInfo
         {
             get;
         }
-        public XboxDumpMode DumpMode
-        {
-            get;
-            set;
-
-        } = XboxDumpMode.Smart;
-
         /// <summary>
-        ///
+        /// Detects Console Type Information.
         /// </summary>
         public XboxConsoleType ConsoleType
         {
-            get => XboxClient.XboxName.Connected ? XboxConsoleType.DevelopmentKit : XboxConsoleType.DevelopmentKit;
-        } //TODO: make it so it actually grabs the console type
+            get => XboxClient.XboxName.Connected ? (XboxConsoleType)Enum.Parse(typeof(XboxConsoleType), SendTextCommand("consoletype"), true) : XboxConsoleType.DevelopmentKit;
+        } 
         bool MemoryCacheEnabled
         {
             get;

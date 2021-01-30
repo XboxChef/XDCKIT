@@ -343,12 +343,6 @@ namespace XDevkit
         OnExecuteHW,
         OnExecute
     }
-    public enum XboxDumpMode
-    {
-        Smart,
-        Enabled,
-        Disabled
-    }
     public enum XboxDumpFlags
     {
         Normal = 0,
