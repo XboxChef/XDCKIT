@@ -16,15 +16,15 @@ namespace XDevkit
     {
         #region Property's
         public static TcpClient XboxName { get; set; } = new TcpClient();
-        public static bool Connected { get; set; }
+        public static bool Connected { get; set; } = false;
         private static Xbox xboxConsole { get; set; } = new Xbox();
         public static int Port { get; set; } = 730;
         public static string IPAddress { get; set; } = "000.000.000.000";
         [Browsable(false)]
         public static StreamReader Reader;
+        static readonly BackgroundWorker FindConsoleBc = new BackgroundWorker();
+        static readonly BackgroundWorker FindConsolegc = new BackgroundWorker();
         #endregion
-
-
 
         #region Networking
         /// <summary>
@@ -38,43 +38,18 @@ namespace XDevkit
         public static bool Connect(this Xbox console, out Xbox XConsole, string ConsoleNameOrIP = "default", int Port = 730)
         {
             XConsole = xboxConsole;//sets Class For Client
-            if (ConsoleNameOrIP == "default")
+
+            // If user specifies to find their console IP address
+            if (ConsoleNameOrIP.Equals("default")| ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
             {
-                XboxName = new TcpClient();
                 if (FindConsole())//if true then continue
                 {
                     XboxName = new TcpClient(IPAddress, 730);
                     Reader = new StreamReader(XboxName.GetStream());
-                    Console.WriteLine("/Connection - F01/....(" + IPAddress + ")");//debugging purposes..
                     // set class properties once connected 
                     xboxConsole.IPAddress = ConsoleNameOrIP;
                     IPAddress = ConsoleNameOrIP;
-                    XboxClient.XboxName = XboxName;
-                    return Connected = true;
-                }
-                else// if top fails
-                {
-                    return Connected = false;
-                }
-            }
-            //User Enter's Nothing
-            else if (ConsoleNameOrIP == "")
-            {
-                XboxName = new TcpClient();
-                if (FindConsole())//if true then continue
-                {
-                    XboxName = new TcpClient(IPAddress, 730);//test...
-                    Reader = new StreamReader(XboxName.GetStream());
-                    Console.WriteLine("/Connection - F01/....(" + IPAddress + ")");//debugging purposes..
-                    // set class properties once connected 
-                    xboxConsole.IPAddress = ConsoleNameOrIP;
-                    IPAddress = ConsoleNameOrIP;
-                    XboxClient.XboxName = XboxName;
-                    return Connected = true;
-                }
-                else// if top fails
-                {
-                    return Connected = false;
+                    Connected = true;
                 }
             }
             // If User Supply's IP To US.
@@ -84,61 +59,35 @@ namespace XDevkit
                 xboxConsole.IPAddress = IPAddress;
                 XboxName = new TcpClient(ConsoleNameOrIP, Port);
                 Reader = new StreamReader(XboxName.GetStream());
-                Console.WriteLine("/Connection - Degits/....(" + "Manual Connection Mode" + ")");
-                return Connected = true;
+                Connected = true;
             }
-            //Get IP Via Name
-            else if (ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))//uses ip to find console makes user think it finds it via name 
-            {
-                Connected = FindConsole();
-                xboxConsole.IPAddress = IPAddress;
-                XboxName = new TcpClient(IPAddress, 730);//test...
-                Reader = new StreamReader(XboxName.GetStream());
-                Console.WriteLine("/Connection - F01/....(" + IPAddress + ")");//debugging purposes..
-                return Connected;
-            }
-            else
-            {
-                return Connected;
-            }
+
+            return Connected;
         }
+
         static DoWorkEventHandler BackgroundSlave()
         {
             string ips = "192.168.0.";
-            while (true)
+
+            for (int i = 0; i <= 255; i += 1)
             {
-                int i = 0;
+                XboxName = new TcpClient();
 
-                for (; ; )
+                if (XboxName.ConnectAsync(ips + i, 730).Wait(10))//keep calm just code..
                 {
-                    if (i < 255)
-                    {
-                        XboxName = new TcpClient();
-                        if (XboxName.ConnectAsync(ips + i, 730).Wait(10))//keep calm just code..
-                        {
-                            xboxConsole.IPAddress = ips + i;
-                            Connected = true;
-                            return null;
-                        }
-                        else
-                        {
-                            i++;
-                        }
-
-                    }
-                    else
-                    {
-                        Connected = false;
-                        return null;
-                    }
+                    xboxConsole.IPAddress = ips + i;
+                    Connected = true;
+                    return null;
                 }
             }
+
+            Connected = false;
+            return null;
         }
-        static readonly BackgroundWorker FindConsoleBc = new BackgroundWorker();
-        static readonly BackgroundWorker FindConsolegc = new BackgroundWorker();
+
+
         public static void CloseConnection(uint Connection)
         {
-
             Disconnect();
         }
         public static void FindConsole(uint Retries, uint RetryDelay)
@@ -156,35 +105,26 @@ namespace XDevkit
             {
                 FindConsoleBc.RunWorkerAsync();
             }
-            int n = 0;
-            switch (n)
-            {
-                case 0:
-                    BackgroundSlave();
-                    goto case 1;
-                case 1:
-                    if (Connected == true)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        if (n < 3)
-                        {
-                            Console.WriteLine("Connection Fail Safe Activated....");
-                            n++;
-                            BackgroundSlave();
-                        }
-                        if (n < 6)
-                        {
-                            Console.WriteLine("Connection Must Not Be Available, Please Make Sure Your On the Same Network As Your Console Otherwise Please Try Again Later.....");
-                            Console.WriteLine("Connection Fail Safe Terminated, Reason: FindConsole Has Failed User Not Connected To Network....");
 
-                            return false;
-                        }
-                        n++;
-                        goto case 1;
-                    }
+            BackgroundSlave();
+
+            if (Connected == true)
+            {
+                return true;
+            }
+            else
+            {
+                int noOfRetries = 0;
+
+                if (noOfRetries < 3)
+                {
+                    BackgroundSlave();
+                    noOfRetries++;
+                }
+                if (noOfRetries < 6)
+                {
+                    return false;
+                }
             }
             return false;
         }

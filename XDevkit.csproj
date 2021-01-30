@@ -10,6 +10,7 @@
     <RootNamespace>XDevkit</RootNamespace>
     <AssemblyName>XDevkit</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -48,6 +49,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="XDRPC">
+      <HintPath>..\..\..\Downloads\xdrpc-master\xdrpc-master\bin\Debug\XDRPC.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,6 +60,18 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="XDevkit\Controls\XMessageboxUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XDevkit\Controls\XMessageboxUI.designer.cs">
+      <DependentUpon>XMessageboxUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapFunctions.cs" />
+    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapInfo.cs" />
+    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapSubmap.cs" />
+    <Compile Include="XDevkit\Devkit\Bitmaps\DDS.cs" />
+    <Compile Include="XDevkit\Devkit\Bitmaps\DXTDecoder.cs" />
+    <Compile Include="XDevkit\Devkit\Bitmaps\TextureFormat.cs" />
     <Compile Include="XDevkit\Controls\ByteArray.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -74,23 +90,17 @@
     <Compile Include="XDevkit\Controls\MemDump.Designer.cs">
       <DependentUpon>MemDump.cs</DependentUpon>
     </Compile>
-    <Compile Include="XDevkit\Controls\XboxMessagebox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\XboxMessagebox.Designer.cs">
-      <DependentUpon>XboxMessagebox.cs</DependentUpon>
-    </Compile>
     <Compile Include="XDevkit\Controls\xex_slider.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="XDevkit\Controls\xex_slider.Designer.cs">
       <DependentUpon>xex_slider.cs</DependentUpon>
     </Compile>
-    <Compile Include="XDevkit\Controls\xex_value.cs">
+    <Compile Include="XDevkit\Controls\ValueEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="XDevkit\Controls\xex_value.designer.cs">
-      <DependentUpon>xex_value.cs</DependentUpon>
+    <Compile Include="XDevkit\Controls\ValueEditor.designer.cs">
+      <DependentUpon>ValueEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="XDevkit\Devkit\Functions.cs" />
     <Compile Include="XDevkit\Devkit\IO\EndianIO.cs" />
@@ -99,7 +109,7 @@
     <Compile Include="XDevkit\Devkit\IO\RWStream.cs" />
     <Compile Include="XDevkit\Devkit\Items.cs" />
     <Compile Include="XDevkit\Extentions\XboxExtention.cs" />
-    <Compile Include="XDevkit\Extentions\XboxFilesystem.cs" />
+    <Compile Include="XDevkit\Extentions\XboxFileSystem.cs" />
     <Compile Include="XDevkit\Extentions\XboxMemoryStream.cs" />
     <Compile Include="XDevkit\Xbox.cs" />
     <Compile Include="XDevkit\XboxClient\XboxClient.cs" />
@@ -112,7 +122,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\.editorconfig" />
-    <None Include="Properties\app.config" />
     <None Include="Properties\packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -123,17 +132,18 @@
     <Content Include="XDevkit\About XDevkit.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="XDevkit\Controls\ByteArray.resx">
       <DependentUpon>ByteArray.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="XDevkit\Controls\MemDump.resx">
       <DependentUpon>MemDump.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="XDevkit\Controls\XboxMessagebox.resx">
-      <DependentUpon>XboxMessagebox.cs</DependentUpon>
+    <EmbeddedResource Include="XDevkit\Controls\ValueEditor.resx">
+      <DependentUpon>ValueEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="XDevkit\Controls\xex_value.resx">
-      <DependentUpon>xex_value.cs</DependentUpon>
+    <EmbeddedResource Include="XDevkit\Controls\XMessageboxUI.resx">
+      <DependentUpon>XMessageboxUI.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

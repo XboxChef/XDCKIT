@@ -29,157 +29,169 @@ namespace XDevkit.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.Value = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.Poke = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            Value = new DevExpress.XtraEditors.TextEdit();
+            comboBox1 = new System.Windows.Forms.ComboBox();
+            textBox1 = new DevExpress.XtraEditors.TextEdit();
+            textBox2 = new DevExpress.XtraEditors.TextEdit();
+            textBox3 = new DevExpress.XtraEditors.TextEdit();
+            textBox4 = new DevExpress.XtraEditors.TextEdit();
+            textBox5 = new DevExpress.XtraEditors.TextEdit();
+            textBox6 = new DevExpress.XtraEditors.TextEdit();
+            textBox7 = new DevExpress.XtraEditors.TextEdit();
+            textBox8 = new DevExpress.XtraEditors.TextEdit();
+            Poke = new System.Windows.Forms.Button();
+            textEdit1 = new DevExpress.XtraEditors.TextEdit();
+            ((System.ComponentModel.ISupportInitialize)(textEdit1.Properties)).BeginInit();
+            SuspendLayout();
             // 
             // Value
             // 
-            this.Value.Location = new System.Drawing.Point(152, 3);
-            this.Value.Name = "Value";
-            this.Value.Size = new System.Drawing.Size(18, 20);
-            this.Value.TabIndex = 2;
-            this.Value.Text = "FF";
-            this.Value.Visible = false;
+            Value.Location = new System.Drawing.Point(152, 3);
+            Value.Name = "Value";
+            Value.Size = new System.Drawing.Size(18, 20);
+            Value.TabIndex = 2;
+            Value.Text = "FF";
+            Value.Visible = false;
             // 
             // comboBox1
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] {
             "1 byte",
             "2 bytes",
             "4 bytes",
             "8 bytes"});
-            this.comboBox1.Location = new System.Drawing.Point(87, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(59, 21);
-            this.comboBox1.TabIndex = 3;
+            comboBox1.Location = new System.Drawing.Point(87, 3);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new System.Drawing.Size(59, 21);
+            comboBox1.TabIndex = 3;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(176, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(18, 20);
-            this.textBox1.TabIndex = 4;
-            this.textBox1.Text = "FF";
-            this.textBox1.Visible = false;
+            textBox1.Location = new System.Drawing.Point(176, 3);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(18, 20);
+            textBox1.TabIndex = 4;
+            textBox1.Text = "FF";
+            textBox1.Visible = false;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(224, 3);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(18, 20);
-            this.textBox2.TabIndex = 6;
-            this.textBox2.Text = "FF";
-            this.textBox2.Visible = false;
+            textBox2.Location = new System.Drawing.Point(224, 3);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new System.Drawing.Size(18, 20);
+            textBox2.TabIndex = 6;
+            textBox2.Text = "FF";
+            textBox2.Visible = false;
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(200, 3);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(18, 20);
-            this.textBox3.TabIndex = 5;
-            this.textBox3.Text = "FF";
-            this.textBox3.Visible = false;
+            textBox3.Location = new System.Drawing.Point(200, 3);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new System.Drawing.Size(18, 20);
+            textBox3.TabIndex = 5;
+            textBox3.Text = "FF";
+            textBox3.Visible = false;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(320, 3);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(18, 20);
-            this.textBox4.TabIndex = 10;
-            this.textBox4.Text = "FF";
-            this.textBox4.Visible = false;
+            textBox4.Location = new System.Drawing.Point(320, 3);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new System.Drawing.Size(18, 20);
+            textBox4.TabIndex = 10;
+            textBox4.Text = "FF";
+            textBox4.Visible = false;
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(296, 3);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(18, 20);
-            this.textBox5.TabIndex = 9;
-            this.textBox5.Text = "FF";
-            this.textBox5.Visible = false;
+            textBox5.Location = new System.Drawing.Point(296, 3);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new System.Drawing.Size(18, 20);
+            textBox5.TabIndex = 9;
+            textBox5.Text = "FF";
+            textBox5.Visible = false;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(272, 3);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(18, 20);
-            this.textBox6.TabIndex = 8;
-            this.textBox6.Text = "FF";
-            this.textBox6.Visible = false;
+            textBox6.Location = new System.Drawing.Point(272, 3);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new System.Drawing.Size(18, 20);
+            textBox6.TabIndex = 8;
+            textBox6.Text = "FF";
+            textBox6.Visible = false;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(248, 3);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(18, 20);
-            this.textBox7.TabIndex = 7;
-            this.textBox7.Text = "FF";
-            this.textBox7.Visible = false;
+            textBox7.Location = new System.Drawing.Point(248, 3);
+            textBox7.Name = "textBox7";
+            textBox7.Size = new System.Drawing.Size(18, 20);
+            textBox7.TabIndex = 7;
+            textBox7.Text = "FF";
+            textBox7.Visible = false;
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(3, 3);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(78, 20);
-            this.textBox8.TabIndex = 11;
-            this.textBox8.Text = "Address";
+            textBox8.Location = new System.Drawing.Point(3, 3);
+            textBox8.Name = "textBox8";
+            textBox8.Size = new System.Drawing.Size(78, 20);
+            textBox8.TabIndex = 11;
+            textBox8.Text = "Address";
             // 
             // Poke
             // 
-            this.Poke.Location = new System.Drawing.Point(344, 3);
-            this.Poke.Name = "Poke";
-            this.Poke.Size = new System.Drawing.Size(53, 19);
-            this.Poke.TabIndex = 12;
-            this.Poke.Text = "Poke";
-            this.Poke.UseVisualStyleBackColor = true;
+            Poke.Location = new System.Drawing.Point(344, 3);
+            Poke.Name = "Poke";
+            Poke.Size = new System.Drawing.Size(53, 19);
+            Poke.TabIndex = 12;
+            Poke.Text = "Poke";
+            Poke.UseVisualStyleBackColor = true;
+            // 
+            // textEdit1
+            // 
+            textEdit1.Location = new System.Drawing.Point(224, 4);
+            textEdit1.Name = "textEdit1";
+            textEdit1.Size = new System.Drawing.Size(100, 20);
+            textEdit1.TabIndex = 13;
             // 
             // ByteArray
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.Poke);
-            this.Controls.Add(this.textBox8);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.Value);
-            this.MaximumSize = new System.Drawing.Size(400, 25);
-            this.MinimumSize = new System.Drawing.Size(400, 25);
-            this.Name = "ByteArray";
-            this.Size = new System.Drawing.Size(400, 25);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(textEdit1);
+            Controls.Add(Poke);
+            Controls.Add(textBox8);
+            Controls.Add(textBox4);
+            Controls.Add(textBox5);
+            Controls.Add(textBox6);
+            Controls.Add(textBox7);
+            Controls.Add(textBox2);
+            Controls.Add(textBox3);
+            Controls.Add(textBox1);
+            Controls.Add(comboBox1);
+            Controls.Add(Value);
+            MaximumSize = new System.Drawing.Size(400, 25);
+            MinimumSize = new System.Drawing.Size(400, 25);
+            Name = "ByteArray";
+            Size = new System.Drawing.Size(400, 25);
+            ((System.ComponentModel.ISupportInitialize)(textEdit1.Properties)).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.TextBox Value;
+        private DevExpress.XtraEditors.TextEdit Value;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox8;
+        private DevExpress.XtraEditors.TextEdit textBox1;
+        private DevExpress.XtraEditors.TextEdit textBox2;
+        private DevExpress.XtraEditors.TextEdit textBox3;
+        private DevExpress.XtraEditors.TextEdit textBox4;
+        private DevExpress.XtraEditors.TextEdit textBox5;
+        private DevExpress.XtraEditors.TextEdit textBox6;
+        private DevExpress.XtraEditors.TextEdit textBox7;
+        private DevExpress.XtraEditors.TextEdit textBox8;
         private System.Windows.Forms.Button Poke;
+        private DevExpress.XtraEditors.TextEdit textEdit1;
     }
 }

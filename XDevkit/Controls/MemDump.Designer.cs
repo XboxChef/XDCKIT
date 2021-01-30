@@ -29,88 +29,88 @@ namespace XDevkit.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.dumpMemoryButton = new System.Windows.Forms.Button();
-            this.label32 = new System.Windows.Forms.Label();
-            this.dumpStartOffsetTextBox = new System.Windows.Forms.TextBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.dumpLengthTextBox = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            comboBox2 = new System.Windows.Forms.ComboBox();
+            dumpMemoryButton = new System.Windows.Forms.Button();
+            label32 = new System.Windows.Forms.Label();
+            dumpStartOffsetTextBox = new System.Windows.Forms.TextBox();
+            label33 = new System.Windows.Forms.Label();
+            dumpLengthTextBox = new System.Windows.Forms.TextBox();
+            SuspendLayout();
             // 
             // comboBox2
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Items.AddRange(new object[] {
             "Please Select",
             "Physical RAM",
             "Base File / Image",
             "Allocated Data / Virtual"});
-            this.comboBox2.Location = new System.Drawing.Point(4, 2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(196, 21);
-            this.comboBox2.TabIndex = 22;
+            comboBox2.Location = new System.Drawing.Point(4, 2);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new System.Drawing.Size(196, 21);
+            comboBox2.TabIndex = 22;
             // 
             // dumpMemoryButton
             // 
-            this.dumpMemoryButton.ForeColor = System.Drawing.Color.Black;
-            this.dumpMemoryButton.Location = new System.Drawing.Point(66, 84);
-            this.dumpMemoryButton.Name = "dumpMemoryButton";
-            this.dumpMemoryButton.Size = new System.Drawing.Size(75, 23);
-            this.dumpMemoryButton.TabIndex = 17;
-            this.dumpMemoryButton.Text = "Dump";
-            this.dumpMemoryButton.UseVisualStyleBackColor = true;
+            dumpMemoryButton.ForeColor = System.Drawing.Color.Black;
+            dumpMemoryButton.Location = new System.Drawing.Point(66, 84);
+            dumpMemoryButton.Name = "dumpMemoryButton";
+            dumpMemoryButton.Size = new System.Drawing.Size(75, 23);
+            dumpMemoryButton.TabIndex = 17;
+            dumpMemoryButton.Text = "Dump";
+            dumpMemoryButton.UseVisualStyleBackColor = true;
             // 
             // label32
             // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(4, 61);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(88, 13);
-            this.label32.TabIndex = 21;
-            this.label32.Text = "Dump Length 0x:";
+            label32.AutoSize = true;
+            label32.Location = new System.Drawing.Point(4, 61);
+            label32.Name = "label32";
+            label32.Size = new System.Drawing.Size(88, 13);
+            label32.TabIndex = 21;
+            label32.Text = "Dump Length 0x:";
             // 
             // dumpStartOffsetTextBox
             // 
-            this.dumpStartOffsetTextBox.Location = new System.Drawing.Point(98, 30);
-            this.dumpStartOffsetTextBox.Name = "dumpStartOffsetTextBox";
-            this.dumpStartOffsetTextBox.Size = new System.Drawing.Size(102, 20);
-            this.dumpStartOffsetTextBox.TabIndex = 18;
-            this.dumpStartOffsetTextBox.Text = "C0000000";
+            dumpStartOffsetTextBox.Location = new System.Drawing.Point(98, 30);
+            dumpStartOffsetTextBox.Name = "dumpStartOffsetTextBox";
+            dumpStartOffsetTextBox.Size = new System.Drawing.Size(102, 20);
+            dumpStartOffsetTextBox.TabIndex = 18;
+            dumpStartOffsetTextBox.Text = "C0000000";
             // 
             // label33
             // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(4, 33);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(91, 13);
-            this.label33.TabIndex = 20;
-            this.label33.Text = "Starting Offset 0x:";
+            label33.AutoSize = true;
+            label33.Location = new System.Drawing.Point(4, 33);
+            label33.Name = "label33";
+            label33.Size = new System.Drawing.Size(91, 13);
+            label33.TabIndex = 20;
+            label33.Text = "Starting Offset 0x:";
             // 
             // dumpLengthTextBox
             // 
-            this.dumpLengthTextBox.Location = new System.Drawing.Point(98, 58);
-            this.dumpLengthTextBox.Name = "dumpLengthTextBox";
-            this.dumpLengthTextBox.Size = new System.Drawing.Size(102, 20);
-            this.dumpLengthTextBox.TabIndex = 19;
-            this.dumpLengthTextBox.Text = "FF";
+            dumpLengthTextBox.Location = new System.Drawing.Point(98, 58);
+            dumpLengthTextBox.Name = "dumpLengthTextBox";
+            dumpLengthTextBox.Size = new System.Drawing.Size(102, 20);
+            dumpLengthTextBox.TabIndex = 19;
+            dumpLengthTextBox.Text = "FF";
             // 
             // MemDump
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.dumpMemoryButton);
-            this.Controls.Add(this.label32);
-            this.Controls.Add(this.dumpStartOffsetTextBox);
-            this.Controls.Add(this.label33);
-            this.Controls.Add(this.dumpLengthTextBox);
-            this.MaximumSize = new System.Drawing.Size(205, 110);
-            this.MinimumSize = new System.Drawing.Size(205, 110);
-            this.Name = "MemDump";
-            this.Size = new System.Drawing.Size(205, 110);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(comboBox2);
+            Controls.Add(dumpMemoryButton);
+            Controls.Add(label32);
+            Controls.Add(dumpStartOffsetTextBox);
+            Controls.Add(label33);
+            Controls.Add(dumpLengthTextBox);
+            MaximumSize = new System.Drawing.Size(205, 110);
+            MinimumSize = new System.Drawing.Size(205, 110);
+            Name = "MemDump";
+            Size = new System.Drawing.Size(205, 110);
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

@@ -27,6 +27,7 @@ namespace XDevkit
 
         #region Bool {Get; Set;}
         public bool SetBool(uint Address) { return GetMemory(Address, 1)[0] != 0; }
+
         public bool ReadBool(uint Offset)
         {
             GetMemory(Offset, 1, myBuff, out outInt);

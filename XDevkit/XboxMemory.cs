@@ -109,38 +109,6 @@ namespace XDevkit
         /// </summary>
         /// <param name="Command"></param>
         /// <param name="response"></param>
-        public static string SendTextCommand(string Command, string c = "")
-        {
-
-            try
-            {
-                // Max packet size is 1026
-                byte[] Packet = new byte[1026];
-                if (XboxClient.XboxName.Connected == true)
-                {
-                    Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
-                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
-                    XboxClient.XboxName.Client.Receive(Packet);
-                    return Encoding.ASCII.GetString(Packet);
-
-                }
-                else
-                {
-                    Console.WriteLine("SendTextCommand ==> " + Assembly.GetEntryAssembly().GetName().Name + " Connection = " + XboxClient.XboxName.Connected);
-                    return string.Empty;
-                }
-
-            }
-            catch (SocketException ex)
-            {
-                return ex.Message;
-            }
-        }
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="Command"></param>
-        /// <param name="response"></param>
         public static void SendTextCommand(string Command, out string response)
         {
             response = string.Empty;
@@ -672,7 +640,6 @@ namespace XDevkit
         /// <returns></returns>
         public uint ResolveFunction(string ModuleName, uint Ordinal)
         {
-
             string Command = "consolefeatures ver=" + (uint)2 + " type=9 params=\"A\\0\\A\\2\\" + (uint)2 + "/" + ModuleName.Length + "\\" + ModuleName.ToHexString() + "\\" + (uint)1 + "\\" + Ordinal + "\\\"";
             SendTextCommand(Command);
             string String = SendTextCommand(Command);

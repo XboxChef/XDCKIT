@@ -12,52 +12,64 @@ namespace XDevkit
     public class XboxFileSystem//TODO:
     {
         /// <summary>
-        /// 
+        /// Get the console drive names.
         /// </summary>
-        public string Drives { get; set; } = Xbox.SendTextCommand("drivelist", "");
+        public string Drives { get => GetDrives(); }
 
         /// <summary>
-        /// Creates a directory on the xbox.
+        /// Get the console drive names Function.
         /// </summary>
-        /// <param name="name">Directory name.</param>
-        public void MakeDirectory(string Directory)
+        public string GetDrives()
         {
-            string sdr = string.Concat("mkdir name=\"{0}\"", Directory);
-            Xbox.SendTextCommand(sdr, out Xbox.Response);
-        }
-        /// <summary>
-        /// Delete's Directory Folder
-        /// </summary>
-        /// <param name="Directory"></param>
-        public void RemoveDirectory(string Directory)
-        {
-            string sdr = string.Concat("delete name=\"{0}\"", Directory);
-            Xbox.SendTextCommand(sdr, out Xbox.Response);
-        }/// <summary>
-         /// 
-         /// </summary>
-         /// <param name="Directory"></param>
-         /// <returns></returns>
-        public string[] DirectoryFiles(string Directory)
-        {
-            return new[] { Xbox.SendTextCommand("", "") };
+
+            return "";
         }
 
-
         /// <summary>
-        /// Creates a directory on the xbox.
+        /// Create the specified directory on the console.
         /// </summary>
-        /// <param name="name">Directory name.</param>
-        public void CreateDirectory(string name)
+        /// <param name="path">Directory name.</param>
+        public void MakeDirectory(string path)
         {
-            string sdr = string.Concat("mkdir name=\"{0}\"", name);
+            string sdr = string.Concat("mkdir name=\"{0}\"", path);
             Xbox.SendTextCommand(sdr, out Xbox.Response);
         }
+
         /// <summary>
-        /// Gets The directory on the xbox.
+        /// Delete the specified folder path from the console.
+        /// </summary>
+        /// <param name="path"></param>
+        public void RemoveDirectory(string path)
+        {
+            string sdr = string.Concat("delete name=\"{0}\"", path);
+            Xbox.SendTextCommand(sdr, out Xbox.Response);
+        }
+        
+        /// <summary>
+        /// Get the specified folder path from the console.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public string[] DirectoryFiles(string path)
+        {
+            return new[] { ""/*Xbox.DMSendCommand("")*/ };
+        }
+
+        /// <summary>
+        /// Create the specified directory path on the console.
+        /// </summary>
+        /// <param name="path">Directory name.</param>
+        public void CreateDirectory(string path)
+        {
+            string sdr = string.Concat("mkdir name=\"{0}\"", path);
+            Xbox.SendTextCommand(sdr, out Xbox.Response);
+        }
+
+        /// <summary>
+        /// Get the specified directory information from the console.
         /// </summary>
         /// <param name="name">Directory name.</param>
-        public void GetDirectory(string name)
+        public void GetDirectory(string path)
         {
 
         }
@@ -65,10 +77,10 @@ namespace XDevkit
         /// <summary>
         /// Deletes a file on the xbox.
         /// </summary>
-        /// <param name="fileName">File to delete.</param>
-        public void DeleteFile(string fileName)
+        /// <param name="filePath">File to delete.</param>
+        public void DeleteFile(string filePath)
         {
-            string dre = string.Concat("delete name=\"{0}\"", fileName);
+            string dre = string.Concat("delete name=\"{0}\"", filePath);
             Xbox.SendTextCommand(dre);
         }
 
@@ -79,7 +91,6 @@ namespace XDevkit
         /// <param name="newFileName">New file name.</param>
         public void RenameFile(string OldFileName, string NewFileName)
         {
-
             string ren = string.Concat("rename name=\"{0}\" newname=\"{1}\"", OldFileName, NewFileName);
             Xbox.SendTextCommand(ren);
         }
@@ -104,18 +115,18 @@ namespace XDevkit
             string[] strArray3 = localFolder.Split(new char[] { '\\' });
             string str = strArray3[strArray3.Length - 1];
             string directory = remoteFolderToSaveIn + @"\" + str + @"\";
-            this.CreateDirectory(directory);
+            CreateDirectory(directory);
             foreach (string str3 in files)
             {
                 strArray3 = str3.Split(new char[] { '\\' });
                 str4 = strArray3[strArray3.Length - 1];
-                this.UploadFile(str3, directory + str4);
+                UploadFile(str3, directory + str4);
             }
             foreach (string str5 in directories)
             {
                 strArray3 = str5.Split(new char[] { '\\' });
                 str4 = strArray3[strArray3.Length - 1];
-                this.UploadDirectory(str5, directory);
+                UploadDirectory(str5, directory);
             }
         }
 
@@ -280,13 +291,13 @@ namespace XDevkit
             {
                 strArray3 = str3.Split(new char[] { '\\' });
                 str4 = strArray3[strArray3.Length - 1];
-                this.DownloadFile(path + str4, str3);
+                DownloadFile(path + str4, str3);
             }
             foreach (string str5 in directories)
             {
                 strArray3 = str5.Split(new char[] { '\\' });
                 str4 = strArray3[strArray3.Length - 1];
-                this.DownloadDirectory(path, str5);
+                DownloadDirectory(path, str5);
             }
         }
         /// <summary>
@@ -305,7 +316,7 @@ namespace XDevkit
         /// <returns></returns>
         private string[] GetFiles(string remoteFolderPath)//todo
         {
-            return new[] { Xbox.SendTextCommand("", "") };
+            return new[] { ""/*Xbox.DMSendCommand("")*/ };
         }
         /// <summary>
         /// 

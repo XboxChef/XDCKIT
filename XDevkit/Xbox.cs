@@ -17,6 +17,7 @@ namespace XDevkit
             get => XboxClient.XboxName.Connected ? SendTextCommand("dbgname") : "Error";
             set => SendTextCommand("dbgname = " + value);
         }
+        public bool IsTrayOpen { get; set; } = false;
         [Browsable(false)]
         public XboxFileSystem File
         {

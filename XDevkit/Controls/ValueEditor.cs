@@ -1,4 +1,9 @@
-﻿using System;
+﻿//Do Not Delete This Comment... 
+//Made By TeddyHammer on 08/20/16
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Thank You for looking love you guys...
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,13 +11,13 @@ using System.Windows.Forms;
 
 namespace XDevkit
 {
-    public partial class xex_value : UserControl
+    public partial class ValueEditor : UserControl
     {
         public string offset;
         private string origvalue;
         public Stream stream;
 
-        public xex_value()
+        public ValueEditor()
         {
             InitializeComponent();
             foreach (Control control in base.Controls)

@@ -14,11 +14,11 @@ namespace XDevkit
 
         public EndianReader(Stream stream, EndianType endianstyle) : base(stream)
         {
-            this.endianstyle = endianstyle;
+            endianstyle = endianstyle;
         }
 
         public string ReadAsciiString(int Length) =>
-            this.ReadAsciiString(Length, this.endianstyle);
+            ReadAsciiString(Length, endianstyle);
 
         public string ReadAsciiString(int Length, EndianType EndianType)
         {
@@ -29,7 +29,7 @@ namespace XDevkit
             {
                 if (num2 < Length)
                 {
-                    char ch = (char)this.ReadByte();
+                    char ch = (char)ReadByte();
                     num++;
                     if (ch != '\0')
                     {
@@ -39,13 +39,13 @@ namespace XDevkit
                     }
                 }
                 int num3 = Length - num;
-                this.BaseStream.Seek(num3, SeekOrigin.Current);
+                BaseStream.Seek(num3, SeekOrigin.Current);
                 return str;
             }
         }
 
         public override double ReadDouble() =>
-            this.ReadDouble(this.endianstyle);
+            ReadDouble(endianstyle);
 
         public double ReadDouble(EndianType EndianType)
         {
@@ -58,7 +58,7 @@ namespace XDevkit
         }
 
         public override short ReadInt16() =>
-            this.ReadInt16(this.endianstyle);
+            ReadInt16(endianstyle);
 
         public short ReadInt16(EndianType EndianType)
         {
@@ -71,7 +71,7 @@ namespace XDevkit
         }
 
         public int ReadInt24() =>
-            this.ReadInt24(this.endianstyle);
+            ReadInt24(endianstyle);
 
         public int ReadInt24(EndianType EndianType)
         {
@@ -85,7 +85,7 @@ namespace XDevkit
         }
 
         public override int ReadInt32() =>
-            this.ReadInt32(this.endianstyle);
+            ReadInt32(endianstyle);
 
         public int ReadInt32(EndianType EndianType)
         {
@@ -98,7 +98,7 @@ namespace XDevkit
         }
 
         public override long ReadInt64() =>
-            this.ReadInt64(this.endianstyle);
+            ReadInt64(endianstyle);
 
         public long ReadInt64(EndianType EndianType)
         {
@@ -116,7 +116,7 @@ namespace XDevkit
             while (true)
             {
                 char ch;
-                bool flag = (ch = this.ReadChar()) != '\0';
+                bool flag = (ch = ReadChar()) != '\0';
                 if (!flag || (ch == '\0'))
                 {
                     return str;
@@ -126,7 +126,7 @@ namespace XDevkit
         }
 
         public override float ReadSingle() =>
-            this.ReadSingle(this.endianstyle);
+            ReadSingle(endianstyle);
 
         public float ReadSingle(EndianType EndianType)
         {
@@ -144,12 +144,12 @@ namespace XDevkit
             int num = 0;
             while (true)
             {
-                char ch = (char)this.ReadByte();
+                char ch = (char)ReadByte();
                 num++;
                 if (ch == '\0')
                 {
                     int num2 = str.Length - num;
-                    this.BaseStream.Seek(num2 + 1, SeekOrigin.Current);
+                    BaseStream.Seek(num2 + 1, SeekOrigin.Current);
                     return str;
                 }
                 str = str + ch;
@@ -157,10 +157,10 @@ namespace XDevkit
         }
 
         public string ReadString(int Length) =>
-            this.ReadAsciiString(Length);
+            ReadAsciiString(Length);
 
         public override ushort ReadUInt16() =>
-            this.ReadUInt16(this.endianstyle);
+            ReadUInt16(endianstyle);
 
         public ushort ReadUInt16(EndianType EndianType)
         {
@@ -173,7 +173,7 @@ namespace XDevkit
         }
 
         public override uint ReadUInt32() =>
-            this.ReadUInt32(this.endianstyle);
+            ReadUInt32(endianstyle);
 
         public uint ReadUInt32(EndianType EndianType)
         {
@@ -186,7 +186,7 @@ namespace XDevkit
         }
 
         public override ulong ReadUInt64() =>
-            this.ReadUInt64(this.endianstyle);
+            ReadUInt64(endianstyle);
 
         public ulong ReadUInt64(EndianType EndianType)
         {
@@ -199,7 +199,7 @@ namespace XDevkit
         }
 
         public string ReadUnicodeString(int Length) =>
-            this.ReadUnicodeString(Length, this.endianstyle);
+            ReadUnicodeString(Length, endianstyle);
 
         public string ReadUnicodeString(int Length, EndianType EndianType)
         {
@@ -210,7 +210,7 @@ namespace XDevkit
             {
                 if (num2 < Length)
                 {
-                    char ch = (char)this.ReadUInt16(EndianType);
+                    char ch = (char)ReadUInt16(EndianType);
                     num++;
                     if (ch != '\0')
                     {
@@ -220,29 +220,29 @@ namespace XDevkit
                     }
                 }
                 int num3 = (Length - num) * 2;
-                this.BaseStream.Seek(num3, SeekOrigin.Current);
+                BaseStream.Seek(num3, SeekOrigin.Current);
                 return str;
             }
         }
 
         public void SeekTo(int offset)
         {
-            this.SeekTo(offset, SeekOrigin.Begin);
+            SeekTo(offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(long offset)
         {
-            this.SeekTo((int)offset, SeekOrigin.Begin);
+            SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int)offset, SeekOrigin.Begin);
+            SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.BaseStream.Seek(offset, SeekOrigin);
+            BaseStream.Seek(offset, SeekOrigin);
         }
     }
 }

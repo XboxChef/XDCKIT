@@ -14,67 +14,67 @@ namespace XDevkit
 
         public EndianWriter(Stream stream, EndianType endianstyle) : base(stream)
         {
-            this.endianstyle = endianstyle;
+            endianstyle = endianstyle;
         }
 
         public void SeekTo(int offset)
         {
-            this.SeekTo(offset, SeekOrigin.Begin);
+            SeekTo(offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(long offset)
         {
-            this.SeekTo((int)offset, SeekOrigin.Begin);
+            SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int)offset, SeekOrigin.Begin);
+            SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.BaseStream.Seek(offset, SeekOrigin);
+            BaseStream.Seek(offset, SeekOrigin);
         }
 
         public override void Write(double value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(short value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(int value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(long value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(float value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(ushort value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(uint value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public override void Write(ulong value)
         {
-            this.Write(value, this.endianstyle);
+            Write(value, endianstyle);
         }
 
         public void Write(double value, EndianType EndianType)
@@ -159,7 +159,7 @@ namespace XDevkit
 
         public void WriteAsciiString(string String, int Length)
         {
-            this.WriteAsciiString(String, Length, this.endianstyle);
+            WriteAsciiString(String, Length, endianstyle);
         }
 
         public void WriteAsciiString(string String, int Length, EndianType EndianType)
@@ -174,19 +174,19 @@ namespace XDevkit
                     int num4 = Length - length;
                     if (num4 > 0)
                     {
-                        this.Write(new byte[num4]);
+                        Write(new byte[num4]);
                     }
                     return;
                 }
                 byte num3 = (byte)String[num2];
-                this.Write(num3);
+                Write(num3);
                 num2++;
             }
         }
 
         public void WriteUnicodeString(string String, int Length)
         {
-            this.WriteUnicodeString(String, Length, this.endianstyle);
+            WriteUnicodeString(String, Length, endianstyle);
         }
 
         public void WriteUnicodeString(string String, int Length, EndianType EndianType)
@@ -201,12 +201,12 @@ namespace XDevkit
                     int num4 = (Length - length) * 2;
                     if (num4 > 0)
                     {
-                        this.Write(new byte[num4]);
+                        Write(new byte[num4]);
                     }
                     return;
                 }
                 ushort num3 = String[num2];
-                this.Write(num3, EndianType);
+                Write(num3, EndianType);
                 num2++;
             }
         }

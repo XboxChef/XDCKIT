@@ -19,85 +19,85 @@ namespace XDevkit
 
         public EndianIO(System.IO.Stream Stream, EndianType EndianStyle)
         {
-            this.filepath = "";
-            this.endiantype = EndianType.LittleEndian;
-            this.endiantype = EndianStyle;
-            this.stream = Stream;
-            this.isfile = false;
+            filepath = "";
+            endiantype = EndianType.LittleEndian;
+            endiantype = EndianStyle;
+            stream = Stream;
+            isfile = false;
         }
 
         public EndianIO(string FilePath, EndianType EndianStyle)
         {
-            this.filepath = "";
-            this.endiantype = EndianType.LittleEndian;
-            this.endiantype = EndianStyle;
-            this.filepath = FilePath;
-            this.isfile = true;
+            filepath = "";
+            endiantype = EndianType.LittleEndian;
+            endiantype = EndianStyle;
+            filepath = FilePath;
+            isfile = true;
         }
 
         public EndianIO(byte[] Buffer, EndianType EndianStyle)
         {
-            this.filepath = "";
-            this.endiantype = EndianType.LittleEndian;
-            this.endiantype = EndianStyle;
-            this.stream = new MemoryStream(Buffer);
-            this.isfile = false;
+            filepath = "";
+            endiantype = EndianType.LittleEndian;
+            endiantype = EndianStyle;
+            stream = new MemoryStream(Buffer);
+            isfile = false;
         }
 
         public void Close()
         {
-            if (this.isOpen)
+            if (isOpen)
             {
-                this.stream.Close();
-                this._in.Close();
-                this._out.Close();
-                this.isOpen = false;
+                stream.Close();
+                _in.Close();
+                _out.Close();
+                isOpen = false;
             }
         }
 
         public void Open()
         {
-            if (!this.isOpen)
+            if (!isOpen)
             {
-                if (this.isfile)
+                if (isfile)
                 {
-                    this.stream = new FileStream(this.filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                    stream = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 }
-                this._in = new EndianReader(this.stream, this.endiantype);
-                this._out = new EndianWriter(this.stream, this.endiantype);
-                this.isOpen = true;
+                _in = new EndianReader(stream, endiantype);
+                _out = new EndianWriter(stream, endiantype);
+                isOpen = true;
             }
         }
 
         public void SeekTo(int offset)
         {
-            this.SeekTo(offset, SeekOrigin.Begin);
+            SeekTo(offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(uint offset)
         {
-            this.SeekTo((int)offset, SeekOrigin.Begin);
+            SeekTo((int)offset, SeekOrigin.Begin);
         }
 
         public void SeekTo(int offset, SeekOrigin SeekOrigin)
         {
-            this.stream.Seek(offset, SeekOrigin);
+            stream.Seek(offset, SeekOrigin);
         }
 
         public bool Opened =>
-            this.isOpen;
+            isOpen;
 
         public bool Closed =>
-            !this.isOpen;
+            !isOpen;
 
         public EndianReader In =>
-            this._in;
+            _in;
 
         public EndianWriter Out =>
-            this._out;
+            _out;
 
         public System.IO.Stream Stream =>
-            this.stream;
+            stream;
     }
 }
 

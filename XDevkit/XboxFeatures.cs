@@ -3,6 +3,7 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
 
+using Microsoft.Test.Xbox.XDRPC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,8 +23,6 @@ namespace XDevkit
     {
         private const string XAMModule = "xam.xex";
         private const string krnlModule = "xboxkrnl.exe";
-
-        public bool IsTrayOpen { get; set; } = false;
 
         public string GetAvatarURL(string gamertag)
         {
@@ -804,5 +803,9 @@ namespace XDevkit
             return true;
         }
 
+        public void XamShowPlayersUI(uint XUserIndex)
+        {
+            XboxExtention.CallVoid(ResolveFunction(XAMModule, 712), new object[] { 0, 0, 0, 0 });
+        }
     }
 }

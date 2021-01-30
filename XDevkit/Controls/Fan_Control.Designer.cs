@@ -29,15 +29,15 @@ namespace XDevkit
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // Fan_Control
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "Fan_Control";
-            this.Size = new System.Drawing.Size(307, 53);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Name = "Fan_Control";
+            Size = new System.Drawing.Size(307, 53);
+            ResumeLayout(false);
 
         }
 
