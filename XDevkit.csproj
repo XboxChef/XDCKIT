@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\ModioX\src\References\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,14 +34,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>TextTemplate.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DevExpress.Data.Desktop.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Data.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Printing.v20.2.Core, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Utils.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraEditors.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraWizard.v20.2, Version=20.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -57,71 +60,78 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Fan_Control.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Fan_Control.Designer.cs">
+      <DependentUpon>Fan_Control.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ValueEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ValueEditor.designer.cs">
+      <DependentUpon>ValueEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\xex_slider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\xex_slider.Designer.cs">
+      <DependentUpon>xex_slider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Xbox.cs" />
+    <Compile Include="Core\XboxClient.cs" />
+    <Compile Include="Dialogs\WizardAddNewXbox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\WizardAddNewXbox.Designer.cs">
+      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\XMessageboxUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\XMessageboxUI.designer.cs">
+      <DependentUpon>XMessageboxUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\XMessageEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\XMessageEdit.Designer.cs">
+      <DependentUpon>XMessageEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Extentions\Bitmaps\BitmapFunctions.cs" />
+    <Compile Include="Extentions\Bitmaps\BitmapInfo.cs" />
+    <Compile Include="Extentions\Bitmaps\BitmapSubmap.cs" />
+    <Compile Include="Extentions\Bitmaps\DDS.cs" />
+    <Compile Include="Extentions\Bitmaps\DXTDecoder.cs" />
+    <Compile Include="Extentions\Bitmaps\TextureFormat.cs" />
+    <Compile Include="Extentions\Functions.cs" />
+    <Compile Include="Extentions\IO\EndianIO.cs" />
+    <Compile Include="Extentions\IO\EndianReader.cs" />
+    <Compile Include="Extentions\IO\EndianWriter.cs" />
+    <Compile Include="Extentions\IO\RWStream.cs" />
+    <Compile Include="Extentions\Items.cs" />
+    <Compile Include="Extentions\XboxEnums.cs" />
+    <Compile Include="Extentions\XboxExtention.cs" />
+    <Compile Include="Extentions\XboxMemoryStream.cs" />
+    <Compile Include="Extentions\XboxStructs.cs" />
+    <Compile Include="Features\Tray.cs" />
+    <Compile Include="Features\XboxFeatures.cs" />
+    <Compile Include="Features\XboxMemory.cs" />
+    <Compile Include="Features\XboxTypes.cs" />
+    <Compile Include="Filsystem\IXboxFile.cs" />
+    <Compile Include="Filsystem\XboxFileSystem.cs" />
+    <Compile Include="Notification System\XNotify.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="XDevkit\Controls\XMessageboxUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\XMessageboxUI.designer.cs">
-      <DependentUpon>XMessageboxUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapFunctions.cs" />
-    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapInfo.cs" />
-    <Compile Include="XDevkit\Devkit\Bitmaps\BitmapSubmap.cs" />
-    <Compile Include="XDevkit\Devkit\Bitmaps\DDS.cs" />
-    <Compile Include="XDevkit\Devkit\Bitmaps\DXTDecoder.cs" />
-    <Compile Include="XDevkit\Devkit\Bitmaps\TextureFormat.cs" />
-    <Compile Include="XDevkit\Controls\ByteArray.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\ByteArray.Designer.cs">
-      <DependentUpon>ByteArray.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Controls\Fan_Control.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\Fan_Control.Designer.cs">
-      <DependentUpon>Fan_Control.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Controls\MemDump.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\MemDump.Designer.cs">
-      <DependentUpon>MemDump.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Controls\xex_slider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\xex_slider.Designer.cs">
-      <DependentUpon>xex_slider.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Controls\ValueEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XDevkit\Controls\ValueEditor.designer.cs">
-      <DependentUpon>ValueEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XDevkit\Devkit\Functions.cs" />
-    <Compile Include="XDevkit\Devkit\IO\EndianIO.cs" />
-    <Compile Include="XDevkit\Devkit\IO\EndianReader.cs" />
-    <Compile Include="XDevkit\Devkit\IO\EndianWriter.cs" />
-    <Compile Include="XDevkit\Devkit\IO\RWStream.cs" />
-    <Compile Include="XDevkit\Devkit\Items.cs" />
-    <Compile Include="XDevkit\Extentions\XboxExtention.cs" />
-    <Compile Include="XDevkit\Extentions\XboxFileSystem.cs" />
-    <Compile Include="XDevkit\Extentions\XboxMemoryStream.cs" />
-    <Compile Include="XDevkit\Xbox.cs" />
-    <Compile Include="XDevkit\XboxClient\XboxClient.cs" />
-    <Compile Include="XDevkit\XboxClient\XboxEnums.cs" />
-    <Compile Include="XDevkit\XboxClient\XboxStructs.cs" />
-    <Compile Include="XDevkit\XboxFeatures.cs" />
-    <Compile Include="XDevkit\XboxMemory.cs" />
-    <Compile Include="XDevkit\XboxTypes.cs" />
-    <Compile Include="XDevkit\XNotify.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\.editorconfig" />
@@ -132,23 +142,29 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TextTemplate.ico" />
-    <Content Include="XDevkit\About XDevkit.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\licenses.licx" />
-    <EmbeddedResource Include="XDevkit\Controls\ByteArray.resx">
-      <DependentUpon>ByteArray.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\Fan_Control.resx">
+      <DependentUpon>Fan_Control.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="XDevkit\Controls\MemDump.resx">
-      <DependentUpon>MemDump.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XDevkit\Controls\ValueEditor.resx">
+    <EmbeddedResource Include="Controls\ValueEditor.resx">
       <DependentUpon>ValueEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="XDevkit\Controls\XMessageboxUI.resx">
+    <EmbeddedResource Include="Dialogs\WizardAddNewXbox.resx">
+      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\XMessageboxUI.resx">
       <DependentUpon>XMessageboxUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\XMessageEdit.resx">
+      <DependentUpon>XMessageEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Core\About XDevkit.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
