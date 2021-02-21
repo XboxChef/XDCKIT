@@ -285,7 +285,7 @@ namespace XDevkit.Dialogs
             this.addresslabel.Name = "addresslabel";
             this.addresslabel.Size = new System.Drawing.Size(360, 13);
             this.addresslabel.TabIndex = 15;
-            this.addresslabel.Text = "Would you like to use \'xxx.xxx.xxx.xxx\' as the Xbox 360 Development Kit?";
+            this.addresslabel.Text = "Would you like to use \'255.255.255.255\' as the Xbox 360 Development Kit?";
             // 
             // WizardWelcome
             // 

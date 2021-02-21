@@ -43,6 +43,19 @@ namespace XDevkit
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public uint DumpLength { set; get; }
+
+        public static bool Connected
+        {
+            get
+            {
+                return XboxClient.Connected;
+            }
+            set
+            {
+                XboxClient.Connected = value;
+            }
+        }
+
         /// <summary>
         /// Sends COmmands Based On User's Input
         /// </summary>
@@ -113,7 +126,7 @@ namespace XDevkit
             {
                 // Max packet size is 1026
                 byte[] Packet = new byte[1026];
-                if (XboxClient.Connected == true)
+                if (Connected == true)
                 {
                     Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
@@ -143,6 +156,7 @@ namespace XDevkit
 
                 try
                 {
+                    Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
                 }
                 catch (Exception /*ex*/)
@@ -169,7 +183,7 @@ namespace XDevkit
         {
             if (!Functions.IsHex(value))
                 throw new Exception("Not a valid Hex String!");
-            if (!XboxClient.Connected)
+            if (!Connected)
                 return; //Call function - If not connected return
             try
             {
@@ -208,7 +222,7 @@ namespace XDevkit
             if (memoryAddress > (startDumpAddress + dumpLength) || memoryAddress < startDumpAddress)
                 throw new Exception("Memory Address Out of Bounds");
 
-            if (!XboxClient.Connected)
+            if (!Connected)
                 return null; //Call function - If not connected return
 
             var readWriter = new RwStream();
@@ -262,7 +276,7 @@ namespace XDevkit
                 throw new Exception("Empty Search string!");
             if (!Functions.IsHex(pointer))
                 throw new Exception(string.Format("{0} is not a valid Hex string.", pointer));
-            if (!XboxClient.Connected)
+            if (!Connected)
                 return null; //Call function - If not connected return
             BindingList<SearchResults> values;
             try
@@ -366,6 +380,7 @@ namespace XDevkit
             int sent = 0;
             try
             {
+                Thread.Sleep(1000);
                 // Send the setmem command
                 XboxClient.XboxName.Client
                     .Send(Encoding.ASCII
@@ -399,6 +414,7 @@ namespace XDevkit
 
             // Check to see our response
             byte[] Packet = new byte[1026];
+            Thread.Sleep(1000);
             XboxClient.XboxName.Client.Receive(Packet);
             BytesWritten = Convert.ToUInt32(Encoding.ASCII.GetString(Packet));
             if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 11) == "0 bytes set")
@@ -421,7 +437,7 @@ namespace XDevkit
             List<byte> ReturnData = new List<byte>();
             byte[] Packet = new byte[1026];
             Data = new byte[1024];
-
+            Thread.Sleep(1000);
             // Send getmemex command.
 
             XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n",Address.ToString("X2"),BytesToRead.ToString("X2"))));
@@ -557,7 +573,7 @@ namespace XDevkit
         public void Dump(string filename, uint startDumpAddress, uint dumpLength)
         {
 
-            if (!XboxClient.Connected)
+            if (!Connected)
                 return; //Call function - If not connected return
 
             var readWriter = new RwStream(filename);
@@ -603,57 +619,7 @@ namespace XDevkit
 
             return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
         }
-        /// <summary>
-        /// Receives multiple lines of text from the xbox.
-        /// </summary>
-        /// <returns></returns>
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public string ReceiveMultilineResponse()
-        {
-            StringBuilder response = new StringBuilder();
-            while (true)
-            {
-                string line = ReceiveSocketLine() + " ";//change here if any issue occurs
-                if (line[0] == '.')
-                    break;
-                else
-                    response.Append(line);
-            }
-            return response.ToString();
-        }
 
-        public string ReceiveSocketLine()
-        {
-            string Line;
-            byte[] textBuffer = new byte[256];  // buffer large enough to contain a line of text
-
-            Thread.Sleep(0);
-            while (true)
-            {
-                int avail = XboxClient.XboxName.Available;   // only get once
-                if (avail < textBuffer.Length)
-                {
-                    XboxClient.XboxName.Client.Receive(textBuffer, avail, SocketFlags.Peek);
-                    Line = Encoding.ASCII.GetString(textBuffer, 0, avail);
-                }
-                else
-                {
-                    XboxClient.XboxName.Client.Receive(textBuffer, textBuffer.Length, SocketFlags.Peek);
-                    Line = Encoding.ASCII.GetString(textBuffer);
-                }
-
-                int eolIndex = Line.IndexOf("\r\n");
-                if (eolIndex != -1)
-                {
-                    XboxClient.XboxName.Client.Receive(textBuffer, eolIndex + 2, SocketFlags.None);
-                    return Encoding.ASCII.GetString(textBuffer, 0, eolIndex);
-                }
-
-                // end of line not found yet, lets wait some more...
-                Thread.Sleep(0);
-            }
-        }
         /// <summary>
         ///
         /// </summary>

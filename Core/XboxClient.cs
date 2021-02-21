@@ -5,6 +5,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -21,8 +22,28 @@ namespace XDevkit
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static TcpClient XboxName { get; set; }
-        public static bool Connected = false;
-        private static Xbox xboxConsole { get; set; } = new Xbox();
+        /// <summary>
+        /// Checks For Connection, Defaults To False.
+        /// </summary>
+        public static bool Connected
+        {
+            get
+            {
+                if (XboxName.Connected.Equals(null))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+
+            }
+            set
+            {
+                Connected = value;
+            }
+        }
         public static int Port 
         {
             get => 730;
@@ -47,14 +68,15 @@ namespace XDevkit
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="console"></param>
-        /// <param name="XConsole"></param>
+        /// <param name="Source"></param>
+        /// <param name="Client"></param>
         /// <param name="ConsoleNameOrIP"></param>
         /// <param name="Port"></param>
         /// <returns></returns>
-        public static bool Connect(this Xbox console, out Xbox XConsole, string ConsoleNameOrIP = "default", int Port = 730)
+        public static bool Connect(this Xbox Source, out Xbox Client, string ConsoleNameOrIP = "default", int Port = 730)
         {
-            XConsole = xboxConsole;//sets Class For Client
+            Client = Source;
+            Client =  new Xbox();//sets Class For Client
 
             // If user specifies to find their console IP address
             if (ConsoleNameOrIP.Equals("default")| ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
@@ -64,7 +86,7 @@ namespace XDevkit
                     XboxName = new TcpClient(IPAddress, 730);
                     Reader = new StreamReader(XboxName.GetStream());
                     IPAddress = ConsoleNameOrIP;
-                    Connected = true;
+                    
                 }
             }
             // If User Supply's IP To US.
@@ -75,11 +97,11 @@ namespace XDevkit
                     IPAddress = ConsoleNameOrIP;
                     XboxName = new TcpClient(ConsoleNameOrIP, Port);
                     Reader = new StreamReader(XboxName.GetStream());
-                    Connected = true;
+                    
                 }
                 catch (SocketException)
                 {
-                  
+
                 }
             }
 
@@ -95,7 +117,7 @@ namespace XDevkit
                     XboxName = new TcpClient(IPAddress, 730);
                     Reader = new StreamReader(XboxName.GetStream());
                     IPAddress = ConsoleNameOrIP;
-                    Connected = true;
+                    
                 }
             }
             // If User Supply's IP To US.
@@ -106,7 +128,6 @@ namespace XDevkit
                     IPAddress = ConsoleNameOrIP;
                     XboxName = new TcpClient(ConsoleNameOrIP, Port);
                     Reader = new StreamReader(XboxName.GetStream());
-                    Connected = true;
                 }
                 catch (SocketException)
                 {
@@ -131,7 +152,7 @@ namespace XDevkit
                     if (XboxName.ConnectAsync(ips + i, 730).Wait(10))//keep calm just code..
                     {
                         IPAddress = ips + i;
-                        Connected = true;
+                        
                         return null;
                     }
                 }
@@ -144,13 +165,6 @@ namespace XDevkit
 
             Connected = false;
             return null;
-        }
-
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void CloseConnection(uint Connection)
-        {
-            Disconnect();
         }
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -217,7 +231,7 @@ namespace XDevkit
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal static bool FindConsole(int retryAttepts)
         {
-            return DoWithRetry(FindConsole(), TimeSpan.FromSeconds(5), 3);
+            return DoWithRetry(FindConsole(), TimeSpan.FromSeconds(5), retryAttepts);
         }
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -250,9 +264,27 @@ namespace XDevkit
             return false;
         }
 
+        private static bool Delay(int millisecond)
+        {
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            bool flag = false;
+            while (!flag)
+            {
+                if (sw.ElapsedMilliseconds > millisecond)
+                {
+                    flag = true;
+                }
+            }
+            sw.Stop();
+            return true;
+
+        }
 
         internal static void Reconnect()
         {
+            Delay(1000);
             Disconnect();
             if (Connect(IPAddress, Port))
             {

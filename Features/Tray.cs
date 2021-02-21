@@ -13,7 +13,17 @@ namespace XDevkit
         /// <summary>
         /// 
         /// </summary>
-        public bool IsTrayOpen { get; set; } = false;
+        public bool IsTrayOpen 
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+
+            }
+        }
 
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]

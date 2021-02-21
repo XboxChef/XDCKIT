@@ -5,7 +5,7 @@
 
 namespace XDevkit
 {
-    #region Xbox Enums
+
     public enum EndianType
     {
         BigEndian,
@@ -23,6 +23,25 @@ namespace XDevkit
         Debugging = 1,
         SecondaryNIC = 2,
         GB_RAM = 4
+    }
+    public enum FriendRequestStatus
+    {
+        RequestSent,
+        RequestReceived,
+        RequestAccepted,
+    }
+    public enum FriendStatus
+    {
+        Offline = -1, // 0xFFFFFFFF
+        Online = 0,
+        Away = 65536, // 0x00010000
+        Busy = 131072, // 0x00020000
+    }
+    public enum SignInState
+    {
+        NotSignedIn,
+        SignedInLocally,
+        SignedInToLive,
     }
     /// <summary>
     /// Xbox response type.
@@ -42,9 +61,9 @@ namespace XDevkit
         MaxConnectionsExceeded = 401,
         FileNotFound = 402,
         NoSuchModule = 403,
-        MemoryNotMapped = 404,  //setzerobytes or setmem failed
+        MemoryNotMapped = 404,  //setzerobytes or set mem failed
         NoSuchThread = 405,
-        ClockNotSet = 406,  //linetoolong or clocknotset
+        ClockNotSet = 406,  //linetoolong or clock not set
         UnknownCommand = 407,
         NotStopped = 408,
         FileMustBeCopied = 409,
@@ -337,7 +356,8 @@ namespace XDevkit
     {
         DevelopmentKit,
         TestKit,
-        ReviewerKit
+        ReviewerKit,
+        NotConnected
     }
     public enum XboxBreakpointType
     {
@@ -758,5 +778,116 @@ namespace XDevkit
         FLASHING_CHAT_SYMBOL = 65,
         UPDATING = 76,
     }
-    #endregion
+    public enum XboxLiveCountry
+    {
+        Unknown = 0,
+        UnitedArabEmirates = 1,
+        Albania = 2,
+        Armenia = 3,
+        Argentina = 4,
+        Austria = 5,
+        Australia = 6,
+        Azerbaijan = 7,
+        Belgium = 8,
+        Bulgaria = 9,
+        Bahrain = 10, // 0x0000000A
+        BruneiDarussalam = 11, // 0x0000000B
+        Bolivia = 12, // 0x0000000C
+        Brazil = 13, // 0x0000000D
+        Belarus = 14, // 0x0000000E
+        Belize = 15, // 0x0000000F
+        Canada = 16, // 0x00000010
+        Switzerland = 18, // 0x00000012
+        Chile = 19, // 0x00000013
+        China = 20, // 0x00000014
+        Colombia = 21, // 0x00000015
+        CostaRica = 22, // 0x00000016
+        CzechRepublic = 23, // 0x00000017
+        Germany = 24, // 0x00000018
+        Denmark = 25, // 0x00000019
+        DominicanRepublic = 26, // 0x0000001A
+        Algeria = 27, // 0x0000001B
+        Ecuador = 28, // 0x0000001C
+        Estonia = 29, // 0x0000001D
+        Egypt = 30, // 0x0000001E
+        Spain = 31, // 0x0000001F
+        Finland = 32, // 0x00000020
+        FaroeIslands = 33, // 0x00000021
+        France = 34, // 0x00000022
+        UnitedKingdom = 35, // 0x00000023
+        Georgia = 36, // 0x00000024
+        Greece = 37, // 0x00000025
+        Guatemala = 38, // 0x00000026
+        HongKong = 39, // 0x00000027
+        Honduras = 40, // 0x00000028
+        Croatia = 41, // 0x00000029
+        Hungary = 42, // 0x0000002A
+        Indonesia = 43, // 0x0000002B
+        Ireland = 44, // 0x0000002C
+        Israel = 45, // 0x0000002D
+        India = 46, // 0x0000002E
+        Iraq = 47, // 0x0000002F
+        Iran = 48, // 0x00000030
+        Iceland = 49, // 0x00000031
+        Italy = 50, // 0x00000032
+        Jamaica = 51, // 0x00000033
+        Jordan = 52, // 0x00000034
+        Japan = 53, // 0x00000035
+        Kenya = 54, // 0x00000036
+        Kyrgyzstan = 55, // 0x00000037
+        Korea = 56, // 0x00000038
+        Kuwait = 57, // 0x00000039
+        Kazakhstan = 58, // 0x0000003A
+        Lebanon = 59, // 0x0000003B
+        Liechtenstein = 60, // 0x0000003C
+        Lithuania = 61, // 0x0000003D
+        Luxembourg = 62, // 0x0000003E
+        Latvia = 63, // 0x0000003F
+        LibyanArabJamahiriya = 64, // 0x00000040
+        Morocco = 65, // 0x00000041
+        Monaco = 66, // 0x00000042
+        Macedonia = 67, // 0x00000043
+        Mongolia = 68, // 0x00000044
+        Macao = 69, // 0x00000045
+        Maldives = 70, // 0x00000046
+        Mexico = 71, // 0x00000047
+        Malaysia = 72, // 0x00000048
+        Nicaragua = 73, // 0x00000049
+        Netherlands = 74, // 0x0000004A
+        Norway = 75, // 0x0000004B
+        NewZealand = 76, // 0x0000004C
+        Oman = 77, // 0x0000004D
+        Panama = 78, // 0x0000004E
+        Peru = 79, // 0x0000004F
+        Philippines = 80, // 0x00000050
+        Pakistan = 81, // 0x00000051
+        Poland = 82, // 0x00000052
+        PuertoRico = 83, // 0x00000053
+        Portugal = 84, // 0x00000054
+        Paraguay = 85, // 0x00000055
+        Qatar = 86, // 0x00000056
+        Romania = 87, // 0x00000057
+        RussianFederation = 88, // 0x00000058
+        SaudiArabia = 89, // 0x00000059
+        Sweden = 90, // 0x0000005A
+        Singapore = 91, // 0x0000005B
+        Slovenia = 92, // 0x0000005C
+        Slovakia = 93, // 0x0000005D
+        ElSalvador = 95, // 0x0000005F
+        SyrianArabRepublic = 96, // 0x00000060
+        Thailand = 97, // 0x00000061
+        Tunisia = 98, // 0x00000062
+        Turkey = 99, // 0x00000063
+        TrinidadAndTobago = 100, // 0x00000064
+        Taiwan = 101, // 0x00000065
+        Ukraine = 102, // 0x00000066
+        UnitedStates = 103, // 0x00000067
+        Uruguay = 104, // 0x00000068
+        Uzbekistan = 105, // 0x00000069
+        Venezuela = 106, // 0x0000006A
+        Vietnam = 107, // 0x0000006B
+        Yemen = 108, // 0x0000006C
+        SouthAfrica = 109, // 0x0000006D
+        Zimbabwe = 110, // 0x0000006E
+    }
 }

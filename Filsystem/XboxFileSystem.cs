@@ -11,27 +11,42 @@ using System.Net.Sockets;
 
 namespace XDevkit
 {
-    public class XboxFileSystem
+    public class XboxFileSystem : IXboxFile
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name
         {
+            get
+            {
+                return "";
+            }
+            set
+            {
+
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public object CreationTime
+        {
             get;
             set;
         }
-
-        public string CreationTime
+        /// <summary>
+        /// 
+        /// </summary>
+        public object ChangeTime
         {
             get;
             set;
         }
 
-        public string ChangeTime
-        {
-            get;
-            set;
-        }
-
+        /// <summary>
+        /// Size of File
+        /// </summary>
         public ulong Size
         {
             get => (ulong)Size.ToString().Length;
@@ -41,14 +56,21 @@ namespace XDevkit
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsReadOnly
         {
             get;
+            set;
         }
 
-        private bool IsDirectory
-        { 
-            get; 
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsDirectory
+        {
+            get;
             set;
         }
 
@@ -62,8 +84,8 @@ namespace XDevkit
         /// <returns></returns>
         public string[] DirectoryFiles(string path)
         {
-
-            return new[] { "" };
+            string sdr = string.Concat("dir name=\"{0}\"", path);
+            return new[] { Xbox.SendTextCommand(sdr) };
         }
 
         /// <summary>
@@ -79,7 +101,15 @@ namespace XDevkit
         /// <summary>
         /// Get the console drive names.
         /// </summary>
-        public string Drives => Xbox.SendTextCommand("drivelist").Replace("drivename=", string.Empty);
+        public string Drives
+        {
+            get
+            {
+                return Xbox.SendTextCommand("drivelist").Replace("drivename=", string.Empty);
+            }
+        }
+
+
 
         public IEnumerator GetEnumerator()
         {

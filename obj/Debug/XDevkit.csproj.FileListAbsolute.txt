@@ -14,8 +14,6 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileI
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CopyComplete
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Fan_Control.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Data.Desktop.v20.2.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Data.v20.2.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Printing.v20.2.Core.dll
@@ -29,7 +27,6 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Data.v20.2.xml
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Printing.v20.2.Core.xml
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Utils.v20.2.xml
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.XtraEditors.v20.2.xml
-C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDRPC.pdb
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Pdf.v20.2.Core.xml
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Pdf.v20.2.Drawing.xml
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\DevExpress.Sparkline.v20.2.Core.xml

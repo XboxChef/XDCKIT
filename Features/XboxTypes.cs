@@ -117,7 +117,7 @@ namespace XDevkit
         }
         public float GetFloat(uint Address)
         {
-            if (XboxClient.Connected == true)
+            if (Connected == true)
             {
                 Console.WriteLine(" Command On Address ==>" + Address + " <== Is Being checked");
                 byte[] memory = GetMemory(Address, 4);
@@ -549,7 +549,7 @@ namespace XDevkit
                 return num;
             }
         }
-        public void WriteUInt32(uint Offset, uint input)
+        public  void WriteUInt32(uint Offset, uint input)
         {
             BitConverter.GetBytes(input).CopyTo(myBuff, 0);
             Array.Reverse(myBuff, 0, 4);

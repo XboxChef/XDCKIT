@@ -3,15 +3,12 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
 //Thank You for looking love you guys...
 
-using System.Windows.Forms;
+using System.Collections;
 
 namespace XDevkit
 {
-    public partial class Fan_Control : UserControl
+    internal interface IXboxFiles : IEnumerable
     {
-        public Fan_Control()
-        {
-            InitializeComponent();
-        }
+        new IEnumerator GetEnumerator();
     }
 }

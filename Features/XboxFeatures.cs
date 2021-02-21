@@ -27,13 +27,7 @@ namespace XDevkit
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         private const string krnlModule = "xboxkrnl.exe";
-        //public byte[] byte_0 = GetMemory(ResolveFunction("xam.xex", 0xa29) + 0x3000, 4);
-        //public string GetSMCVersion()
-        //{
 
-        //    object[] objArray1 = new object[] { " ", byte_0[2], ".", byte_0[3] };
-        //    return string.Concat(objArray1);
-        //}
         public string GetSMCVersion()
         {
             byte[] byte_0 = GetMemory(ResolveFunction("xam.xex", 0xa29) + 0x3000, 4);
@@ -134,7 +128,7 @@ namespace XDevkit
             return Regex.Matches(input, pattern)[0].Groups[1].Value;
         }
 
-        public string Gamerscore(string gamertag)
+        public string GamerScore(string gamertag)
         {
             bool flag = gamertag.Contains(" ");
             bool flag2 = flag;
@@ -164,7 +158,7 @@ namespace XDevkit
             }
             return list;
         }
-        public void NULL(uint address)
+        public void NULL_Address(uint address)
         {
 
             byte[] buffer1 = new byte[4];
@@ -197,7 +191,7 @@ namespace XDevkit
         public void XboxShortcut(XboxShortcuts UI)
         {
 
-            if (XboxClient.Connected)
+            if (Connected)
                 switch (UI)//works by getting the int of the UI and matches the numbers to execute things
                 {
                     case XboxShortcuts.XboxHome:
@@ -334,7 +328,6 @@ namespace XDevkit
         /// <summary>
         /// Get's Box Id.
         /// </summary>
-        /// <param name="fileName">File to delete.</param>
         public string GetBoxID()
         {
 
@@ -392,11 +385,11 @@ namespace XDevkit
                         #region HDD
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+                            
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo"))};
                             foreach (string s in Info)
                             {
-                                int Start = s.IndexOf("hdd=");
+                                int Start = s.find("hdd=");
                                 int End = s.IndexOf("type=");
                                 return s.Substring(4, End - 4);
                             }
@@ -421,8 +414,8 @@ namespace XDevkit
                         #region Platform
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 int Start = s.IndexOf("type=");
@@ -439,8 +432,8 @@ namespace XDevkit
                         #region System
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 int Start = s.IndexOf("type=");
@@ -457,8 +450,8 @@ namespace XDevkit
                         #region BaseKrnlVersion
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 int Start = s.IndexOf(" krnl=");
@@ -475,8 +468,8 @@ namespace XDevkit
                         #region Kernal Version
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"));
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 int Start = s.IndexOf(" krnl=");
@@ -493,8 +486,8 @@ namespace XDevkit
                         #region XDK Version
                         try
                         {
-                            SendTextCommand(string.Concat("systeminfo"), out Response);
-                            string[] Info = new[] { ReceiveMultilineResponse().ToString().ToLower() };
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 return s.Substring(s.IndexOf("xdk=") + 4, 12);
@@ -509,6 +502,7 @@ namespace XDevkit
             }
             return string.Empty;
         }
+
         /// <summary>
         /// Reboot Method flag types cold or warm reboot.
         /// </summary>
@@ -540,16 +534,7 @@ namespace XDevkit
                 SendTextCommand("go");
             }
         }
-        /// <summary>
-        /// XBEINFO Console.
-        /// </summary>
-        public string XBEINFO(string Type)
-        {
 
-            SendTextCommand("XBEINFO RUNNING");
-            string str1 = ReceiveMultilineResponse();
-            return str1.Substring(str1.find(Type));
-        }
         /// <summary>
         ///
         /// </summary>
@@ -557,7 +542,7 @@ namespace XDevkit
         public string GetConsoleType()
         {
 
-            if (XboxClient.XboxName.Connected)
+            if (Connected)
             {
                 string str = string.Concat("consolefeatures ver=", 2, " type=17 params=\"A\\0\\A\\0\\\"");
                 string str1 = SendTextCommand(str);
@@ -570,9 +555,9 @@ namespace XDevkit
 
 
         }
-        public static void CloseConnection()
+        public void CloseConnection()
         {
-            XboxClient.CloseConnection(0);
+            XboxClient.Disconnect();
         }
         public void ScreenShot(string Filename)//TODO: File Functionality
         {
@@ -806,7 +791,6 @@ namespace XDevkit
         public void GetSigninState()
         {
             ResolveFunction("xboxkrnl.exe", 528);
-            //528 
         }
     }
 }

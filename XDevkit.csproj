@@ -60,23 +60,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\Fan_Control.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\Fan_Control.Designer.cs">
-      <DependentUpon>Fan_Control.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ValueEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ValueEditor.designer.cs">
       <DependentUpon>ValueEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\xex_slider.cs">
+    <Compile Include="Controls\ValueSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\xex_slider.Designer.cs">
-      <DependentUpon>xex_slider.cs</DependentUpon>
+    <Compile Include="Controls\ValueSlider.Designer.cs">
+      <DependentUpon>ValueSlider.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Xbox.cs" />
     <Compile Include="Core\XboxClient.cs" />
@@ -119,6 +113,7 @@
     <Compile Include="Features\XboxMemory.cs" />
     <Compile Include="Features\XboxTypes.cs" />
     <Compile Include="Filsystem\IXboxFile.cs" />
+    <Compile Include="Filsystem\IXboxFiles.cs" />
     <Compile Include="Filsystem\XboxFileSystem.cs" />
     <Compile Include="Notification System\XNotify.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -142,9 +137,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\Fan_Control.resx">
-      <DependentUpon>Fan_Control.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ValueEditor.resx">
       <DependentUpon>ValueEditor.cs</DependentUpon>
     </EmbeddedResource>

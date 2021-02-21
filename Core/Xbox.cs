@@ -20,10 +20,20 @@ namespace XDevkit
         /// </summary>
         public string Name
         {
-            get => XboxClient.XboxName.Connected ? SendTextCommand("dbgname").Replace("200- ", string.Empty) : "Error";
+            get
+            {
+                if(Connected)
+                {
+                    return SendTextCommand("dbgname").Replace("200- ", string.Empty);
+                }
+                else
+                {
+                    return "Error";
+                }
+            }
             set
             {
-                if(XboxClient.XboxName.Connected == true)
+                if (Connected)
                 {
                     SendTextCommand("dbgname name=" + value);
                 }
@@ -40,16 +50,26 @@ namespace XDevkit
         /// 
         /// </summary>
         public XboxFileSystem File = new XboxFileSystem();
-        
+
         /// <summary>
         /// 
         /// </summary>
         public string SystemTime
         {
-            get => XboxClient.XboxName.Connected ? SendTextCommand("systime") : "Error";
+            get
+            {
+                if(Connected)
+                {
+                    return SendTextCommand("systime");
+                }
+                else
+                {
+                    return "Error";
+                }
+            }
             set
             {
-                if (XboxClient.XboxName.Connected == true)
+                if (Connected)
                 {
                     SendTextCommand("setsystime" + value);
                 }
@@ -67,7 +87,20 @@ namespace XDevkit
         /// <summary>
         /// Detects Console Type Information.
         /// </summary>
-        public XboxConsoleType ConsoleType = XboxClient.XboxName.Connected ? (XboxConsoleType)Enum.Parse(typeof(XboxConsoleType), SendTextCommand("consoletype"), true) : XboxConsoleType.DevelopmentKit;
+        public XboxConsoleType ConsoleType
+        {
+            get
+            {
+                if(Connected)
+                {
+                    return (XboxConsoleType)Enum.Parse(typeof(XboxConsoleType), SendTextCommand("consoletype"), true);
+                }
+                else
+                {
+                    return XboxConsoleType.NotConnected;
+                }
+            }
+        }
         
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]//hidden not yet set
@@ -76,10 +109,6 @@ namespace XDevkit
             get;
             set;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        public static bool IsConnected = XboxClient.XboxName.Connected;
         /// <summary>
         /// 
         /// </summary>
@@ -99,17 +128,46 @@ namespace XDevkit
         /// <summary>
         /// Gets The Console IPAddress 
         /// </summary>
-        public uint IPAddress = uint.Parse(XboxClient.IPAddress, System.Globalization.NumberStyles.HexNumber);
+        public uint IPAddress
+        {
+            get
+            {
+                return uint.Parse(XboxClient.IPAddress, System.Globalization.NumberStyles.HexNumber);
+            }
+        }
         /// <summary>
         /// Gets the title ip address
         /// </summary>
-        uint IPAddressTitle  = XboxClient.XboxName.Connected ? uint.Parse(SendTextCommand("altaddr"), System.Globalization.NumberStyles.HexNumber) : 0;
+        uint IPAddressTitle
+        {
+            get
+            {
+                if(XboxClient.Connected)
+                {
+                    return uint.Parse(SendTextCommand("altaddr"), System.Globalization.NumberStyles.HexNumber);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
         
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]//hidden not yet set
         public string DefaultConsole
         {
-            get => XboxClient.XboxName.Connected ? Name : "Error";
+            get
+            {
+                if(Connected)
+                {
+                    return Name;
+                }
+                else
+                {
+                    return "Error";
+                }
+            }
             set
             {
                     DefaultConsole = value;
@@ -117,21 +175,22 @@ namespace XDevkit
         }
 
         public Tray Tray = new Tray();
+        public XNotify XNotify = new XNotify();
 
         #endregion
-        public static void Connect()
+        public void Connect()
         {
             XboxClient.Connect();
         }
-        public static void Connect(string ConsoleNameOrIP = "default", int Port = 730)
+        public void Connect(string ConsoleNameOrIP = "default", int Port = 730)
         {
             XboxClient.Connect(ConsoleNameOrIP , Port);
         }
-        static Xbox()
+        public void Disconnect()
         {
-
+            XboxClient.Disconnect();
         }
-        public static string TranslateError(int code)
+        public  string TranslateError(int code)
         {
             string str;
             int num = code;
