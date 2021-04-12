@@ -1,18 +1,12 @@
 ﻿using DevExpress.XtraEditors;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace XDevkit.Dialogs
 {
-    public partial class WizardForm : DevExpress.XtraEditors.XtraForm
+    public partial class WizardForm : XtraForm
     {
         public string IPAddress
         {
@@ -86,7 +80,7 @@ namespace XDevkit.Dialogs
             }
             else if (sender.Equals(NOPNext))
             {
-                if(XboxClient.Connect(NameOrIP.Text,730))
+                if (XboxClient.Connect(NameOrIP.Text, 730))
                 {
                     IPAddress = NameOrIP.Text;
                     ShowNext(WizardDefualtConsole);
@@ -126,7 +120,7 @@ namespace XDevkit.Dialogs
 
         private void MainControl_SelectedPageChanged(object sender, DevExpress.XtraTab.TabPageChangedEventArgs e)
         {
-            if(WizardDefualtConsole.PageVisible)
+            if (WizardDefualtConsole.PageVisible)
             {
                 IPAddressLabel.Text = IPAddress + " (" + IPAddress + ")";
                 addresslabel.Text = "Would you like to use '" + IPAddress + "' as the Xbox 360 Development Kit?";

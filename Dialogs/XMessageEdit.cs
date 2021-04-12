@@ -1,17 +1,11 @@
-﻿using DevExpress.XtraEditors;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.XtraEditors;
 
 namespace XDevkit.Dialogs
 {
-    public partial class XMessageEdit : DevExpress.XtraEditors.XtraForm
+    public partial class XMessageEdit : XtraForm
     {
         public XMessageEdit()
         {
@@ -41,7 +35,7 @@ namespace XDevkit.Dialogs
 
             try
             {
-                if (checkEdit2.Checked  == true && checkEdit3.Checked == true)
+                if (checkEdit2.Checked == true && checkEdit3.Checked == true)
                 {
                     text2.Enabled = true;
                     Button2.Text = "Type Custom Text Here";

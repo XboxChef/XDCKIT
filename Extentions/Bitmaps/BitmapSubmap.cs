@@ -26,8 +26,8 @@
             Width = er.ReadInt16();
             Height = er.ReadInt16();
             Depth = er.ReadInt16();
-            Type = (TextureType) er.ReadInt16();
-            Format = (TextureFormat) er.ReadInt16();
+            Type = (TextureType)er.ReadInt16();
+            Format = (TextureFormat)er.ReadInt16();
             er.ReadInt16();
             er.ReadInt16();
             er.ReadInt16();

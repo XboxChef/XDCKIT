@@ -4,7 +4,7 @@
     {
         string Name { get; set; }
         object CreationTime { get; set; }
-        object ChangeTime  { get; set; }
+        object ChangeTime { get; set; }
 
         ulong Size { get; set; }
 

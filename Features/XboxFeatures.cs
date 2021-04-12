@@ -385,8 +385,8 @@ namespace XDevkit
                         #region HDD
                         try
                         {
-                            
-                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo"))};
+
+                            string[] Info = new[] { SendTextCommand(string.Concat("systeminfo")) };
                             foreach (string s in Info)
                             {
                                 int Start = s.find("hdd=");
@@ -557,6 +557,7 @@ namespace XDevkit
         }
         public void CloseConnection()
         {
+
             XboxClient.Disconnect();
         }
         public void ScreenShot(string Filename)//TODO: File Functionality

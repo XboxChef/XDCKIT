@@ -218,7 +218,7 @@ namespace XDevkit.Dialogs
             "Warning"});
             this.ImageType.Properties.Sorted = true;
             this.ImageType.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.HideTextEditor;
-            this.ImageType.Size = new System.Drawing.Size(26, 18);
+            this.ImageType.Size = new System.Drawing.Size(26, 14);
             this.ImageType.TabIndex = 2;
             this.ImageType.SelectedIndexChanged += new System.EventHandler(this.Type);
             this.ImageType.TextChanged += new System.EventHandler(this.ImageType_TextChanged);
@@ -264,7 +264,7 @@ namespace XDevkit.Dialogs
             this.checkEdit1.Name = "checkEdit1";
             this.checkEdit1.Properties.AllowFocused = false;
             this.checkEdit1.Properties.Caption = "1";
-            this.checkEdit1.Size = new System.Drawing.Size(32, 20);
+            this.checkEdit1.Size = new System.Drawing.Size(32, 18);
             this.checkEdit1.TabIndex = 13;
             // 
             // checkEdit3
@@ -273,7 +273,7 @@ namespace XDevkit.Dialogs
             this.checkEdit3.Name = "checkEdit3";
             this.checkEdit3.Properties.AllowFocused = false;
             this.checkEdit3.Properties.Caption = "3";
-            this.checkEdit3.Size = new System.Drawing.Size(32, 20);
+            this.checkEdit3.Size = new System.Drawing.Size(32, 18);
             this.checkEdit3.TabIndex = 12;
             this.checkEdit3.CheckStateChanged += new System.EventHandler(this.CheckStateChanged);
             // 
@@ -283,7 +283,7 @@ namespace XDevkit.Dialogs
             this.checkEdit2.Name = "checkEdit2";
             this.checkEdit2.Properties.AllowFocused = false;
             this.checkEdit2.Properties.Caption = "2";
-            this.checkEdit2.Size = new System.Drawing.Size(32, 20);
+            this.checkEdit2.Size = new System.Drawing.Size(32, 18);
             this.checkEdit2.TabIndex = 11;
             this.checkEdit2.CheckStateChanged += new System.EventHandler(this.CheckStateChanged);
             // 

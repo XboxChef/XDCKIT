@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace XDevkit
 {
     public class Tray
     {
-        private static Xbox xbox = new Xbox();
+        private static readonly Xbox xbox = new Xbox();
         /// <summary>
         /// 
         /// </summary>
-        public bool IsTrayOpen 
+        public bool IsTrayOpen
         {
             get
             {

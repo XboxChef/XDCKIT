@@ -1,7 +1,5 @@
 ﻿namespace XDevkit
 {
-
-    using System;
     using System.ComponentModel;
 
     [Browsable(false)]

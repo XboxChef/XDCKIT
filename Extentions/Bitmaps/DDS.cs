@@ -108,7 +108,7 @@
             int num;
             dwMagic = br.ReadInt32();
             dwSize = br.ReadInt32();
-            dwFlags = (DDSD) br.ReadInt32();
+            dwFlags = (DDSD)br.ReadInt32();
             dwHeight = br.ReadInt32();
             dwWidth = br.ReadInt32();
             dwPitchOrLinearSize = br.ReadInt32();
@@ -120,15 +120,15 @@
                 dwReserved1[num] = br.ReadInt32();
             }
             dwSize2 = br.ReadInt32();
-            dwFlags2 = (DDPF) br.ReadInt32();
-            dwFourCC = (FourCC) br.ReadInt32();
+            dwFlags2 = (DDPF)br.ReadInt32();
+            dwFourCC = (FourCC)br.ReadInt32();
             dwRGBBitCount = br.ReadInt32();
             dwRBitMask = br.ReadInt32();
             dwGBitMask = br.ReadInt32();
             dwBBitMask = br.ReadInt32();
             dwRGBAlphaBitMask = br.ReadUInt32();
-            dwCaps1 = (DDSCAPS) br.ReadInt32();
-            dwCaps2 = (DDSCAPS2) br.ReadInt32();
+            dwCaps1 = (DDSCAPS)br.ReadInt32();
+            dwCaps2 = (DDSCAPS2)br.ReadInt32();
             Reserved2 = new int[2];
             for (num = 0; num < Reserved2.Length; num++)
             {
@@ -142,7 +142,7 @@
             int num;
             bw.Write(dwMagic);
             bw.Write(dwSize);
-            bw.Write((int) dwFlags);
+            bw.Write((int)dwFlags);
             bw.Write(dwHeight);
             bw.Write(dwWidth);
             bw.Write(dwPitchOrLinearSize);
@@ -153,15 +153,15 @@
                 bw.Write(dwReserved1[num]);
             }
             bw.Write(dwSize2);
-            bw.Write((int) dwFlags2);
-            bw.Write((int) dwFourCC);
+            bw.Write((int)dwFlags2);
+            bw.Write((int)dwFourCC);
             bw.Write(dwRGBBitCount);
             bw.Write(dwRBitMask);
             bw.Write(dwGBitMask);
             bw.Write(dwBBitMask);
             bw.Write(dwRGBAlphaBitMask);
-            bw.Write((int) dwCaps1);
-            bw.Write((int) dwCaps2);
+            bw.Write((int)dwCaps1);
+            bw.Write((int)dwCaps2);
             for (num = 0; num < Reserved2.Length; num++)
             {
                 bw.Write(Reserved2[num]);

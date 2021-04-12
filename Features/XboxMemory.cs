@@ -9,9 +9,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace XDevkit
 {
@@ -132,7 +132,7 @@ namespace XDevkit
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
                     Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Receive(Packet);
-                    response = Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r", string.Empty).Replace("\"", string.Empty).Replace("\n.", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n",string.Empty.Replace("200-", string.Empty));//
+                    response = Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r", string.Empty).Replace("\"", string.Empty).Replace("\n.", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n", string.Empty.Replace("200-", string.Empty));//
                     response = response.Substring(0, response.Length - 1);
                     Response = response;
 
@@ -194,7 +194,103 @@ namespace XDevkit
                 throw new Exception(ex.Message);
             }
         }
+        public void PokeXbox(Offset offsetData)
+        {
+            uint offset = Convert.ToUInt32(offsetData.Address, 0x10);
+            string poketype = offsetData.Type;
+            string amount = offsetData.Value;
 
+                    XboxMemoryStream xbms = ReturnXboxMemoryStream();
+                    EndianIO IO = new EndianIO(xbms, EndianType.BigEndian);
+                    IO.Open();
+                    IO.Out.BaseStream.Position = offset;
+                    if (poketype == "Unicode String")
+                    {
+                        IO.Out.WriteUnicodeString(amount, amount.Length);
+                    }
+                    if (poketype == "ASCII String")
+                    {
+                        IO.Out.WriteUnicodeString(amount, amount.Length);
+                    }
+                    if ((poketype == "String") | (poketype == "string"))
+                    {
+                        IO.Out.Write(amount);
+                    }
+                    if ((poketype == "Float") | (poketype == "float"))
+                    {
+                        IO.Out.Write(float.Parse(amount));
+                    }
+                    if ((poketype == "Double") | (poketype == "double"))
+                    {
+                        IO.Out.Write(double.Parse(amount));
+                    }
+                    if ((poketype == "Short") | (poketype == "short"))
+                    {
+                        IO.Out.Write((short)Convert.ToUInt32(amount, 0x10));
+                    }
+                    if ((poketype == "Byte") | (poketype == "byte"))
+                    {
+                        IO.Out.Write((byte)Convert.ToUInt32(amount, 0x10));
+                    }
+                    if ((poketype == "Long") | (poketype == "long"))
+                    {
+                        IO.Out.Write((long)Convert.ToUInt32(amount, 0x10));
+                    }
+                    if ((poketype == "Quad") | (poketype == "quad"))
+                    {
+                        IO.Out.Write((long)Convert.ToUInt64(amount, 0x10));
+                    }
+                    if ((poketype == "Int") | (poketype == "int"))
+                    {
+                        IO.Out.Write(Convert.ToUInt32(amount, 0x10));
+                    }
+                    IO.Close();
+                    xbms.Close();
+                    MessageBox.Show("Poked", "Poked " + amount + " to 0x" + offset.ToString("X"));
+        }
+
+        public string PeekXbox(uint offset, string type)
+        {
+           
+                string hex = "X";
+                object rn = null;
+                    XboxMemoryStream xbms = ReturnXboxMemoryStream();
+                    EndianIO IO = new EndianIO(xbms, EndianType.BigEndian);
+                    IO.Open();
+                    IO.In.BaseStream.Position = offset;
+                    if ((type == "String") | (type == "string"))
+                    {
+                        rn = IO.In.ReadString();
+                    }
+                    if ((type == "Float") | (type == "float"))
+                    {
+                        rn = IO.In.ReadSingle();
+                    }
+                    if ((type == "Double") | (type == "double"))
+                    {
+                        rn = IO.In.ReadDouble();
+                    }
+                    if ((type == "Short") | (type == "short"))
+                    {
+                        rn = IO.In.ReadInt16().ToString(hex);
+                    }
+                    if ((type == "Byte") | (type == "byte"))
+                    {
+                        rn = IO.In.ReadByte().ToString(hex);
+                    }
+                    if ((type == "Long") | (type == "long"))
+                    {
+                        rn = IO.In.ReadInt32().ToString(hex);
+                    }
+                    if ((type == "Quad") | (type == "quad"))
+                    {
+                        rn = IO.In.ReadInt64().ToString(hex);
+                    }
+                    IO.Close();
+                    xbms.Close();
+                    return rn.ToString();
+                
+        }
         /// <summary>
         /// Peek into the Memory
         /// </summary>
@@ -440,7 +536,7 @@ namespace XDevkit
             Thread.Sleep(1000);
             // Send getmemex command.
 
-            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n",Address.ToString("X2"),BytesToRead.ToString("X2"))));
+            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n", Address.ToString("X2"), BytesToRead.ToString("X2"))));
 
             // Receieve the 203 response to verify we are going to recieve raw data in packets
             XboxClient.XboxName.Client.Receive(Packet);

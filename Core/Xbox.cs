@@ -22,7 +22,7 @@ namespace XDevkit
         {
             get
             {
-                if(Connected)
+                if (Connected)
                 {
                     return SendTextCommand("dbgname").Replace("200- ", string.Empty);
                 }
@@ -58,7 +58,7 @@ namespace XDevkit
         {
             get
             {
-                if(Connected)
+                if (Connected)
                 {
                     return SendTextCommand("systime");
                 }
@@ -91,7 +91,7 @@ namespace XDevkit
         {
             get
             {
-                if(Connected)
+                if (Connected)
                 {
                     return (XboxConsoleType)Enum.Parse(typeof(XboxConsoleType), SendTextCommand("consoletype"), true);
                 }
@@ -101,7 +101,7 @@ namespace XDevkit
                 }
             }
         }
-        
+
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]//hidden not yet set
         bool MemoryCacheEnabled
@@ -142,7 +142,7 @@ namespace XDevkit
         {
             get
             {
-                if(XboxClient.Connected)
+                if (XboxClient.Connected)
                 {
                     return uint.Parse(SendTextCommand("altaddr"), System.Globalization.NumberStyles.HexNumber);
                 }
@@ -152,14 +152,14 @@ namespace XDevkit
                 }
             }
         }
-        
+
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]//hidden not yet set
         public string DefaultConsole
         {
             get
             {
-                if(Connected)
+                if (Connected)
                 {
                     return Name;
                 }
@@ -170,7 +170,7 @@ namespace XDevkit
             }
             set
             {
-                    DefaultConsole = value;
+                DefaultConsole = value;
             }
         }
 
@@ -184,13 +184,13 @@ namespace XDevkit
         }
         public void Connect(string ConsoleNameOrIP = "default", int Port = 730)
         {
-            XboxClient.Connect(ConsoleNameOrIP , Port);
+            XboxClient.Connect(ConsoleNameOrIP, Port);
         }
         public void Disconnect()
         {
             XboxClient.Disconnect();
         }
-        public  string TranslateError(int code)
+        public string TranslateError(int code)
         {
             string str;
             int num = code;

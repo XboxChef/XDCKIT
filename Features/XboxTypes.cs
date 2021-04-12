@@ -33,11 +33,11 @@ namespace XDevkit
             GetMemory(Offset, 1, myBuff, out outInt);
             return myBuff[0] != 0;
         }
-        public void WriteBool(uint Offset, bool input)
-        {
-            myBuff[0] = input ? 1 : 0;
-            SetMemory(Offset, 1, myBuff, out outInt);
-        }
+        //public void WriteBool(uint Offset, int input)
+        //{
+        //    myBuff[0] = input ? 1 : 0;
+        //    SetMemory(Offset, 1, myBuff, out outInt);
+        //}
 
 
 
@@ -549,7 +549,7 @@ namespace XDevkit
                 return num;
             }
         }
-        public  void WriteUInt32(uint Offset, uint input)
+        public void WriteUInt32(uint Offset, uint input)
         {
             BitConverter.GetBytes(input).CopyTo(myBuff, 0);
             Array.Reverse(myBuff, 0, 4);

@@ -29,7 +29,8 @@ namespace XDevkit
         {
             get
             {
-                if (XboxName.Connected.Equals(null))
+                XboxName = new TcpClient();
+                if (XboxName.Connected)
                 {
                     return false;
                 }
@@ -44,7 +45,7 @@ namespace XDevkit
                 Connected = value;
             }
         }
-        public static int Port 
+        public static int Port
         {
             get => 730;
             set
@@ -76,17 +77,17 @@ namespace XDevkit
         public static bool Connect(this Xbox Source, out Xbox Client, string ConsoleNameOrIP = "default", int Port = 730)
         {
             Client = Source;
-            Client =  new Xbox();//sets Class For Client
+            Client = new Xbox();//sets Class For Client
 
             // If user specifies to find their console IP address
-            if (ConsoleNameOrIP.Equals("default")| ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            if (ConsoleNameOrIP.Equals("default") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
             {
                 if (FindConsole())//if true then continue
                 {
                     XboxName = new TcpClient(IPAddress, 730);
                     Reader = new StreamReader(XboxName.GetStream());
                     IPAddress = ConsoleNameOrIP;
-                    
+
                 }
             }
             // If User Supply's IP To US.
@@ -97,7 +98,7 @@ namespace XDevkit
                     IPAddress = ConsoleNameOrIP;
                     XboxName = new TcpClient(ConsoleNameOrIP, Port);
                     Reader = new StreamReader(XboxName.GetStream());
-                    
+
                 }
                 catch (SocketException)
                 {
@@ -117,7 +118,7 @@ namespace XDevkit
                     XboxName = new TcpClient(IPAddress, 730);
                     Reader = new StreamReader(XboxName.GetStream());
                     IPAddress = ConsoleNameOrIP;
-                    
+
                 }
             }
             // If User Supply's IP To US.
@@ -152,7 +153,7 @@ namespace XDevkit
                     if (XboxName.ConnectAsync(ips + i, 730).Wait(10))//keep calm just code..
                     {
                         IPAddress = ips + i;
-                        
+
                         return null;
                     }
                 }

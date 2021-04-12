@@ -163,7 +163,7 @@
             byte[] destinationArray = new byte[(submap.Width * submap.Height) * 4];
             for (int i = 0; i < submap.Height; i++)
             {
-                Array.Copy(bitmapData, (int) ((i * vWidth) * 4), destinationArray, (int) ((i * submap.Width) * 4), (int) (submap.Width * 4));
+                Array.Copy(bitmapData, (i * vWidth) * 4, destinationArray, (i * submap.Width) * 4, submap.Width * 4);
             }
             Marshal.Copy(destinationArray, 0, bitmapdata.Scan0, destinationArray.Length);
             bitmap.UnlockBits(bitmapdata);
@@ -254,7 +254,7 @@
             byte[] destinationArray = new byte[(submap.Width * submap.Height) * 4];
             for (int i = 0; i < submap.Height; i++)
             {
-                Array.Copy(bitmapData, (int) ((i * vWidth) * 4), destinationArray, (int) ((i * submap.Width) * 4), (int) (submap.Width * 4));
+                Array.Copy(bitmapData, (i * vWidth) * 4, destinationArray, (i * submap.Width) * 4, submap.Width * 4);
             }
             Marshal.Copy(destinationArray, 0, bitmapdata.Scan0, destinationArray.Length);
             bitmap2.UnlockBits(bitmapdata);

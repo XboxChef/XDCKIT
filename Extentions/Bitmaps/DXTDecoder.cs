@@ -7,10 +7,10 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     internal static class DXTDecoder
     {
-        public static byte[] ConvertFromLinearTexture(byte[] data, int width, int height, TextureFormat texture) => 
+        public static byte[] ConvertFromLinearTexture(byte[] data, int width, int height, TextureFormat texture) =>
             ModifyLinearTexture(data, width, height, texture, false);
 
-        public static byte[] ConvertToLinearTexture(byte[] data, int width, int height, TextureFormat texture) => 
+        public static byte[] ConvertToLinearTexture(byte[] data, int width, int height, TextureFormat texture) =>
             ModifyLinearTexture(data, width, height, texture, true);
 
         public static byte[] DecodeA1R5G5B5(byte[] data, int width, int height)
@@ -18,10 +18,10 @@
             byte[] buffer = new byte[(width * height) * 4];
             for (int i = 0; i < ((width * height) * 2); i += 2)
             {
-                short num2 = (short) (data[i] | (data[i + 1] << 8));
-                buffer[i * 2] = (byte) (num2 & 0x1f);
-                buffer[(i * 2) + 1] = (byte) ((num2 >> 5) & 0x3f);
-                buffer[(i * 2) + 2] = (byte) ((num2 >> 11) & 0x1f);
+                short num2 = (short)(data[i] | (data[i + 1] << 8));
+                buffer[i * 2] = (byte)(num2 & 0x1f);
+                buffer[(i * 2) + 1] = (byte)((num2 >> 5) & 0x3f);
+                buffer[(i * 2) + 2] = (byte)((num2 >> 11) & 0x1f);
                 buffer[(i * 2) + 3] = 0xff;
             }
             return buffer;
@@ -32,10 +32,10 @@
             byte[] buffer = new byte[(width * height) * 4];
             for (int i = 0; i < ((width * height) * 2); i += 2)
             {
-                buffer[(i * 2) + 3] = (byte) (data[i] & 240);
-                buffer[(i * 2) + 2] = (byte) (data[i] & 15);
-                buffer[(i * 2) + 1] = (byte) (data[i + 1] & 240);
-                buffer[i * 2] = (byte) (data[i + 1] & 15);
+                buffer[(i * 2) + 3] = (byte)(data[i] & 240);
+                buffer[(i * 2) + 2] = (byte)(data[i] & 15);
+                buffer[(i * 2) + 1] = (byte)(data[i + 1] & 240);
+                buffer[i * 2] = (byte)(data[i + 1] & 15);
             }
             return buffer;
         }
@@ -117,12 +117,12 @@
                         RGBAColor color = colorArray[num5 & 3];
                         num5 = num5 >> 2;
                         int num13 = (((((num8 * 4) + j) * width) + (num7 * 4)) + k) * 4;
-                        float num14 = ((((float) color.R) / 255f) * 2f) - 1f;
-                        float num15 = ((((float) color.G) / 255f) * 2f) - 1f;
-                        float num16 = (float) Math.Sqrt((double) Math.Max(0f, Math.Min((float) 1f, (float) ((1f - (num14 * num14)) - (num15 * num15)))));
-                        buffer[num13] = (byte) (((num16 + 1f) / 2f) * 255f);
-                        buffer[num13 + 1] = (byte) color.G;
-                        buffer[num13 + 2] = (byte) color.R;
+                        float num14 = ((color.R / 255f) * 2f) - 1f;
+                        float num15 = ((color.G / 255f) * 2f) - 1f;
+                        float num16 = (float)Math.Sqrt(Math.Max(0f, Math.Min((float)1f, (float)((1f - (num14 * num14)) - (num15 * num15)))));
+                        buffer[num13] = (byte)(((num16 + 1f) / 2f) * 255f);
+                        buffer[num13 + 1] = (byte)color.G;
+                        buffer[num13 + 2] = (byte)color.R;
                         buffer[num13 + 3] = 0xff;
                     }
                 }
@@ -148,14 +148,14 @@
                 int num6 = 0;
                 while (num6 < 8)
                 {
-                    buffer2[num6] = (byte) (index & 7);
+                    buffer2[num6] = (byte)(index & 7);
                     index = index >> 3;
                     num6++;
                 }
                 index = ((data[i + 6] << 0x10) | (data[i + 7] << 8)) | data[i + 4];
                 while (num6 < 0x10)
                 {
-                    buffer2[num6] = (byte) (index & 7);
+                    buffer2[num6] = (byte)(index & 7);
                     index = index >> 3;
                     num6++;
                 }
@@ -166,14 +166,14 @@
                 num6 = 0;
                 while (num6 < 8)
                 {
-                    buffer3[num6] = (byte) (index & 7);
+                    buffer3[num6] = (byte)(index & 7);
                     index = index >> 3;
                     num6++;
                 }
                 index = ((data[i + 14] << 0x10) | (data[i + 15] << 8)) | data[i + 12];
                 while (num6 < 0x10)
                 {
-                    buffer3[num6] = (byte) (index & 7);
+                    buffer3[num6] = (byte)(index & 7);
                     index = index >> 3;
                     num6++;
                 }
@@ -182,19 +182,19 @@
                 buffer4[1] = num4;
                 if (buffer4[0] > buffer4[1])
                 {
-                    buffer4[2] = (byte) (((num4 - num3) * 0.1428571f) + num3);
-                    buffer4[3] = (byte) (((num4 - num3) * 0.2857143f) + num3);
-                    buffer4[4] = (byte) (((num4 - num3) * 0.4285714f) + num3);
-                    buffer4[5] = (byte) (((num4 - num3) * 0.5714286f) + num3);
-                    buffer4[6] = (byte) (((num4 - num3) * 0.7142857f) + num3);
-                    buffer4[7] = (byte) (((num4 - num3) * 0.8571429f) + num3);
+                    buffer4[2] = (byte)(((num4 - num3) * 0.1428571f) + num3);
+                    buffer4[3] = (byte)(((num4 - num3) * 0.2857143f) + num3);
+                    buffer4[4] = (byte)(((num4 - num3) * 0.4285714f) + num3);
+                    buffer4[5] = (byte)(((num4 - num3) * 0.5714286f) + num3);
+                    buffer4[6] = (byte)(((num4 - num3) * 0.7142857f) + num3);
+                    buffer4[7] = (byte)(((num4 - num3) * 0.8571429f) + num3);
                 }
                 else
                 {
-                    buffer4[2] = (byte) (((num4 - num3) * 0.2f) + num3);
-                    buffer4[3] = (byte) (((num4 - num3) * 0.4f) + num3);
-                    buffer4[4] = (byte) (((num4 - num3) * 0.6f) + num3);
-                    buffer4[5] = (byte) (((num4 - num3) * 0.8f) + num3);
+                    buffer4[2] = (byte)(((num4 - num3) * 0.2f) + num3);
+                    buffer4[3] = (byte)(((num4 - num3) * 0.4f) + num3);
+                    buffer4[4] = (byte)(((num4 - num3) * 0.6f) + num3);
+                    buffer4[5] = (byte)(((num4 - num3) * 0.8f) + num3);
                     buffer4[6] = num3;
                     buffer4[7] = num4;
                 }
@@ -203,19 +203,19 @@
                 buffer5[1] = num8;
                 if (buffer5[0] > buffer5[1])
                 {
-                    buffer5[2] = (byte) (((num8 - num7) * 0.1428571f) + num7);
-                    buffer5[3] = (byte) (((num8 - num7) * 0.2857143f) + num7);
-                    buffer5[4] = (byte) (((num8 - num7) * 0.4285714f) + num7);
-                    buffer5[5] = (byte) (((num8 - num7) * 0.5714286f) + num7);
-                    buffer5[6] = (byte) (((num8 - num7) * 0.7142857f) + num7);
-                    buffer5[7] = (byte) (((num8 - num7) * 0.8571429f) + num7);
+                    buffer5[2] = (byte)(((num8 - num7) * 0.1428571f) + num7);
+                    buffer5[3] = (byte)(((num8 - num7) * 0.2857143f) + num7);
+                    buffer5[4] = (byte)(((num8 - num7) * 0.4285714f) + num7);
+                    buffer5[5] = (byte)(((num8 - num7) * 0.5714286f) + num7);
+                    buffer5[6] = (byte)(((num8 - num7) * 0.7142857f) + num7);
+                    buffer5[7] = (byte)(((num8 - num7) * 0.8571429f) + num7);
                 }
                 else
                 {
-                    buffer5[2] = (byte) (((num8 - num7) * 0.2f) + num7);
-                    buffer5[3] = (byte) (((num8 - num7) * 0.4f) + num7);
-                    buffer5[4] = (byte) (((num8 - num7) * 0.6f) + num7);
-                    buffer5[5] = (byte) (((num8 - num7) * 0.8f) + num7);
+                    buffer5[2] = (byte)(((num8 - num7) * 0.2f) + num7);
+                    buffer5[3] = (byte)(((num8 - num7) * 0.4f) + num7);
+                    buffer5[4] = (byte)(((num8 - num7) * 0.6f) + num7);
+                    buffer5[5] = (byte)(((num8 - num7) * 0.8f) + num7);
                     buffer5[6] = num7;
                     buffer5[7] = num8;
                 }
@@ -231,16 +231,16 @@
                         RGBAColor color;
                         color.R = buffer4[buffer2[(j * num12) + k]];
                         color.G = buffer5[buffer3[(j * num12) + k]];
-                        float num16 = ((((float) color.R) / 255f) * 2f) - 1f;
-                        float num17 = ((((float) color.G) / 255f) * 2f) - 1f;
-                        float num18 = (float) Math.Sqrt((double) Math.Max(0f, Math.Min((float) 1f, (float) ((1f - (num16 * num16)) - (num17 * num17)))));
-                        color.B = (byte) (((num18 + 1f) / 2f) * 255f);
+                        float num16 = ((color.R / 255f) * 2f) - 1f;
+                        float num17 = ((color.G / 255f) * 2f) - 1f;
+                        float num18 = (float)Math.Sqrt(Math.Max(0f, Math.Min((float)1f, (float)((1f - (num16 * num16)) - (num17 * num17)))));
+                        color.B = (byte)(((num18 + 1f) / 2f) * 255f);
                         color.A = 0xff;
                         index = (((((num11 * 4) + j) * width) + (num10 * 4)) + k) * 4;
-                        buffer[index] = (byte) color.B;
-                        buffer[index + 1] = (byte) color.G;
-                        buffer[index + 2] = (byte) color.R;
-                        buffer[index + 3] = (byte) color.A;
+                        buffer[index] = (byte)color.B;
+                        buffer[index + 1] = (byte)color.G;
+                        buffer[index + 2] = (byte)color.R;
+                        buffer[index + 3] = (byte)color.A;
                     }
                 }
             }
@@ -257,8 +257,8 @@
                 for (int j = 0; j < num; j++)
                 {
                     int index = ((i * num) + j) * 8;
-                    uint num6 = (uint) ((data[index] << 8) + data[index + 1]);
-                    uint num7 = (uint) ((data[index + 2] << 8) + data[index + 3]);
+                    uint num6 = (uint)((data[index] << 8) + data[index + 1]);
+                    uint num7 = (uint)((data[index + 2] << 8) + data[index + 3]);
                     uint num8 = BitConverter.ToUInt32(data, index + 4);
                     ushort num9 = 0;
                     ushort num10 = 0;
@@ -266,12 +266,12 @@
                     ushort num12 = 0;
                     ushort num13 = 0;
                     ushort num14 = 0;
-                    num9 = (ushort) (8 * (num6 & 0x1f));
-                    num10 = (ushort) (4 * ((num6 >> 5) & 0x3f));
-                    num11 = (ushort) (8 * ((num6 >> 11) & 0x1f));
-                    num12 = (ushort) (8 * (num7 & 0x1f));
-                    num13 = (ushort) (4 * ((num7 >> 5) & 0x3f));
-                    num14 = (ushort) (8 * ((num7 >> 11) & 0x1f));
+                    num9 = (ushort)(8 * (num6 & 0x1f));
+                    num10 = (ushort)(4 * ((num6 >> 5) & 0x3f));
+                    num11 = (ushort)(8 * ((num6 >> 11) & 0x1f));
+                    num12 = (ushort)(8 * (num7 & 0x1f));
+                    num13 = (ushort)(4 * ((num7 >> 5) & 0x3f));
+                    num14 = (ushort)(8 * ((num7 >> 11) & 0x1f));
                     for (int k = 0; k < 4; k++)
                     {
                         int num16 = k ^ 1;
@@ -281,16 +281,16 @@
                             switch ((num8 & 3))
                             {
                                 case 0:
-                                    buffer[num18] = (byte) num9;
-                                    buffer[num18 + 1] = (byte) num10;
-                                    buffer[num18 + 2] = (byte) num11;
+                                    buffer[num18] = (byte)num9;
+                                    buffer[num18 + 1] = (byte)num10;
+                                    buffer[num18 + 2] = (byte)num11;
                                     buffer[num18 + 3] = 0xff;
                                     goto Label_023B;
 
                                 case 1:
-                                    buffer[num18] = (byte) num12;
-                                    buffer[num18 + 1] = (byte) num13;
-                                    buffer[num18 + 2] = (byte) num14;
+                                    buffer[num18] = (byte)num12;
+                                    buffer[num18 + 1] = (byte)num13;
+                                    buffer[num18 + 2] = (byte)num14;
                                     buffer[num18 + 3] = 0xff;
                                     goto Label_023B;
 
@@ -300,9 +300,9 @@
                                     {
                                         break;
                                     }
-                                    buffer[num18] = (byte) (((2 * num9) + num12) / 3);
-                                    buffer[num18 + 1] = (byte) (((2 * num10) + num13) / 3);
-                                    buffer[num18 + 2] = (byte) (((2 * num11) + num14) / 3);
+                                    buffer[num18] = (byte)(((2 * num9) + num12) / 3);
+                                    buffer[num18 + 1] = (byte)(((2 * num10) + num13) / 3);
+                                    buffer[num18 + 2] = (byte)(((2 * num11) + num14) / 3);
                                     goto Label_023B;
 
                                 case 3:
@@ -310,18 +310,18 @@
                                     {
                                         goto Label_021D;
                                     }
-                                    buffer[num18] = (byte) ((num9 + (2 * num12)) / 3);
-                                    buffer[num18 + 1] = (byte) ((num10 + (2 * num13)) / 3);
-                                    buffer[num18 + 2] = (byte) ((num11 + (2 * num14)) / 3);
+                                    buffer[num18] = (byte)((num9 + (2 * num12)) / 3);
+                                    buffer[num18 + 1] = (byte)((num10 + (2 * num13)) / 3);
+                                    buffer[num18 + 2] = (byte)((num11 + (2 * num14)) / 3);
                                     buffer[num18 + 3] = 0xff;
                                     goto Label_023B;
 
                                 default:
                                     goto Label_023B;
                             }
-                            buffer[num18] = (byte) ((num9 + num12) / 2);
-                            buffer[num18 + 1] = (byte) ((num10 + num13) / 2);
-                            buffer[num18 + 2] = (byte) ((num11 + num14) / 2);
+                            buffer[num18] = (byte)((num9 + num12) / 2);
+                            buffer[num18 + 1] = (byte)((num10 + num13) / 2);
+                            buffer[num18 + 2] = (byte)((num11 + num14) / 2);
                             goto Label_023B;
                         Label_021D:
                             buffer[num18] = 0;
@@ -348,7 +348,7 @@
                 {
                     int num7;
                     int index = ((i * num) + j) * 0x10;
-                    ushort[] numArray = new ushort[] { (ushort) ((data[index] << 8) + data[index + 1]), (ushort) ((data[index + 2] << 8) + data[index + 3]), (ushort) ((data[index + 4] << 8) + data[index + 5]), (ushort) ((data[index + 6] << 8) + data[index + 7]) };
+                    ushort[] numArray = new ushort[] { (ushort)((data[index] << 8) + data[index + 1]), (ushort)((data[index + 2] << 8) + data[index + 3]), (ushort)((data[index + 4] << 8) + data[index + 5]), (ushort)((data[index + 6] << 8) + data[index + 7]) };
                     byte[,] buffer2 = new byte[4, 4];
                     int num6 = 0;
                     while (num6 < 4)
@@ -356,14 +356,14 @@
                         num7 = 0;
                         while (num7 < 4)
                         {
-                            buffer2[num7, num6] = (byte) ((numArray[num6] & 15) * 0x10);
-                            numArray[num6] = (ushort) (numArray[num6] >> 4);
+                            buffer2[num7, num6] = (byte)((numArray[num6] & 15) * 0x10);
+                            numArray[num6] = (ushort)(numArray[num6] >> 4);
                             num7++;
                         }
                         num6++;
                     }
-                    ushort num8 = (ushort) ((data[index + 8] << 8) + data[index + 9]);
-                    ushort num9 = (ushort) ((data[index + 10] << 8) + data[index + 11]);
+                    ushort num8 = (ushort)((data[index + 8] << 8) + data[index + 9]);
+                    ushort num9 = (ushort)((data[index + 10] << 8) + data[index + 11]);
                     uint num10 = BitConverter.ToUInt32(data, (index + 8) + 4);
                     ushort num11 = 0;
                     ushort num12 = 0;
@@ -371,12 +371,12 @@
                     ushort num14 = 0;
                     ushort num15 = 0;
                     ushort num16 = 0;
-                    num11 = (ushort) (8 * (num8 & 0x1f));
-                    num12 = (ushort) (4 * ((num8 >> 5) & 0x3f));
-                    num13 = (ushort) (8 * ((num8 >> 11) & 0x1f));
-                    num14 = (ushort) (8 * (num9 & 0x1f));
-                    num15 = (ushort) (4 * ((num9 >> 5) & 0x3f));
-                    num16 = (ushort) (8 * ((num9 >> 11) & 0x1f));
+                    num11 = (ushort)(8 * (num8 & 0x1f));
+                    num12 = (ushort)(4 * ((num8 >> 5) & 0x3f));
+                    num13 = (ushort)(8 * ((num8 >> 11) & 0x1f));
+                    num14 = (ushort)(8 * (num9 & 0x1f));
+                    num15 = (ushort)(4 * ((num9 >> 5) & 0x3f));
+                    num16 = (ushort)(8 * ((num9 >> 11) & 0x1f));
                     for (int k = 0; k < 4; k++)
                     {
                         num6 = k ^ 1;
@@ -388,15 +388,15 @@
                             switch (num19)
                             {
                                 case 0:
-                                    buffer[num18] = (byte) num11;
-                                    buffer[num18 + 1] = (byte) num12;
-                                    buffer[num18 + 2] = (byte) num13;
+                                    buffer[num18] = (byte)num11;
+                                    buffer[num18 + 1] = (byte)num12;
+                                    buffer[num18 + 2] = (byte)num13;
                                     goto Label_02E0;
 
                                 case 1:
-                                    buffer[num18] = (byte) num14;
-                                    buffer[num18 + 1] = (byte) num15;
-                                    buffer[num18 + 2] = (byte) num16;
+                                    buffer[num18] = (byte)num14;
+                                    buffer[num18 + 1] = (byte)num15;
+                                    buffer[num18 + 2] = (byte)num16;
                                     goto Label_02E0;
 
                                 case 2:
@@ -404,9 +404,9 @@
                                     {
                                         break;
                                     }
-                                    buffer[num18] = (byte) (((2 * num11) + num14) / 3);
-                                    buffer[num18 + 1] = (byte) (((2 * num12) + num15) / 3);
-                                    buffer[num18 + 2] = (byte) (((2 * num13) + num16) / 3);
+                                    buffer[num18] = (byte)(((2 * num11) + num14) / 3);
+                                    buffer[num18 + 1] = (byte)(((2 * num12) + num15) / 3);
+                                    buffer[num18 + 2] = (byte)(((2 * num13) + num16) / 3);
                                     goto Label_02E0;
 
                                 case 3:
@@ -414,17 +414,17 @@
                                     {
                                         goto Label_02C9;
                                     }
-                                    buffer[num18] = (byte) ((num11 + (2 * num14)) / 3);
-                                    buffer[num18 + 1] = (byte) ((num12 + (2 * num15)) / 3);
-                                    buffer[num18 + 2] = (byte) ((num13 + (2 * num16)) / 3);
+                                    buffer[num18] = (byte)((num11 + (2 * num14)) / 3);
+                                    buffer[num18 + 1] = (byte)((num12 + (2 * num15)) / 3);
+                                    buffer[num18 + 2] = (byte)((num13 + (2 * num16)) / 3);
                                     goto Label_02E0;
 
                                 default:
                                     goto Label_02E0;
                             }
-                            buffer[num18] = (byte) ((num11 + num14) / 2);
-                            buffer[num18 + 1] = (byte) ((num12 + num15) / 2);
-                            buffer[num18 + 2] = (byte) ((num13 + num16) / 2);
+                            buffer[num18] = (byte)((num11 + num14) / 2);
+                            buffer[num18 + 1] = (byte)((num12 + num15) / 2);
+                            buffer[num18 + 2] = (byte)((num13 + num16) / 2);
                             goto Label_02E0;
                         Label_02C9:
                             buffer[num18] = 0;
@@ -467,19 +467,19 @@
                     num6 |= data[index + 3];
                     if (numArray[0] > numArray[1])
                     {
-                        numArray[2] = (byte) ((((6 * numArray[0]) + numArray[1]) + 3) / 7);
-                        numArray[3] = (byte) ((((5 * numArray[0]) + (2 * numArray[1])) + 3) / 7);
-                        numArray[4] = (byte) ((((4 * numArray[0]) + (3 * numArray[1])) + 3) / 7);
-                        numArray[5] = (byte) ((((3 * numArray[0]) + (4 * numArray[1])) + 3) / 7);
-                        numArray[6] = (byte) ((((2 * numArray[0]) + (5 * numArray[1])) + 3) / 7);
-                        numArray[7] = (byte) (((numArray[0] + (6 * numArray[1])) + 3) / 7);
+                        numArray[2] = (byte)((((6 * numArray[0]) + numArray[1]) + 3) / 7);
+                        numArray[3] = (byte)((((5 * numArray[0]) + (2 * numArray[1])) + 3) / 7);
+                        numArray[4] = (byte)((((4 * numArray[0]) + (3 * numArray[1])) + 3) / 7);
+                        numArray[5] = (byte)((((3 * numArray[0]) + (4 * numArray[1])) + 3) / 7);
+                        numArray[6] = (byte)((((2 * numArray[0]) + (5 * numArray[1])) + 3) / 7);
+                        numArray[7] = (byte)(((numArray[0] + (6 * numArray[1])) + 3) / 7);
                     }
                     else
                     {
-                        numArray[2] = (byte) ((((4 * numArray[0]) + numArray[1]) + 2) / 5);
-                        numArray[3] = (byte) ((((3 * numArray[0]) + (2 * numArray[1])) + 2) / 5);
-                        numArray[4] = (byte) ((((2 * numArray[0]) + (3 * numArray[1])) + 2) / 5);
-                        numArray[5] = (byte) (((numArray[0] + (4 * numArray[1])) + 2) / 5);
+                        numArray[2] = (byte)((((4 * numArray[0]) + numArray[1]) + 2) / 5);
+                        numArray[3] = (byte)((((3 * numArray[0]) + (2 * numArray[1])) + 2) / 5);
+                        numArray[4] = (byte)((((2 * numArray[0]) + (3 * numArray[1])) + 2) / 5);
+                        numArray[5] = (byte)(((numArray[0] + (4 * numArray[1])) + 2) / 5);
                         numArray[6] = 0;
                         numArray[7] = 0xff;
                     }
@@ -490,14 +490,14 @@
                         num8 = 0;
                         while (num8 < 4)
                         {
-                            buffer2[num8, num7] = (byte) numArray[(int) ((IntPtr) (num6 & ((ulong) 7L)))];
+                            buffer2[num8, num7] = (byte)numArray[(int)((IntPtr)(num6 & 7L))];
                             num6 = num6 >> 3;
                             num8++;
                         }
                         num7++;
                     }
-                    ushort num9 = (ushort) ((data[index + 8] << 8) + data[index + 9]);
-                    ushort num10 = (ushort) ((data[index + 10] << 8) + data[index + 11]);
+                    ushort num9 = (ushort)((data[index + 8] << 8) + data[index + 9]);
+                    ushort num10 = (ushort)((data[index + 10] << 8) + data[index + 11]);
                     uint num11 = BitConverter.ToUInt32(data, (index + 8) + 4);
                     ushort num12 = 0;
                     ushort num13 = 0;
@@ -505,12 +505,12 @@
                     ushort num15 = 0;
                     ushort num16 = 0;
                     ushort num17 = 0;
-                    num12 = (ushort) (8 * (num9 & 0x1f));
-                    num13 = (ushort) (4 * ((num9 >> 5) & 0x3f));
-                    num14 = (ushort) (8 * ((num9 >> 11) & 0x1f));
-                    num15 = (ushort) (8 * (num10 & 0x1f));
-                    num16 = (ushort) (4 * ((num10 >> 5) & 0x3f));
-                    num17 = (ushort) (8 * ((num10 >> 11) & 0x1f));
+                    num12 = (ushort)(8 * (num9 & 0x1f));
+                    num13 = (ushort)(4 * ((num9 >> 5) & 0x3f));
+                    num14 = (ushort)(8 * ((num9 >> 11) & 0x1f));
+                    num15 = (ushort)(8 * (num10 & 0x1f));
+                    num16 = (ushort)(4 * ((num10 >> 5) & 0x3f));
+                    num17 = (ushort)(8 * ((num10 >> 11) & 0x1f));
                     for (int k = 0; k < 4; k++)
                     {
                         num8 = k ^ 1;
@@ -522,15 +522,15 @@
                             switch (num20)
                             {
                                 case 0:
-                                    buffer[num19] = (byte) num12;
-                                    buffer[num19 + 1] = (byte) num13;
-                                    buffer[num19 + 2] = (byte) num14;
+                                    buffer[num19] = (byte)num12;
+                                    buffer[num19 + 1] = (byte)num13;
+                                    buffer[num19 + 2] = (byte)num14;
                                     goto Label_03F9;
 
                                 case 1:
-                                    buffer[num19] = (byte) num15;
-                                    buffer[num19 + 1] = (byte) num16;
-                                    buffer[num19 + 2] = (byte) num17;
+                                    buffer[num19] = (byte)num15;
+                                    buffer[num19 + 1] = (byte)num16;
+                                    buffer[num19 + 2] = (byte)num17;
                                     goto Label_03F9;
 
                                 case 2:
@@ -538,9 +538,9 @@
                                     {
                                         break;
                                     }
-                                    buffer[num19] = (byte) (((2 * num12) + num15) / 3);
-                                    buffer[num19 + 1] = (byte) (((2 * num13) + num16) / 3);
-                                    buffer[num19 + 2] = (byte) (((2 * num14) + num17) / 3);
+                                    buffer[num19] = (byte)(((2 * num12) + num15) / 3);
+                                    buffer[num19 + 1] = (byte)(((2 * num13) + num16) / 3);
+                                    buffer[num19 + 2] = (byte)(((2 * num14) + num17) / 3);
                                     goto Label_03F9;
 
                                 case 3:
@@ -548,17 +548,17 @@
                                     {
                                         goto Label_03E2;
                                     }
-                                    buffer[num19] = (byte) ((num12 + (2 * num15)) / 3);
-                                    buffer[num19 + 1] = (byte) ((num13 + (2 * num16)) / 3);
-                                    buffer[num19 + 2] = (byte) ((num14 + (2 * num17)) / 3);
+                                    buffer[num19] = (byte)((num12 + (2 * num15)) / 3);
+                                    buffer[num19 + 1] = (byte)((num13 + (2 * num16)) / 3);
+                                    buffer[num19 + 2] = (byte)((num14 + (2 * num17)) / 3);
                                     goto Label_03F9;
 
                                 default:
                                     goto Label_03F9;
                             }
-                            buffer[num19] = (byte) ((num12 + num15) / 2);
-                            buffer[num19 + 1] = (byte) ((num13 + num16) / 2);
-                            buffer[num19 + 2] = (byte) ((num14 + num17) / 2);
+                            buffer[num19] = (byte)((num12 + num15) / 2);
+                            buffer[num19 + 1] = (byte)((num13 + num16) / 2);
+                            buffer[num19 + 2] = (byte)((num14 + num17) / 2);
                             goto Label_03F9;
                         Label_03E2:
                             buffer[num19] = 0;
@@ -578,10 +578,10 @@
             byte[] buffer = new byte[(width * height) * 4];
             for (int i = 0; i < ((width * height) * 2); i += 2)
             {
-                short num2 = (short) (data[i] | (data[i + 1] << 8));
-                buffer[i * 2] = (byte) (num2 & 0x1f);
-                buffer[(i * 2) + 1] = (byte) ((num2 >> 5) & 0x3f);
-                buffer[(i * 2) + 2] = (byte) ((num2 >> 11) & 0x1f);
+                short num2 = (short)(data[i] | (data[i + 1] << 8));
+                buffer[i * 2] = (byte)(num2 & 0x1f);
+                buffer[(i * 2) + 1] = (byte)((num2 >> 5) & 0x3f);
+                buffer[(i * 2) + 2] = (byte)((num2 >> 11) & 0x1f);
                 buffer[(i * 2) + 3] = 0xff;
             }
             return buffer;
@@ -604,9 +604,9 @@
         private static RGBAColor GradientColors(RGBAColor Color1, RGBAColor Color2)
         {
             RGBAColor color;
-            color.R = (byte) (((Color1.R * 2) + Color2.R) / 3);
-            color.G = (byte) (((Color1.G * 2) + Color2.G) / 3);
-            color.B = (byte) (((Color1.B * 2) + Color2.B) / 3);
+            color.R = (byte)(((Color1.R * 2) + Color2.R) / 3);
+            color.G = (byte)(((Color1.G * 2) + Color2.G) / 3);
+            color.B = (byte)(((Color1.B * 2) + Color2.B) / 3);
             color.A = 0xff;
             return color;
         }
@@ -614,9 +614,9 @@
         private static RGBAColor GradientColorsHalf(RGBAColor Color1, RGBAColor Color2)
         {
             RGBAColor color;
-            color.R = (byte) ((Color1.R / 2) + (Color2.R / 2));
-            color.G = (byte) ((Color1.G / 2) + (Color2.G / 2));
-            color.B = (byte) ((Color1.B / 2) + (Color2.B / 2));
+            color.R = (byte)((Color1.R / 2) + (Color2.R / 2));
+            color.G = (byte)((Color1.G / 2) + (Color2.G / 2));
+            color.B = (byte)((Color1.B / 2) + (Color2.B / 2));
             color.A = 0xff;
             return color;
         }

@@ -781,7 +781,7 @@ namespace XDevkit.Dialogs
             this.checkEdit5.Location = new System.Drawing.Point(5, 78);
             this.checkEdit5.Name = "checkEdit5";
             this.checkEdit5.Properties.Caption = "Control";
-            this.checkEdit5.Size = new System.Drawing.Size(75, 20);
+            this.checkEdit5.Size = new System.Drawing.Size(75, 18);
             this.checkEdit5.TabIndex = 4;
             // 
             // checkEdit4
@@ -789,7 +789,7 @@ namespace XDevkit.Dialogs
             this.checkEdit4.Location = new System.Drawing.Point(119, 52);
             this.checkEdit4.Name = "checkEdit4";
             this.checkEdit4.Properties.Caption = "Control";
-            this.checkEdit4.Size = new System.Drawing.Size(75, 20);
+            this.checkEdit4.Size = new System.Drawing.Size(75, 18);
             this.checkEdit4.TabIndex = 3;
             // 
             // checkEdit3
@@ -797,7 +797,7 @@ namespace XDevkit.Dialogs
             this.checkEdit3.Location = new System.Drawing.Point(119, 26);
             this.checkEdit3.Name = "checkEdit3";
             this.checkEdit3.Properties.Caption = "Write";
-            this.checkEdit3.Size = new System.Drawing.Size(75, 20);
+            this.checkEdit3.Size = new System.Drawing.Size(75, 18);
             this.checkEdit3.TabIndex = 2;
             // 
             // checkEdit2
@@ -805,7 +805,7 @@ namespace XDevkit.Dialogs
             this.checkEdit2.Location = new System.Drawing.Point(5, 52);
             this.checkEdit2.Name = "checkEdit2";
             this.checkEdit2.Properties.Caption = "Configure";
-            this.checkEdit2.Size = new System.Drawing.Size(75, 20);
+            this.checkEdit2.Size = new System.Drawing.Size(75, 18);
             this.checkEdit2.TabIndex = 1;
             // 
             // checkEdit1
@@ -813,7 +813,7 @@ namespace XDevkit.Dialogs
             this.checkEdit1.Location = new System.Drawing.Point(5, 26);
             this.checkEdit1.Name = "checkEdit1";
             this.checkEdit1.Properties.Caption = "Read";
-            this.checkEdit1.Size = new System.Drawing.Size(75, 20);
+            this.checkEdit1.Size = new System.Drawing.Size(75, 18);
             this.checkEdit1.TabIndex = 0;
             // 
             // textEdit1
