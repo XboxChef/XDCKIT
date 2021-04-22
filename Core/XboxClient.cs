@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 
 using System;
@@ -53,7 +53,7 @@ namespace XDevkit
                 Port = value;
             }
         }
-        public static string IPAddress { get; set; } = "000.000.000.000";
+        public static string IPAddress { get; set; } = "192.000.000.000";
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static StreamReader Reader;
@@ -100,9 +100,9 @@ namespace XDevkit
                     Reader = new StreamReader(XboxName.GetStream());
 
                 }
-                catch (SocketException)
+                catch (SocketException ex)
                 {
-
+                    Console.WriteLine(ex.Message);
                 }
             }
 
@@ -130,9 +130,9 @@ namespace XDevkit
                     XboxName = new TcpClient(ConsoleNameOrIP, Port);
                     Reader = new StreamReader(XboxName.GetStream());
                 }
-                catch (SocketException)
+                catch (SocketException ex)
                 {
-
+                    
                 }
             }
 
@@ -150,7 +150,7 @@ namespace XDevkit
 
                 try
                 {
-                    if (XboxName.ConnectAsync(ips + i, 730).Wait(10))//keep calm just code..
+                    if (XboxName.ConnectAsync(ips + i, 730).Wait(12))//keep calm just code..
                     {
                         IPAddress = ips + i;
 
@@ -169,6 +169,35 @@ namespace XDevkit
         }
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool Ping (string host, int attempts, int timeout)
+        {
+            System.Net.NetworkInformation.Ping ping =
+                                             new System.Net.NetworkInformation.Ping();
+
+            System.Net.NetworkInformation.PingReply pingReply;
+
+            for (int i = 0; i < attempts; i++)
+            {
+                try
+                {
+                    pingReply = ping.Send(host, timeout);
+
+                    // If there is a successful ping then return true.
+                    if (pingReply != null &&
+                        pingReply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                        return true;
+                }
+                catch
+                {
+                    // Do nothing and let it try again until the attempts are exausted.
+                    // Exceptions are thrown for normal ping failurs like address lookup
+                    // failed.  For this reason we are supressing errors.
+                }
+            }
+
+            // Return false if we can't successfully ping the server after several attempts.
+            return false;
+        }
         public static void FindConsole(uint Retries, uint RetryDelay)
         {
 

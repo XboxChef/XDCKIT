@@ -7,17 +7,9 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.pdb
 C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.ValueEditor.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.GenerateResource.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll.licenses
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileInputs.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CopyComplete
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Properties.Resources.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Dialogs.XMessageboxUI.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Dialogs.WizardForm.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.Dialogs.XMessageEdit.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkitTester.XDevkit.Dialogs.ValueParser.resources
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkitTester.XDevkit.Dialogs.ValueTester.resources
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csprojAssemblyReference.cache

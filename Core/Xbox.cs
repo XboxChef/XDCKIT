@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 
 using System;
@@ -78,12 +78,6 @@ namespace XDevkit
 
 
 
-        [Browsable(false)]//hidden not yet set
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public XBOX_PROCESS_INFO RunningProcessInfo
-        {
-            get;
-        }
         /// <summary>
         /// Detects Console Type Information.
         /// </summary>
@@ -128,11 +122,11 @@ namespace XDevkit
         /// <summary>
         /// Gets The Console IPAddress 
         /// </summary>
-        public uint IPAddress
+        public string IPAddress
         {
             get
             {
-                return uint.Parse(XboxClient.IPAddress, System.Globalization.NumberStyles.HexNumber);
+                return XboxClient.IPAddress;
             }
         }
         /// <summary>

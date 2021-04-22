@@ -57,62 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\ValueEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ValueEditor.designer.cs">
-      <DependentUpon>ValueEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ValueSlider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ValueSlider.Designer.cs">
-      <DependentUpon>ValueSlider.cs</DependentUpon>
-    </Compile>
     <Compile Include="Core\Xbox.cs" />
     <Compile Include="Core\XboxClient.cs" />
-    <Compile Include="Dialogs\ValueParser.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ValueParser.Designer.cs">
-      <DependentUpon>ValueParser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ValueTester.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ValueTester.Designer.cs">
-      <DependentUpon>ValueTester.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\WizardAddNewXbox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\WizardAddNewXbox.Designer.cs">
-      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\XCheatEngine.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\XCheatEngine.Designer.cs">
-      <DependentUpon>XCheatEngine.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\XMessageboxUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\XMessageboxUI.designer.cs">
-      <DependentUpon>XMessageboxUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\XMessageEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\XMessageEdit.Designer.cs">
-      <DependentUpon>XMessageEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Extentions\Bitmaps\BitmapFunctions.cs" />
-    <Compile Include="Extentions\Bitmaps\BitmapInfo.cs" />
-    <Compile Include="Extentions\Bitmaps\BitmapSubmap.cs" />
-    <Compile Include="Extentions\Bitmaps\DDS.cs" />
-    <Compile Include="Extentions\Bitmaps\DXTDecoder.cs" />
-    <Compile Include="Extentions\Bitmaps\TextureFormat.cs" />
+    <Compile Include="FileSystem\XboxFileSystem.cs" />
     <Compile Include="Extentions\Functions.cs" />
     <Compile Include="Extentions\IO\EndianIO.cs" />
     <Compile Include="Extentions\IO\EndianReader.cs" />
@@ -123,21 +70,12 @@
     <Compile Include="Extentions\XboxEnums.cs" />
     <Compile Include="Extentions\XboxExtention.cs" />
     <Compile Include="Extentions\XboxMemoryStream.cs" />
-    <Compile Include="Extentions\XboxStructs.cs" />
     <Compile Include="Features\Tray.cs" />
     <Compile Include="Features\XboxFeatures.cs" />
     <Compile Include="Features\XboxMemory.cs" />
     <Compile Include="Features\XboxTypes.cs" />
-    <Compile Include="Filsystem\IXboxFile.cs" />
-    <Compile Include="Filsystem\IXboxFiles.cs" />
-    <Compile Include="Filsystem\XboxFileSystem.cs" />
     <Compile Include="Notification System\XNotify.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -153,38 +91,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\ValueEditor.resx">
-      <DependentUpon>ValueEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\ValueParser.resx">
-      <DependentUpon>ValueParser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\ValueTester.resx">
-      <DependentUpon>ValueTester.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\WizardAddNewXbox.resx">
-      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\XCheatEngine.resx">
-      <DependentUpon>XCheatEngine.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\XMessageboxUI.resx">
-      <DependentUpon>XMessageboxUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\XMessageEdit.resx">
-      <DependentUpon>XMessageEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Core\About XDevkit.txt" />
-    <None Include="Resources\classica_pause-button_flat-rounded-square-white-on-blue-gray_512x512.png" />
-    <None Include="Resources\circled-pause.png" />
-    <None Include="Resources\unnamed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

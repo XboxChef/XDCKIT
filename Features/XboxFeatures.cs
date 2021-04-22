@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it 3 years and counting...
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 
 using System;
@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace XDevkit
 {
@@ -560,11 +561,45 @@ namespace XDevkit
 
             XboxClient.Disconnect();
         }
-        public void ScreenShot(string Filename)//TODO: File Functionality
-        {
-            CloseConnection();
-            Reconnect(0);
-        }
+        
+        /// <summary>
+        /// Captures a screenshot from the frame buffer of the console.
+        /// </summary>
+        /// <returns>A BitmapSource containing the uncompressed frame buffer captured off the current console.</returns>
+        //public BitmapSource CaptureScreenshot()
+        //{
+
+        //   // IntPtr pointerToHBitmap = 
+        //    BitmapSource managedBitmap = null;
+
+        //    try
+        //    {
+        //        managedBitmap = Imaging.CreateBitmapSourceFromHBitmap(pointerToHBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+        //    }
+        //    catch (ArgumentNullException ex)
+        //    {
+        //        // Occurs when passing a IntPtr.Zero into CreateBitmapSourceFromHBitmap.
+        //        // Shouldn't ever happen because the adapter checks for this.
+        //        throw new ("Failed to capture screenshot.", ex);
+        //    }
+        //    finally
+        //    {
+        //        NativeMethods.DeleteObject(pointerToHBitmap);
+        //    }
+
+        //    return managedBitmap;
+        //}
+
+        /// <summary>
+        /// Captures a screenshot from the frame buffer of the specified console.
+        /// </summary>
+        /// <param name="systemIpAddress">The IP address of the console.</param>
+        /// <returns>A pointer to the location in memory of the uncompressed frame buffer captured off the console.</returns>
+        //public IntPtr CaptureScreenshot(string systemIpAddress)
+        //{
+        //    return null;
+        //}
+
         /// <summary>
         /// Reconnect Feature.
         /// </summary>
@@ -793,5 +828,14 @@ namespace XDevkit
         {
             ResolveFunction("xboxkrnl.exe", 528);
         }
+    }
+    /// <summary>
+    /// Contains all native helper methods used by XboxConsole.
+    /// </summary>
+    public static class NativeMethods
+    {
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject([In] IntPtr hObject);
     }
 }
