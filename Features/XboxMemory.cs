@@ -159,7 +159,7 @@ namespace XDevkit
                     Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
                 }
-                catch (Exception /*ex*/)
+                catch
                 {
 
                 }

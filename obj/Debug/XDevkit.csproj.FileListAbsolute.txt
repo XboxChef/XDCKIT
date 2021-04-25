@@ -7,7 +7,6 @@ C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDevkit.pdb
 C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.dll
 C:\Users\Serenity\Documents\GitHub\ModioX\src\References\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll.licenses
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CoreCompileInputs.cache
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.csproj.CopyComplete
 C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDevkit.dll

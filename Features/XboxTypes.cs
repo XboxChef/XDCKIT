@@ -3,6 +3,7 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
@@ -18,11 +19,11 @@ namespace XDevkit
         private static readonly byte[] myBuff = new byte[0x20];
         private static uint outInt;
         private static uint uTemp32;
-        private static UInt16 uTemp16;
-        private static UInt64 uTemp64;
-        private static Int16 Temp16;
-        private static Int32 Temp32;
-        private static Int64 Temp64;
+        private static ushort uTemp16;
+        private static ulong uTemp64;
+        private static short Temp16;
+        private static int Temp32;
+        private static long Temp64;
         #endregion
 
         #region Bool {Get; Set;}
@@ -274,6 +275,10 @@ namespace XDevkit
         {
             myBuff[0] = input;
             SetMemory(Offset, 1, myBuff, out outInt);
+        }
+        public void WriteBytes(uint Offset, byte[] input)
+        {
+            SetMemory(Offset, 1, input, out outInt);
         }
 
         #endregion

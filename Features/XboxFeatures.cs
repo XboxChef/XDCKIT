@@ -35,65 +35,6 @@ namespace XDevkit
             object[] objArray1 = new object[] { " ", byte_0[2], ".", byte_0[3] };
             return string.Concat(objArray1);
         }
-        public string GetAvatarURL(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<img src=\"(.*)\" alt=\"(.*)\" title=\"(.*)\" class=\"avatarBig\" />";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value.Split(new char[]
-            {
-                '"'
-            })[0];
-        }
-
-        public string GetGamerPicture(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<img src=\"(.*)\" alt=\"(.*)\" title=\"(.*)\" class=\"avatarTile\"/>";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value.Split(new char[]
-            {
-                '"'
-            })[0];
-        }
-
-        public string TotalGames(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<p class=\"\">Total Games Played: (.*)</p>";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value;
-        }
-
-        public string GamesCompleted(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<p class=\"\">Games Completed: (.*)</p>";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value;
-
-
-        }
 
         public string ProfileID()
         {
@@ -102,18 +43,6 @@ namespace XDevkit
         public string Gamertag()
         {
             return BitConverter.ToString(GetMemory(0xC035261d, 30)).Replace("00", null).Replace("-", null);
-        }
-        public string AverageCompleted(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<p class=\"\">Average Completion: (.*)</p>";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value;
         }
 
         public string LastSeen(string gamertag)
@@ -127,37 +56,6 @@ namespace XDevkit
             string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
             string pattern = "Last seen (.*)";
             return Regex.Matches(input, pattern)[0].Groups[1].Value;
-        }
-
-        public string GamerScore(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<p class=\"rightGS\"><img src=\"/resources/images/gamerscore_icon.png\" alt=\"(.*)\" title=\"(.*)\">(.*)</p>";
-            return Regex.Matches(input, pattern)[0].Groups[3].Value.Replace(" ", string.Empty);
-        }
-
-        public List<string> GetRecentGames(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            List<string> list = new List<string>();
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "<p class=\"gameName\"><a href=\"(.*)\">(.*)</a></p>";
-            foreach (Match match in new Regex(pattern).Matches(input))
-            {
-                list.Add(match.Groups[2].Value);
-            }
-            return list;
         }
         public void NULL_Address(uint address)
         {
@@ -563,44 +461,6 @@ namespace XDevkit
         }
         
         /// <summary>
-        /// Captures a screenshot from the frame buffer of the console.
-        /// </summary>
-        /// <returns>A BitmapSource containing the uncompressed frame buffer captured off the current console.</returns>
-        //public BitmapSource CaptureScreenshot()
-        //{
-
-        //   // IntPtr pointerToHBitmap = 
-        //    BitmapSource managedBitmap = null;
-
-        //    try
-        //    {
-        //        managedBitmap = Imaging.CreateBitmapSourceFromHBitmap(pointerToHBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-        //    }
-        //    catch (ArgumentNullException ex)
-        //    {
-        //        // Occurs when passing a IntPtr.Zero into CreateBitmapSourceFromHBitmap.
-        //        // Shouldn't ever happen because the adapter checks for this.
-        //        throw new ("Failed to capture screenshot.", ex);
-        //    }
-        //    finally
-        //    {
-        //        NativeMethods.DeleteObject(pointerToHBitmap);
-        //    }
-
-        //    return managedBitmap;
-        //}
-
-        /// <summary>
-        /// Captures a screenshot from the frame buffer of the specified console.
-        /// </summary>
-        /// <param name="systemIpAddress">The IP address of the console.</param>
-        /// <returns>A pointer to the location in memory of the uncompressed frame buffer captured off the console.</returns>
-        //public IntPtr CaptureScreenshot(string systemIpAddress)
-        //{
-        //    return null;
-        //}
-
-        /// <summary>
         /// Reconnect Feature.
         /// </summary>
         private void Reconnect(int delay)
@@ -611,9 +471,10 @@ namespace XDevkit
         /// <summary>
         /// Find's Console And Connects To Found IP does not set class
         /// </summary>
-        private void OpenConnection()
+        private void OpenConnection(string port)
         {
-            XboxClient.Connect("", XboxClient.Port);
+
+            XboxClient.Connect("default", XboxClient.Port);
         }
 
 
