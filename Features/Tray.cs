@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace XDevkit
+namespace XDCKIT
 {
     public class Tray
     {
-        private static readonly Xbox xbox = new Xbox();
+        private static readonly XboxConsole xbox = new XboxConsole();
         /// <summary>
         /// 
         /// </summary>

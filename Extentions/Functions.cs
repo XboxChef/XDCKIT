@@ -9,7 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace XDevkit
+namespace XDCKIT
 {
     public static class Functions
     {

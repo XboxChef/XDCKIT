@@ -14,13 +14,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-namespace XDevkit
+namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
     /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox //XboxFeatures
+    public partial class XboxConsole //XboxFeatures
     {
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]

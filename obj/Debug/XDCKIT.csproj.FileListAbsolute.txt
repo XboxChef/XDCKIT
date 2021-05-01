@@ -1,0 +1,7 @@
+C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDCKIT.dll
+C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Debug\XDCKIT.pdb
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDCKIT.csprojAssemblyReference.cache
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDCKIT.csproj.CoreCompileInputs.cache
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDCKIT.csproj.CopyComplete
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDCKIT.dll
+C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Debug\XDCKIT.pdb

@@ -6,7 +6,7 @@
 using System;
 using System.Text;
 
-namespace XDevkit
+namespace XDCKIT
 {
     /// <summary>
     /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
@@ -27,7 +27,7 @@ namespace XDevkit
         }
         public void XMessage(string Tittle, string Body, string ButtonText)
         {
-            Xbox Xconsole = new Xbox();
+            XboxConsole Xconsole = new XboxConsole();
             object[] objArray1 = new object[] { 0xff, 1 };
             uint num = XboxExtention.Call<uint>("xam.xex", 0x489, objArray1);
             object[] objArray2 = new object[] { 0x400, 1 };
@@ -72,7 +72,7 @@ namespace XDevkit
         /// <param name="int_7"></param>
         public static void XMessage(int IconType, string Title, string Button_Text, int int_5, string[] Body, int int_6, int int_7)
         {
-            Xbox Xconsole = new Xbox();
+            XboxConsole Xconsole = new XboxConsole();
             try
             {
                 uint address = Xconsole.ResolveFunction("xam.xex", 0x2ca);
@@ -410,7 +410,7 @@ namespace XDevkit
                     command += "\\\"";
                     break;
             }
-            Xbox.SendTextCommand(command);
+            XboxConsole.SendTextCommand(command);
         }
     }
 }

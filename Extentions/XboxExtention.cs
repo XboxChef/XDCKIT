@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 
-namespace XDevkit
+namespace XDCKIT
 {
     [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -66,7 +66,7 @@ namespace XDevkit
             uint Uint64 = 8;
             uint Uint64Array = 9;
             uint Version = 2;
-            Xbox.ConnectTimeout = Xbox.ConversationTimeout = (int)4000000U; //ConversationTimeout
+            XboxConsole.ConnectTimeout = XboxConsole.ConversationTimeout = (int)4000000U; //ConversationTimeout
             object[] objArray1 = new object[13];
             objArray1[0] = "consolefeatures ver=";
             objArray1[1] = Version;
@@ -159,15 +159,15 @@ namespace XDevkit
                     str2 = str2 + Uint64.ToString() + "\\" + Functions.ConvertToUInt64(o).ToString() + "\\";
             }
             string Command = str2 + "\"";
-            string String = Xbox.SendTextCommand(Command);
+            string String = XboxConsole.SendTextCommand(Command);
             uint num1;
-            for (string _Ptr = "buf_addr="; String.Contains(_Ptr); String = Xbox.SendTextCommand("consolefeatures " + _Ptr + "0x" + num1.ToString("X")))
+            for (string _Ptr = "buf_addr="; String.Contains(_Ptr); String = XboxConsole.SendTextCommand("consolefeatures " + _Ptr + "0x" + num1.ToString("X")))
             {
                 Thread.Sleep(250);
                 num1 = uint.Parse(String.Substring(String.find(_Ptr) + _Ptr.Length), NumberStyles.HexNumber);
             }
-            Xbox.ConnectTimeout = (int)2000U;
-            Xbox.ConversationTimeout = (int)5000U;
+            XboxConsole.ConnectTimeout = (int)2000U;
+            XboxConsole.ConversationTimeout = (int)5000U;
             switch (Type)
             {
                 case 1:

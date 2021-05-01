@@ -13,13 +13,13 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace XDevkit
+namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
     /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox //XboxMemory Commands
+    public partial class XboxConsole //XboxMemory Commands
     {
 
         private uint _startDumpOffset { set; get; }

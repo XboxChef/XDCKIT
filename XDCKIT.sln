@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDevkit", "XDevkit.csproj", "{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDCKIT", "XDCKIT.csproj", "{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47FE4ED5-76FB-46E0-8BED-7050998A19EF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Properties\.editorconfig = Properties\.editorconfig
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDevkitTester", "..\XDevkitTester\XDevkitTester.csproj", "{E3FFBDA2-4661-40C0-8605-8D00841F1AF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3FFBDA2-4661-40C0-8605-8D00841F1AF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3FFBDA2-4661-40C0-8605-8D00841F1AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3FFBDA2-4661-40C0-8605-8D00841F1AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3FFBDA2-4661-40C0-8605-8D00841F1AF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

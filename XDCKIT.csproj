@@ -7,8 +7,8 @@
     <ProjectGuid>{EE2B6EAD-7D2E-4723-AB63-6CD539A3666C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XDevkit</RootNamespace>
-    <AssemblyName>XDevkit</AssemblyName>
+    <RootNamespace>XDCKIT</RootNamespace>
+    <AssemblyName>XDCKIT</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Xbox.cs" />
+    <Compile Include="Core\XboxConsole.cs" />
     <Compile Include="Core\XboxClient.cs" />
     <Compile Include="FileSystem\XboxFileSystem.cs" />
     <Compile Include="Extentions\Functions.cs" />

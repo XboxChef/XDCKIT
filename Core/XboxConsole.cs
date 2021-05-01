@@ -8,9 +8,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 
-namespace XDevkit
+namespace XDCKIT
 {
-    public partial class Xbox //Main
+    public partial class XboxConsole //Main
     {
 
         #region Properties

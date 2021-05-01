@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace XDevkit.Properties {
+namespace XDCKIT.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

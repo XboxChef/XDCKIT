@@ -6,11 +6,11 @@
 using System;
 using System.IO;
 
-namespace XDevkit
+namespace XDCKIT
 {
     public class XboxFileSystem
     {
-        Xbox Xbox = new Xbox();
+        XboxConsole Xbox = new XboxConsole();
         public XboxFileSystem()
         {
         }
@@ -23,7 +23,7 @@ namespace XDevkit
         {
             FileStream lfs = new FileStream(localName, FileMode.Open);
             byte[] fileData = new byte[XboxClient.XboxName.Client.SendBufferSize];
-            Xbox.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
+            XboxConsole.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
 
             int mainIterations = (int)lfs.Length / XboxClient.XboxName.Client.SendBufferSize;
             int remainder = (int)lfs.Length % XboxClient.XboxName.Client.SendBufferSize;
@@ -45,7 +45,7 @@ namespace XDevkit
         public void MakeDirectory(string path)
         {
             string sdr = string.Concat("mkdir name=\"{0}\"", path);
-            Xbox.SendTextCommand(sdr, out Xbox.Response);
+            XboxConsole.SendTextCommand(sdr, out XboxConsole.Response);
         }
         /// <summary>
         /// Renames or moves a file on the xbox.
@@ -55,7 +55,7 @@ namespace XDevkit
         public void RenameFile(string OldFileName, string NewFileName)
         {
             string ren = string.Concat("rename name=\"{0}\" newname=\"{1}\"", OldFileName, NewFileName);
-            Xbox.SendTextCommand(ren);
+            XboxConsole.SendTextCommand(ren);
         }
         /// <summary>
         /// Delete the specified folder path from the console.
@@ -64,7 +64,7 @@ namespace XDevkit
         public void RemoveDirectory(string path)
         {
             string sdr = string.Concat("delete name=\"{0}\"", path);
-            Xbox.SendTextCommand(sdr, out Xbox.Response);
+            XboxConsole.SendTextCommand(sdr, out XboxConsole.Response);
         }
         /// <summary>
         /// Get the console drive names.
@@ -73,7 +73,7 @@ namespace XDevkit
         {
             get
             {
-                return Xbox.SendTextCommand("drivelist").Replace("drivename=", ",");
+                return XboxConsole.SendTextCommand("drivelist").Replace("drivename=", ",");
             }
         }
         /// <summary>
@@ -83,7 +83,7 @@ namespace XDevkit
         /// <param name="remoteName">Xbox file name.</param>
         public void ReceiveFile(string localName, string remoteName)
         {
-            Xbox.SendTextCommand("getfile name=\"{0}\"" + remoteName);
+            XboxConsole.SendTextCommand("getfile name=\"{0}\"" + remoteName);
             int fileSize = BitConverter.ToInt32(Xbox.ReceiveBinaryData(4), 0);
             using (var lfs = new System.IO.FileStream(localName, FileMode.Create))
             {

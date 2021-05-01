@@ -11,7 +11,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace XDevkit
+namespace XDCKIT
 {
 
     [Browsable(false)]
@@ -74,10 +74,10 @@ namespace XDevkit
         /// <param name="ConsoleNameOrIP"></param>
         /// <param name="Port"></param>
         /// <returns></returns>
-        public static bool Connect(this Xbox Source, out Xbox Client, string ConsoleNameOrIP = "default", int Port = 730)
+        public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730)
         {
             Client = Source;
-            Client = new Xbox();//sets Class For Client
+            Client = new XboxConsole();//sets Class For Client
 
             // If user specifies to find their console IP address
             if (ConsoleNameOrIP.Equals("default") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
@@ -245,7 +245,7 @@ namespace XDevkit
             {
                 if (Connected)
                 {
-                    Xbox.SendTextCommand("bye");
+                    XboxConsole.SendTextCommand("bye");
                     XboxName.Client.Dispose();
                     IPAddress = "000.000.000.000";
                     XboxName.Close();

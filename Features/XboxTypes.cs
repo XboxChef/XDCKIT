@@ -7,13 +7,13 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
-namespace XDevkit
+namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
     /// Made By TeddyHammer
     /// </summary>
-    public partial class Xbox //XboxTypes
+    public partial class XboxConsole //XboxTypes
     {
         #region Property's
         private static readonly byte[] myBuff = new byte[0x20];

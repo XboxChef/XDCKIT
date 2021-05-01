@@ -13,7 +13,7 @@ using System.Text;
 
 #endregion
 
-namespace XDevkit
+namespace XDCKIT
 {
     /// <summary>Contains function/s that deals with I/O reading and writing of Data</summary>
     public class RwStream

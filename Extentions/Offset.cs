@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XDevkit
+namespace XDCKIT
 {
     public class Offset
     {
@@ -29,7 +29,7 @@ namespace XDevkit
         {
             string hex = "X";
             object rn = null;
-            Xbox Xbox_Debug_Communicator = new Xbox();
+            XboxConsole Xbox_Debug_Communicator = new XboxConsole();
 
 
                 XboxMemoryStream xbms = Xbox_Debug_Communicator.ReturnXboxMemoryStream();
