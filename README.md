@@ -39,6 +39,7 @@ I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On 
 25. Quick Sign In  (In Beta Testing Phase)
 26. Fan Speed Control
 27. Get Sign in State (In Beta Testing Phase)
+28. Trainer Features witch allows The ability To Share Modified Files For Any Game To Be modded
 ```
 ### Debugging Features
 ```markdown
@@ -70,21 +71,35 @@ I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On 
 26.  Double {Get; Set;}
 27.  Long {Get; Set;}
 28.  All XOR int / AND Int / OR Int {Get; Set;}
-29.  SendTextCommand
+29.  WriteVector's
 30.  WriteHook
-31.  WriteVector's
+31.  SendTextCommand
 ```
-### FileSystem Features
+### Current FileSystem Features
 ```markdown
-1.   GetSMCVersion
+1.   SendFile
+2.   RecieveFile
+3.   RenameFile
+4.   MakeDirectory
+5.   RemoveDirectory
+6.   Get Drives
+7.   Get DirectoryFiles
 ```
-
+### XNOTIFY Features
+```markdown
+1.   Show (Aloows The Pgrammer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)
+2.   Show (Message , Logo , Switch)
+3.   Show (Message , Switch)
+4.   Show (Message , Logo)
+5.   XMessage (Allow The Console To Display A MessageBox (In Development)) 
+```
+# So Many More Features That Are Not Listed Here
 # Requirements
 **1. An Internet Connection**
 
-**2. know C# Programing language**
+**2. A know How Of C# Programing language Development**
 
-**3 .Understand How Xbox XDevkit Works**
+**3. An Understand How The Xbox XDevkit Works**
 
 ## Code Example
 
