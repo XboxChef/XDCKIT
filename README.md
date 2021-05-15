@@ -1,8 +1,45 @@
 # XDCKIT
 [![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
 An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
-# Main Features
-# Contributors
+
+## Requirements
+1.An Internet Connection
+2.know C# Programing language
+3.Understand How Xbox XDevkit Works
+
+```markdown
+# Connecting
+using XDCKIT;
+
+namespace Custom_namespace
+{
+    public partial class Classnamehere : Form
+    {
+        public static XboxConsole Console;
+    
+        public Classnamehere()
+        {
+            InitializeComponent();
+        }
+        
+        private void Button_Click(object sender, ItemClickEventArgs e)
+        {
+            Console.Connect() or Console.Connect(Provide_IP) or Console.Connect(Provide_IP,provide_CostumePort) or
+            Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730)
+        }
+   }
+}
+More Example's will be provided here [![More Examples](https://img.shields.io/badge/More-Examples-red)](https://xbm360.github.io/XDCKIT/)
+```
+
+## Main Features
+
+## Contributors
 * [ohhsodead](https://github.com/ohhsodead)
+* 
 ## Disclaimer
 I have no liability for any damages done to your system by using this extention.
+
+## License
+
+This project is released under the GNU General Public License v3.
