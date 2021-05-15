@@ -4,8 +4,11 @@ An open source libery designed to Emulate XDevkit libery extention to work exact
 
 ## Requirements
 **An Internet Connection**
+
 **know C# Programing language**
+
 **Understand How Xbox XDevkit Works**
+
 ## Code Example
 
 ```markdown
