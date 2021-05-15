@@ -3,9 +3,9 @@
 An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
 
 ## Requirements
-1.An Internet Connection
-2.know C# Programing language
-3.Understand How Xbox XDevkit Works
+**An Internet Connection**
+**know C# Programing language**
+**Understand How Xbox XDevkit Works**
 ## Code Example
 
 ```markdown
@@ -31,8 +31,7 @@ namespace Custom_namespace
    }
 }
 ```
-[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) More Example's will be provided.
-## Main Features
+[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) For More Example's
 
 ## Contributors
 * [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
