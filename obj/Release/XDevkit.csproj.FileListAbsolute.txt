@@ -1,6 +1,0 @@
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Release\XDevkit.csprojAssemblyReference.cache
-C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Release\XDevkit.dll
-C:\Users\Serenity\Documents\GitHub\XDevkit\bin\Release\XDevkit.pdb
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Release\XDevkit.csproj.CoreCompileInputs.cache
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Release\XDevkit.dll
-C:\Users\Serenity\Documents\GitHub\XDevkit\obj\Release\XDevkit.pdb
