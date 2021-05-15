@@ -29,9 +29,8 @@ namespace Custom_namespace
         }
    }
 }
-More Example's will be provided here [![More Examples](https://img.shields.io/badge/More-Examples-red)](https://xbm360.github.io/XDCKIT/)
 ```
-
+More Example's will be provided here [![More Examples](https://img.shields.io/badge/More-Examples-red)](https://xbm360.github.io/XDCKIT/)
 ## Main Features
 
 ## Contributors
