@@ -4,10 +4,11 @@ Give A ⭐ To Support This Project.
 [![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
 
 
-An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
+An open source library designed to Emulate or Imitate The XDevkit library extention to work exactly like the original with New added features
 
-Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
+Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
+
 # Features
 
 ### General Features
@@ -93,13 +94,16 @@ I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On 
 4.   Show (Message , Logo)
 5.   XMessage (Allow The Console To Display A MessageBox (In Development)) 
 ```
-# So Many More Features That Are Not Listed Here
+# So Many More Features!
+
 # Requirements
 **1. An Internet Connection**
 
 **2. A know How Of C# Programing language Development**
 
 **3. An Understand How The Xbox XDevkit Works**
+
+**4. An Understanding On How To Work A Modified Xbox Console**
 
 ## Code Example
 
