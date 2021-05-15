@@ -30,12 +30,11 @@ namespace Custom_namespace
    }
 }
 ```
-[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) More Example's will be provided here
+[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) More Example's will be provided.
 ## Main Features
 
 ## Contributors
-* [ohhsodead](https://github.com/ohhsodead)
-* 
+* [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
 ## Disclaimer
 I have no liability for any damages done to your system by using this extention.
 
