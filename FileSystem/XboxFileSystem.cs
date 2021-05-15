@@ -66,6 +66,32 @@ namespace XDCKIT
             string sdr = string.Concat("delete name=\"{0}\"", path);
             XboxConsole.SendTextCommand(sdr, out XboxConsole.Response);
         }
+        ///// <summary>
+        ///// determines if it's a file or Directory
+        ///// </summary>
+        //public bool IsDirectory//TODO: ADD Path
+        //{
+
+        //    get
+        //    {
+        //        // get the file attributes for file or directory
+        //        FileAttributes attr = File.GetAttributes("path");
+        //        //detect whether its a directory or file
+        //        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    set
+        //    {
+
+        //    }
+        //}
+
         /// <summary>
         /// Get the console drive names.
         /// </summary>
@@ -101,9 +127,16 @@ namespace XDCKIT
                 lfs.Write(fileData, 0, remainder);
             }
         }
-        internal void DirectoryFiles(string directory)
+
+        /// <summary>
+        /// Get the specified folder path from the console.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public string[] DirectoryFiles(string path)
         {
-            throw new NotImplementedException();
+            string sdr = string.Concat("dir name=\"{0}\"", path);
+            return new[] { XboxConsole.SendTextCommand(sdr) };
         }
     }
 }

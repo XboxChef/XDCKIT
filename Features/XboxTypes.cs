@@ -261,6 +261,16 @@ namespace XDCKIT
         #endregion
 
         #region Byte {Get; Set;}
+        public void WriteByte(uint Offset, byte[] Bytes)
+        {
+            if (!Connected)
+                return;
+            string str = "setmem addr=0x" + Offset.ToString("X8") + " data=";
+            foreach (byte b in Bytes)
+                str += b.ToString("X2");
+            str += "\r\n";
+            new BinaryWriter(XboxClient.XboxName.GetStream()).Write(Encoding.ASCII.GetBytes(str));
+        }
         public byte GetByte(uint Address) { return GetMemory(Address, 1)[0]; }
         public byte ReadByte(uint Offset)
         {

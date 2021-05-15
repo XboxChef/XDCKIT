@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace XDCKIT
         private uint _startDumpOffset { set; get; }
         private bool _stopSearch { set; get; }
         private RwStream _readWriter { set; get; }
+        private static StreamReader sreader;
         public XboxMemoryStream ReturnXboxMemoryStream()
         {
             return new XboxMemoryStream();
@@ -44,34 +46,8 @@ namespace XDCKIT
         [EditorBrowsable(EditorBrowsableState.Never)]
         public uint DumpLength { set; get; }
 
-        public static bool Connected
-        {
-            get
-            {
-                return XboxClient.Connected;
-            }
-            set
-            {
-                XboxClient.Connected = value;
-            }
-        }
 
-        /// <summary>
-        /// Sends COmmands Based On User's Input
-        /// </summary>
-        /// <param name="Command"></param>
-        /// <returns></returns>
-        public static string SendTextCommand(string Command)
-        {
-            try
-            {
-                SendTextCommand(Command, out Response);
-            }
-            catch
-            {
-            }
-            return Response;
-        }
+
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void InvalidateMemoryCache(bool ExecutablePages, uint Address, uint Size)
@@ -114,8 +90,55 @@ namespace XDCKIT
         {
             Type = XboxBreakpointType.NoBreakpoint;
         }
+        public void NULL_Address(uint address)
+        {
+
+            byte[] buffer1 = new byte[4];
+            buffer1[0] = 0x60;
+            byte[] data = buffer1;
+            SetMemory(address, data);
+        }
         /// <summary>
-        ///
+        /// Sends Commands Based On User's Input
+        /// </summary>
+        /// <param name="Command"></param>
+        /// <returns></returns>
+        public static string SendTextCommand(string Command)
+        {
+            if (!Connected)
+            {
+                return "";
+            }
+            else
+            {
+                new BinaryWriter(XboxClient.XboxName.GetStream()).Write(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
+                return string.Join("", sreader.ReadToEnd().Split("\n".ToCharArray()));
+            }
+        }
+        /// <summary>
+        /// Sends Commands Based On User's Input
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="args"></param>
+        public void SendTextCommand(string command, params object[] args)
+        {
+            if (XboxClient.XboxName != null)
+            {
+
+                try
+                {
+                    Thread.Sleep(1000);
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
+                }
+                catch
+                {
+
+                }
+            }
+            else throw new Exception("No Connection Detected");
+        }
+        /// <summary>
+        /// Sends Commands Based On User's Input
         /// </summary>
         /// <param name="Command"></param>
         /// <param name="response"></param>
@@ -149,23 +172,7 @@ namespace XDCKIT
             }
         }
 
-        public void SendTextCommand(string command, params object[] args)
-        {
-            if (XboxClient.XboxName != null)
-            {
 
-                try
-                {
-                    Thread.Sleep(1000);
-                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
-                }
-                catch
-                {
-
-                }
-            }
-            else throw new Exception("No Connection Detected");
-        }
 
         /// <summary>
         /// Poke the Memory
@@ -699,6 +706,86 @@ namespace XDCKIT
             {
                 throw new Exception(ex.Message);
             }
+        }
+        public void WriteHook(uint Offset, uint Destination, bool Linked)
+        {
+            uint[] Func = new uint[4];
+            if ((Destination & 0x8000) != 0)
+                Func[0] = 0x3D600000 + (((Destination >> 16) & 0xFFFF) + 1);
+            else
+                Func[0] = 0x3D600000 + ((Destination >> 16) & 0xFFFF);
+            Func[1] = 0x396B0000 + (Destination & 0xFFFF);
+            Func[2] = 0x7D6903A6;
+            Func[3] = 0x4E800420;
+            if (Linked)
+                Func[3]++;
+            byte[] buffer = new byte[0x10];
+            byte[] f1 = BitConverter.GetBytes(Func[0]);
+            byte[] f2 = BitConverter.GetBytes(Func[1]);
+            byte[] f3 = BitConverter.GetBytes(Func[2]);
+            byte[] f4 = BitConverter.GetBytes(Func[3]);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(f1);
+                Array.Reverse(f2);
+                Array.Reverse(f3);
+                Array.Reverse(f4);
+            }
+            for (int i = 0; i < 4; i++)
+                buffer[i] = f1[i];
+            for (int i = 4; i < 8; i++)
+                buffer[i] = f2[i - 4];
+            for (int i = 8; i < 0xC; i++)
+                buffer[i] = f3[i - 8];
+            for (int i = 0xC; i < 0x10; i++)
+                buffer[i] = f4[i - 0xC];
+            WriteByte(Offset, buffer);
+        }
+        public struct Vector
+        {
+            public float x, y, z;
+        }
+        public void WriteVector1(uint Offset, Vector Vector)
+        {
+            byte[] bytes = new byte[8];
+            byte[] x = BitConverter.GetBytes(Vector.x);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(x);
+            }
+            Array.Copy(x, 0, bytes, 0, 4);
+            WriteByte(Offset, bytes);
+        }
+        public void WriteVector2(uint Offset, Vector Vector)
+        {
+            byte[] bytes = new byte[8];
+            byte[] x = BitConverter.GetBytes(Vector.x);
+            byte[] y = BitConverter.GetBytes(Vector.y);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(x);
+                Array.Reverse(y);
+            }
+            Array.Copy(x, 0, bytes, 0, 4);
+            Array.Copy(y, 0, bytes, 4, 4);
+            WriteByte(Offset, bytes);
+        }
+        public void WriteVector3(uint Offset, Vector Vector)
+        {
+            byte[] bytes = new byte[12];
+            byte[] x = BitConverter.GetBytes(Vector.x);
+            byte[] y = BitConverter.GetBytes(Vector.y);
+            byte[] z = BitConverter.GetBytes(Vector.z);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(x);
+                Array.Reverse(y);
+                Array.Reverse(z);
+            }
+            Array.Copy(x, 0, bytes, 0, 4);
+            Array.Copy(y, 0, bytes, 4, 4);
+            Array.Copy(z, 0, bytes, 8, 4);
+            WriteByte(Offset, bytes);
         }
 
         /// <summary>

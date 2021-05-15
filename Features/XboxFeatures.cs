@@ -36,35 +36,7 @@ namespace XDCKIT
             return string.Concat(objArray1);
         }
 
-        public string ProfileID()
-        {
-            return BitConverter.ToString(GetMemory(0xC02c0148, 8)).Replace("-", null);
-        }
-        public string Gamertag()
-        {
-            return BitConverter.ToString(GetMemory(0xC035261d, 30)).Replace("00", null).Replace("-", null);
-        }
 
-        public string LastSeen(string gamertag)
-        {
-            bool flag = gamertag.Contains(" ");
-            bool flag2 = flag;
-            if (flag2)
-            {
-                gamertag.Replace(" ", "+");
-            }
-            string input = new WebClient().DownloadString(string.Format("https://www.xboxgamertag.com/search/{0}", gamertag));
-            string pattern = "Last seen (.*)";
-            return Regex.Matches(input, pattern)[0].Groups[1].Value;
-        }
-        public void NULL_Address(uint address)
-        {
-
-            byte[] buffer1 = new byte[4];
-            buffer1[0] = 0x60;
-            byte[] data = buffer1;
-            SetMemory(address, data);
-        }
 
         /// <summary>
         ///
@@ -435,7 +407,7 @@ namespace XDCKIT
         }
 
         /// <summary>
-        ///
+        /// Allows the User To See The Type Of Console they own.
         /// </summary>
         /// <returns></returns>
         public string GetConsoleType()
@@ -478,6 +450,10 @@ namespace XDCKIT
         }
 
 
+        public void Get_GameTitle()
+        {
+
+        }
 
         /// <summary>
         /// Retrieve's The Console's Central Processing Unit Key.
@@ -604,8 +580,9 @@ namespace XDCKIT
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         private readonly TcpListener notificationListener = null;
+
         /// <summary>
-        ///
+        /// Retrieves Current Title ID
         /// </summary>
         /// <returns></returns>
         public uint XamGetCurrentTitleId()
@@ -630,6 +607,9 @@ namespace XDCKIT
             {
             }
         }
+        /// <summary>
+        /// Signs User in
+        /// </summary>
         public void QuickSignIn()
         {
 
@@ -683,8 +663,9 @@ namespace XDCKIT
             XboxExtention.CallVoid(uint_0, arguments);
             return true;
         }
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        /// <summary>
+        /// Get's The State of User's Sign In
+        /// </summary>
         public void GetSigninState()
         {
             ResolveFunction("xboxkrnl.exe", 528);

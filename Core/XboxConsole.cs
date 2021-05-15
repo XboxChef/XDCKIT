@@ -3,6 +3,7 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 
+using SharpDX.Direct2D1.Effects;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -78,77 +79,36 @@ namespace XDCKIT
             }
         }
 
-        /// <summary>
-        /// Captures a screenshot from the frame buffer of the console.
-        /// </summary>
-        /// <returns>A BitmapSource containing the uncompressed frame buffer captured off the current console.</returns>
-        //public BitmapSource CaptureScreenshot()
-        //{
 
-        //   // IntPtr pointerToHBitmap = 
-        //    BitmapSource managedBitmap = null;
-
-        //    try
-        //    {
-        //        managedBitmap = Imaging.CreateBitmapSourceFromHBitmap(pointerToHBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-        //    }
-        //    catch (ArgumentNullException ex)
-        //    {
-        //        // Occurs when passing a IntPtr.Zero into CreateBitmapSourceFromHBitmap.
-        //        // Shouldn't ever happen because the adapter checks for this.
-        //        throw new ("Failed to capture screenshot.", ex);
-        //    }
-        //    finally
-        //    {
-        //        NativeMethods.DeleteObject(pointerToHBitmap);
-        //    }
-
-        //    return managedBitmap;
-        //}
-
-        /// <summary>
-        /// Captures a screenshot from the frame buffer of the specified console.
-        /// </summary>
-        /// <param name="systemIpAddress">The IP address of the console.</param>
-        /// <returns>A pointer to the location in memory of the uncompressed frame buffer captured off the console.</returns>
-        //public IntPtr CaptureScreenshot(string systemIpAddress)
-        //{
-        //    return null;
-        //}
-
+        public static bool Connected
+        {
+            get
+            {
+                return XboxClient.Connected;
+            }
+            set
+            {
+                XboxClient.Connected = value;
+            }
+        }
         public void ScreenShot(string FilePath)
         {
-            //try
-            //{
-            //    // Retrieve the image.
-            //    image1 = new Bitmap(@"C:\Documents and Settings\All Users\"
-            //        + @"Documents\My Music\music.bmp", true);
+            Bitmap image1 = new Bitmap(SendTextCommand("screenshot"));
+            int x, y;
 
-            //    int x, y;
-
-            //    // Loop through the images pixels to reset color.
-            //    for (x = 0; x < image1.Width; x++)
-            //    {
-            //        for (y = 0; y < image1.Height; y++)
-            //        {
-            //            Color pixelColor = image1.GetPixel(x, y);
-            //            Color newColor = Color.FromArgb(pixelColor.R, 0, 0);
-            //            image1.SetPixel(x, y, newColor);
-            //        }
-            //    }
-
-            //    // Set the PictureBox to display the image.
-            //    PictureBox1.Image = image1;
-
-            //    // Display the pixel format in Label1.
-            //    Label1.Text = "Pixel format: " + image1.PixelFormat.ToString();
-            //}
-            //catch (ArgumentException)
-            //{
-            //    MessageBox.Show("There was an error." +
-            //        "Check the path to the image file.");
-            //}
+            // Loop through the images pixels to reset color.
+            for (x = 0; x < image1.Width; x++)
+            {
+                for (y = 0; y < image1.Height; y++)
+                {
+                    Color pixelColor = image1.GetPixel(x, y);
+                    Color newColor = Color.FromArgb(pixelColor.R, 0, 0);
+                    image1.SetPixel(x, y, newColor);
+                }
+            }
+            
         }
+
         /// <summary>
         /// Detects Console Type Information.
         /// </summary>
@@ -218,8 +178,6 @@ namespace XDCKIT
             }
         }
 
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]//hidden not yet set
         public string DefaultConsole
         {
             get
