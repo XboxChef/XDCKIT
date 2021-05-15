@@ -37,6 +37,15 @@ namespace Custom_namespace
 }
 ```
 [![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) For More Example's
+## Quick Guide
+
+### Getting Started
+
+You can Either Build Yourself By Downloading the Source Or Just Grabbing The Latest Dll Extention.
+
+### Connection
+
+Have To Be under The Same Local Network and Make Sure both Devices Are Connected To The Network
 
 ## Contributors
 * [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
