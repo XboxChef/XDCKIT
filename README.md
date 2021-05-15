@@ -100,14 +100,13 @@ You can Either Build Yourself By Downloading the Source Or Just Grabbing The Lat
 Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
 
 ### Plugin Requirements
-
 xbdm.xex
 
+### Computer Requirements
+A Working Tool Using this Extention Properly
 ## Contributors
 * [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
 ## Disclaimer
 I have no liability for any damages done to your system by using this extention.
-
 ## License
-
 This project is released under the GNU General Public License v3.
