@@ -1,4 +1,4 @@
-# XDCKIT
+#  Xbox Direct Connect Kit (XDCKIT)
 Give A ⭐ To Support This Project.
 
 [![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
