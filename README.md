@@ -6,6 +6,9 @@ Give A ⭐ To Support This Project.
 
 An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
 
+Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
+I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
+
 ## Requirements
 **1. An Internet Connection**
 
