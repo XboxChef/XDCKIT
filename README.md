@@ -30,7 +30,15 @@ I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On 
 16. Get Kernal Version
 17. Get Temperature
 18. Set LED State
-19.Get Module Handle
+19. Get Module Handle
+20. Launch System DLL Thread
+21. Unload Image
+22. Xex Pc To File Header
+23. Xam Get Current Title Id
+24. ShutDown
+25. Quick Sign In  (In Beta Testing Phase)
+26. Fan Speed Control
+27. Get Sign in State (In Beta Testing Phase)
 ```
 ### Debugging Features
 ```markdown
