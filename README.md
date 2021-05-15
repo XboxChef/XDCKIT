@@ -10,11 +10,11 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
 ## Features
 
-### Debugging Features
+# Debugging Features
 
-### FileSystem Features
+# FileSystem Features
 
-### Memory Features
+# Memory Features
 
 
 ## Requirements
