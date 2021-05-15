@@ -9,13 +9,24 @@ An open source libery designed to Emulate XDevkit libery extention to work exact
 Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
 # Features
-
+### General Features
+```markdown
+1.Get SMC Version
+2.Reboot Console Or Game Title
+```
 ### Debugging Features
-
+```markdown
+1.NULL_Address(uint address)
+```
 ### FileSystem Features
-
+```markdown
+1.GetSMCVersion
+```
 ### Memory Features
-
+```markdown
+1.
+2.
+```
 
 # Requirements
 **1. An Internet Connection**
