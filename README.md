@@ -42,16 +42,41 @@ I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On 
 ```
 ### Debugging Features
 ```markdown
-1.NULL_Address(uint address)
+1.   NULL_Address (Allows The User To Add An Adress witch sets The Value To 6000000 meaning that you are making a null value)
+2.   SetBreakpoint (In Development)
+3.   RemoveBreakpoint (In Development)
+4.   RemoveAllBreakpoints (In Development)
+5.   SetInitialBreakpoint (In Development)
+6.   SetDataBreakpoint (In Development)
+7.   IsBreakpoint (In Development)
+8.   Invalidate MemoryCache (In Development)
+9.   Poke
+10.  peek
+11.  Find Hex Offset
+12.  constant Memory Setting
+13.  constant Memory Set
+14.  Get Memory / Set Memory
+15.  Dump Memory
+16.  ResolveFunction
+17.  ReverseBytes
+18.  Bool {Get; Set;}
+19.  String {Get; Set;}
+20.  Float {Get; Set;}
+21.  BinaryData {Get; Set;}
+22.  Byte {Get; Set;}
+23.  SByte {Get; Set;}
+24.  All Int {Get; Set;}
+25.  All Uint {Get; Set;}
+26.  Double {Get; Set;}
+27.  Long {Get; Set;}
+28.  All XOR int / AND Int / OR Int {Get; Set;}
+29.  SendTextCommand
+30.  WriteHook
+31.  WriteVector's
 ```
 ### FileSystem Features
 ```markdown
-1.GetSMCVersion
-```
-### Memory Features
-```markdown
-1.
-2.
+1.   GetSMCVersion
 ```
 
 # Requirements
@@ -99,7 +124,7 @@ You can Either Build Yourself By Downloading the Source Or Just Grabbing The Lat
 
 Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
 
-### Plugin Requirements
+### Xbox 360 Plugin Requirements
 xbdm.xex
 
 ### Computer Requirements
