@@ -9,10 +9,28 @@ An open source libery designed to Emulate XDevkit libery extention to work exact
 Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
 # Features
+
 ### General Features
 ```markdown
-1.Get SMC Version
-2.Reboot Console Or Game Title
+1.  Get SMC Version
+2.  Reboot Console Or Game Title
+3.  XboxShortcuts (witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc)
+4.  Get Box ID (Get's The Xbox's identification number)
+5.  Set Console Color (Allows User to Turns The Console's Default Neighborhood Icon to any of the following... (black , blue , bluegray , nosidecar) 
+6.  Get Console ID (Gets The Console's identification number)
+7.  Get DM Version (Allows User To See The Debug Monitor Version)
+8.  Get System Info (allows user see Various Console Information)
+9.  Reboot Cold Or Warm (Allows user to Perform A Warm In A Very Fast Manner Or A Cold Reboot WItch Attempts To Reboot Slowly)
+10. Freeze Console (Allows User Perform A Stop Or Go Witch Tempory Freezes The Console Until A Go Command Is Sent)
+11. Get Console Type (Allows The User The See Witch Console Type They Own)
+12. CloseConnection (Allows For The Connection From The Device To Be severed From Each Other)
+13. Reconnect (Allows The User To Add A Delay So when The Console Is Ready The User Can Connect To It)
+14. OpenConnection (Find's Console And Connects To the IP Found and does not set class meaning you would have to set ConsoleX TO XDCKIT)
+15. Get CPU Key
+16. Get Kernal Version
+17. Get Temperature
+18. Set LED State
+19.Get Module Handle
 ```
 ### Debugging Features
 ```markdown
