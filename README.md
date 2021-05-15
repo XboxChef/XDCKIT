@@ -8,13 +8,13 @@ An open source libery designed to Emulate XDevkit libery extention to work exact
 
 Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
-## Features
+# Features
 
-# Debugging Features
+### Debugging Features
 
-# FileSystem Features
+### FileSystem Features
 
-# Memory Features
+### Memory Features
 
 
 ## Requirements
