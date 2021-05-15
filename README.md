@@ -1,4 +1,5 @@
 # XDCKIT
+Please give this project a ⭐.
 [![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
 An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
 
@@ -45,7 +46,7 @@ You can Either Build Yourself By Downloading the Source Or Just Grabbing The Lat
 
 ### Connection
 
-Have To Be under The Same Local Network and Make Sure both Devices Are Connected To The Network
+Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
 
 ## Contributors
 * [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
