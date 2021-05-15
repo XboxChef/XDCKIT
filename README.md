@@ -30,7 +30,7 @@ namespace Custom_namespace
    }
 }
 ```
-[![Click Me!](https://img.shields.io/badge/More-Examples-red)](https://xbm360.github.io/XDCKIT/) More Example's will be provided here
+[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) More Example's will be provided here
 ## Main Features
 
 ## Contributors
