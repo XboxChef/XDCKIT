@@ -8,6 +8,14 @@ An open source libery designed to Emulate XDevkit libery extention to work exact
 
 Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
+## Features
+
+### Debugging Features
+
+### FileSystem Features
+
+### Memory Features
+
 
 ## Requirements
 **1. An Internet Connection**
@@ -53,6 +61,10 @@ You can Either Build Yourself By Downloading the Source Or Just Grabbing The Lat
 ### Connection
 
 Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
+
+### Plugin Requirements
+
+xbdm.xex
 
 ## Contributors
 * [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
