@@ -3,11 +3,11 @@
 An open source libery designed to Emulate XDevkit libery extention to work exactly like the original with added features
 
 ## Requirements
-**1.An Internet Connection**
+**1. An Internet Connection**
 
-**2.know C# Programing language**
+**2. know C# Programing language**
 
-**3.Understand How Xbox XDevkit Works**
+**3 .Understand How Xbox XDevkit Works**
 
 ## Code Example
 
@@ -19,7 +19,7 @@ namespace Custom_namespace
 {
     public partial class Classnamehere : Form
     {
-        public static XboxConsole Console;
+        public static XboxConsole ConsoleX;
     
         public Classnamehere()
         {
@@ -28,8 +28,10 @@ namespace Custom_namespace
         
         private void Button_Click(object sender, ItemClickEventArgs e)
         {
-            Console.Connect() or Console.Connect(Provide_IP) or Console.Connect(Provide_IP,provide_CostumePort) or
-            Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730)
+            Console.Connect() //Attemps to Find Console 192.168.0.X Attempts compensate for X aka finds last digit.
+            Console.Connect(Provide_IP) //User Provides Costume IP Address
+            Console.Connect(Provide_IP,provide_CostumePort) //User Provides The IP Address and Port Number "Port Number Is Always 730" Regardless was added for more flexibility.
+            Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730) //sets the ###ConsoleX to XDCKIT class so everythin can be called like so example: ConsoleX.Screenshot() , then if IP Address is Provide then it proceeds to Connect also you can provide Port Number Witch By Again Defualt Is 730.
         }
    }
 }
