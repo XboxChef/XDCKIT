@@ -30,22 +30,6 @@ ________________________________________________________________________________
 
 Known Bugs: (Done ==)(Working On *)(Almost Finished -=)
 
-Changes:  (Added + Removed -)
-Polished Code - At 6:33  Am 04/26/2020
-Polished Code - At 9     Am 09/15/2020
-Polished Code - At 9     Am 09/17/2020
-Polished Code - At 3     Am 12/05/2020
-Added    Code + At 3     Am 12/05/2020
-Removed  Code - At 1     Pm 12/08/2020 
-Added    Code + At 10:44 Pm 12/30/2020
-Removed  Code - At 11:41 Pm 01/22/2021
-Added    Code + At 11:41 Pm 01/22/2021
-Polished Code - At 11:41 Am 01/22/2021
-Removed  Code - At 07:05 Pm 02/15/2021
-Removed  Code - At 07:05 Pm 04/22/2021
-Polished Code - At 09:23 Am 05/13/2021
-
-
 Todo: DMScreenShot , Features , Debugging Tools, FileSystem
 
 
@@ -61,3 +45,18 @@ Todo: DMScreenShot , Features , Debugging Tools, FileSystem
 
 
 Progress Road: FileSystem
+
+Changes:  (Added + Removed -)
+Polished Code - At 6:33  Am 04/26/2020
+Polished Code - At 9     Am 09/15/2020
+Polished Code - At 9     Am 09/17/2020
+Polished Code - At 3     Am 12/05/2020
+Added    Code + At 3     Am 12/05/2020
+Removed  Code - At 1     Pm 12/08/2020 
+Added    Code + At 10:44 Pm 12/30/2020
+Removed  Code - At 11:41 Pm 01/22/2021
+Added    Code + At 11:41 Pm 01/22/2021
+Polished Code - At 11:41 Am 01/22/2021
+Removed  Code - At 07:05 Pm 02/15/2021
+Removed  Code - At 07:05 Pm 04/22/2021
+Polished Code - At 09:23 Am 05/13/2021

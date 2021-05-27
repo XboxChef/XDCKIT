@@ -3,7 +3,6 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
 //Thank You for looking love you guys...
 
-using SharpDX.Direct2D1.Effects;
 using System;
 using System.ComponentModel;
 using System.Drawing;
