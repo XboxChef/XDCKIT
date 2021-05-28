@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
 using System;
@@ -428,7 +428,7 @@ namespace XDCKIT
         public static Byte[] UInt32ToBytes(UInt32 value)
         {
             var buffer = new Byte[4];
-            buffer[3] = (Byte)(value & 0xFF);
+            buffer[3] = (byte)(value & 0xFF);
             buffer[2] = (Byte)((value >> 8) & 0xFF);
             buffer[1] = (Byte)((value >> 16) & 0xFF);
             buffer[0] = (Byte)((value >> 24) & 0xFF);

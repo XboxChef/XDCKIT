@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
 using System;
@@ -24,10 +24,7 @@ namespace XDCKIT
     {
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        private const string XAMModule = "xam.xex";
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private const string krnlModule = "xboxkrnl.exe";
+        private const string XAMModule = "xam.xex", krnlModule = "xboxkrnl.exe";
 
         public string GetSMCVersion()
         {
@@ -51,7 +48,7 @@ namespace XDCKIT
             string[] lines = Name.Split("\\".ToCharArray());
             for (int i = 0; i < lines.Length - 1; i++)
                 MediaDirectory += lines[i] + "\\";
-            object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//todo
+            object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//TODO:
             SendTextCommand(string.Concat(Reboot));
         }
 

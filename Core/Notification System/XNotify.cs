@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
 using System;
@@ -27,131 +27,21 @@ namespace XDCKIT
         }
         public void XMessage(string Tittle, string Body, string ButtonText)
         {
-            XboxConsole Xconsole = new XboxConsole();
-            object[] objArray1 = new object[] { 0xff, 1 };
-            uint num = XboxExtention.Call<uint>("xam.xex", 0x489, objArray1);
-            object[] objArray2 = new object[] { 0x400, 1 };
-            uint num2 = XboxExtention.Call<uint>("xam.xex", 0x489, objArray2);
-            object[] objArray3 = new object[] { 8, 1 };
-            uint num3 = XboxExtention.Call<uint>("xam.xex", 0x489, objArray3);
-            object[] objArray4 = new object[] { 12, 1 };
-            uint num4 = XboxExtention.Call<uint>("xam.xex", 0x489, objArray4);
-            object[] objArray5 = new object[] { 0x20, 1 };
-            uint num5 = XboxExtention.Call<uint>("xam.xex", 0x489, objArray5);
-            object[] objArray6 = new object[] { 0x20, 1 };
-            uint num6 = XboxExtention.Call<uint>("xam.xex", 0x489, objArray6);
-            Xconsole.SetMemory(num, this.messagemethod(Tittle));
-            Xconsole.SetMemory(num2, this.messagemethod(Body));
-            Xconsole.WriteUInt32(num3, num6);
-            Xconsole.SetMemory(num6, this.messagemethod(ButtonText));
-            uint num7 = Xconsole.ResolveFunction("xam.xex", 0x2ca);
-            object[] objArray7 = new object[] { 0, num, num2, 1, num3, 0, 2, num4, num5 };
-            XboxExtention.CallVoid(num7, objArray7);
-            object[] objArray8 = new object[] { num, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray8);
-            object[] objArray9 = new object[] { num2, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray9);
-            object[] objArray10 = new object[] { num3, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray10);
-            object[] objArray11 = new object[] { num4, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray11);
-            object[] objArray12 = new object[] { num5, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray12);
-            object[] objArray13 = new object[] { num6, 1 };
-            XboxExtention.Call<uint>("xam.xex", 0x48b, objArray13);
+            //TODO:
         }
         /// <summary>
         /// Sends A Costume Message Box via Xbox Notification System.
         /// </summary>
         /// <param name="IconType"></param>
         /// <param name="Title"></param>
-        /// <param name="Button_Text"></param>
+        /// <param name="Button1_Text"></param>
         /// <param name="int_5"></param>
         /// <param name="Body"></param>
         /// <param name="int_6"></param>
         /// <param name="int_7"></param>
-        public static void XMessage(int IconType, string Title, string Button_Text, int int_5, string[] Body, int int_6, int int_7)
+        public static void XMessage(int IconType, string Title, string Button1_Text, int int_5, string[] Body, int int_6, int int_7)
         {
-            XboxConsole Xconsole = new XboxConsole();
-            try
-            {
-                uint address = Xconsole.ResolveFunction("xam.xex", 0x2ca);
-                uint num2 = 0x81b01480;
-                byte[] data = new byte[6];
-                byte[] buffer2 = new byte[0x1c];
-                byte[] buffer3 = new byte[0];
-                byte[] buffer4 = new byte[0];
-                byte[] buffer5 = new byte[0];
-                uint num3 = 0;
-                uint num4 = 0;
-                uint num5 = 0;
-                uint num6 = 0;
-                Xconsole.SetMemory(0x81b01480, data);
-                Xconsole.SetMemory(0x81b01486, buffer2);
-                uint num7 = 0x22;
-                byte[] buffer6 = Title.ToWCHAR();
-                byte[] buffer7 = Button_Text.ToWCHAR();
-                if (int_5 >= 1)
-                {
-                    buffer3 = Body[0].ToWCHAR();
-                }
-                if (int_5 >= 2)
-                {
-                    buffer4 = Body[1].ToWCHAR();
-                }
-                if (int_5 == 3)
-                {
-                    buffer5 = Body[2].ToWCHAR();
-                }
-                Xconsole.SetMemory(num2 + num7, buffer6);
-                uint num8 = num2 + num7;
-                num7 += (uint)buffer6.Length;
-                Xconsole.SetMemory(num2 + num7, buffer7);
-                uint num9 = num2 + num7;
-                num7 += (uint)buffer7.Length;
-                if (int_5 >= 1)
-                {
-                    Xconsole.SetMemory(num2 + num7, buffer3);
-                    num3 = num2 + num7;
-                    num7 += (uint)buffer3.Length;
-                }
-                if (int_5 >= 2)
-                {
-                    Xconsole.SetMemory(num2 + num7, buffer4);
-                    num4 = num2 + num7;
-                    num7 += (uint)buffer4.Length;
-                }
-                if (int_5 == 3)
-                {
-                    Xconsole.SetMemory(num2 + num7, buffer5);
-                    num5 = num2 + num7;
-                    num7 += (uint)buffer5.Length;
-                }
-                if (int_5 >= 1)
-                {
-                    Xconsole.WriteInt32(num2 + num7, (int)num3);
-                    num6 = num2 + num7;
-                    num7 += 4;
-                }
-                if (int_5 >= 2)
-                {
-                    Xconsole.WriteInt32(num2 + num7, (int)num4);
-                    num7 += 4;
-                }
-                if (int_5 == 3)
-                {
-                    Xconsole.WriteInt32(num2 + num7, (int)num5);
-                    num7 += 4;
-                }
-                object[] arguments = new object[] { IconType, num8, num9, int_5, num6, int_6, int_7, num2, num2 + 0x1c };
-                XboxExtention.Call<uint>(address, arguments);
-                byte[] buffer8 = new byte[num7];
-                Xconsole.SetMemory(num2, buffer8);
-            }
-            catch
-            {
-
-            }
+           //TODO:
         }
         /// <summary>
         /// Sends A Costume Message Via Xbox Notification System.

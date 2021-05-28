@@ -1,6 +1,6 @@
 ﻿//Do Not Delete This Comment... 
 //Made By TeddyHammer on 08/20/16
-//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2015.
+//Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
 using System;
@@ -52,8 +52,9 @@ namespace XDCKIT
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void InvalidateMemoryCache(bool ExecutablePages, uint Address, uint Size)
         {
+            //TODO:
+        }
 
-        }//TODO:
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         void SetBreakpoint(uint Address)
@@ -155,7 +156,7 @@ namespace XDCKIT
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
                     Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Receive(Packet);
-                    response = Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r", string.Empty).Replace("\"", string.Empty).Replace("\n.", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n", string.Empty.Replace("200-", string.Empty));//
+                    response = Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r\n", string.Empty).Replace("\"", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n", string.Empty.Replace("200-", string.Empty));//
                     response = response.Substring(0, response.Length - 1);
                     Response = response;
 
