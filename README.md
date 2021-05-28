@@ -78,13 +78,23 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ```
 ### Current FileSystem Features
 ```markdown
-1.   SendFile
-2.   RecieveFile
-3.   RenameFile
-4.   MakeDirectory
-5.   RemoveDirectory
-6.   Get Drives
-7.   Get DirectoryFiles
+1.   ChangeTime
+2.   CreationTime
+3.   bool IsDirectory
+4.   bool IsReadOnly
+5.   GetFile Size(string directory)
+6.   MakeDirectory
+7.   RemoveDirectory(string path)
+8.   DirectoryFiles
+9.   Get FileName
+10.  ReceiveBinaryData
+11.  ReceiveBinaryData(int size)
+12.  ReceiveBinaryData(byte[] data)
+13.  ReceiveFile(string localName, string remoteName)
+14.  SendBinaryData(byte[] data)
+15.  SendBinaryData(byte[] data, int length)
+16.  SendFile(string localName, string remoteName)
+17.  RenameFile(string OldFileName, string NewFileName)
 ```
 ### XNOTIFY Features
 ```markdown
