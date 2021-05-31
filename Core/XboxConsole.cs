@@ -12,10 +12,12 @@ namespace XDCKIT
 {
     public partial class XboxConsole //Main
     {
-
+        public XboxConsole()
+        {
+         
+        }
         #region Properties
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+
         public static string Response;
         /// <summary>
         /// Get's or Set's Console's Current Name
@@ -49,9 +51,15 @@ namespace XDCKIT
             return xboxFile;
         }
         /// <summary>
-        /// 
+        /// Object To FileSystem Class
         /// </summary>
-        public XboxFileSystem File = new XboxFileSystem();
+        public XboxFileSystem File
+        {
+            get
+            {
+                return new XboxFileSystem();
+            }
+        }
 
         /// <summary>
         /// 
@@ -90,7 +98,7 @@ namespace XDCKIT
                 XboxClient.Connected = value;
             }
         }
-        public void ScreenShot(string FilePath)
+        public void ScreenShot(string FilePath)//TODO: Work in Progress
         {
             Bitmap image1 = new Bitmap(SendTextCommand("screenshot"));
             int x, y;
@@ -105,7 +113,7 @@ namespace XDCKIT
                     image1.SetPixel(x, y, newColor);
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -138,25 +146,41 @@ namespace XDCKIT
         /// </summary>
         public static int ConnectTimeout
         {
-            get => XboxClient.XboxName.SendTimeout;
-            set => XboxClient.XboxName.SendTimeout = value;
+            get
+            {
+                return XboxClient.XboxName.SendTimeout;
+            }
+            set
+            {
+                XboxClient.XboxName.SendTimeout = value;
+            }
         }
         /// <summary>
         /// 
         /// </summary>
         public static int ConversationTimeout
         {
-            get => XboxClient.XboxName.ReceiveTimeout;
-            set => XboxClient.XboxName.ReceiveTimeout = value;
+            get
+            {
+                return XboxClient.XboxName.ReceiveTimeout;
+            }
+            set
+            {
+                XboxClient.XboxName.ReceiveTimeout = value;
+            }
         }
         /// <summary>
-        /// Gets The Console IPAddress 
+        /// Xbox Console IPAddress 
         /// </summary>
         public string IPAddress
         {
             get
             {
                 return XboxClient.IPAddress;
+            }
+            set
+            {
+                IPAddress = value;
             }
         }
         /// <summary>
@@ -177,13 +201,13 @@ namespace XDCKIT
             }
         }
 
-        public string DefaultConsole
+        public string DefaultConsole //TODO: Add XML To Save Console name or IP
         {
             get
             {
                 if (Connected)
                 {
-                    return Name;
+                    return "In Development";
                 }
                 else
                 {
@@ -195,19 +219,33 @@ namespace XDCKIT
                 DefaultConsole = value;
             }
         }
-
-        public Tray Tray = new Tray();
-        public XNotify XNotify = new XNotify();
+        public static XboxConsole XConsole
+        {
+            get
+            {
+                return new XboxConsole();
+            }
+            set
+            {
+                XConsole = value;
+            }
+        }
+        public Tray Tray
+        {
+            get
+            {
+                return new Tray();
+            }
+        }
+        public XNotify XNotify
+        {
+            get
+            {
+                return new XNotify();
+            }
+        }
 
         #endregion
-        public void Connect()
-        {
-            XboxClient.Connect();
-        }
-        public void Connect(string ConsoleNameOrIP = "default", int Port = 730)
-        {
-            XboxClient.Connect(ConsoleNameOrIP, Port);
-        }
         public void Disconnect()
         {
             XboxClient.Disconnect();

@@ -28,7 +28,7 @@ namespace XDCKIT
 
         public string GetSMCVersion()
         {
-            byte[] byte_0 = GetMemory(ResolveFunction("xam.xex", 0xa29) + 0x3000, 4);
+            byte[] byte_0 = GetMemory(0x81AC7C50, 4);
             object[] objArray1 = new object[] { " ", byte_0[2], ".", byte_0[3] };
             return string.Concat(objArray1);
         }
@@ -582,7 +582,7 @@ namespace XDCKIT
         /// Retrieves Current Title ID
         /// </summary>
         /// <returns></returns>
-        public uint XamGetCurrentTitleId()
+        public uint GetTitleID()
         {
 
             string str = string.Concat("consolefeatures ver=", 2, " type=16 params=\"A\\0\\A\\0\\\"");

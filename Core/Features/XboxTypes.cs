@@ -3,6 +3,7 @@
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -665,6 +666,46 @@ namespace XDCKIT
         #endregion
 
         #region Random Types
+        public static byte[] HexStringToByteArray(string str)
+        {
+
+            if (str.Length % 2 == 1) str = "0" + str;
+            List<byte> ret = new List<byte>();
+            for (int i = 0; i < str.Length; i += 2)
+                ret.Add(Convert.ToByte(str.Substring(i, 2), 16));
+            return ret.ToArray();
+        }
+        public static List<uint> ByteArrayFindAll(byte[] InputBuffer, byte[] ToSearch, ProgressUpdateCallback ProgressCallback)
+        {
+            List<uint> Found = new List<uint>();
+
+            for (int i = 0; i < InputBuffer.Length - ToSearch.Length; i++)
+            {
+                if (ProgressCallback != null)
+                {
+                    ProgressCallback((int)Math.Round(((double)i / (double)InputBuffer.Length) * 100));
+                }
+
+                if (BComp(InputBuffer, i, ToSearch))
+                {
+                    Found.Add((uint)i);
+                }
+            }
+
+            return Found;
+        }
+        public delegate void ProgressUpdateCallback(int Percentage);
+
+        private static bool BComp(byte[] A, int Position, byte[] B)
+        {
+            for (int i = 0; i < B.Length; i++)
+            {
+                if (A[Position + i] != B[i])
+                    return false;
+            }
+
+            return true;
+        }
         public static byte[] ReadToEnd(System.IO.Stream stream)
         {
             long originalPosition = 0;

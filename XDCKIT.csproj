@@ -38,6 +38,11 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevExpress.Data.Desktop.v20.2, Version=20.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v20.2, Version=20.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v20.2.Core, Version=20.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v20.2, Version=20.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v20.2, Version=20.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -50,24 +55,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\XboxConsole.cs" />
-    <Compile Include="Core\XboxClient.cs" />
-    <Compile Include="Core\FileSystem\XboxFileSystem.cs" />
-    <Compile Include="Core\Extentions\Functions.cs" />
-    <Compile Include="Core\Extentions\IO\EndianIO.cs" />
-    <Compile Include="Core\Extentions\IO\EndianReader.cs" />
-    <Compile Include="Core\Extentions\IO\EndianWriter.cs" />
-    <Compile Include="Core\Extentions\IO\RWStream.cs" />
-    <Compile Include="Core\Extentions\Items.cs" />
-    <Compile Include="Core\Extentions\Offset.cs" />
+    <Compile Include="Core\Dialogs\WizardAddNewXbox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Core\Dialogs\WizardAddNewXbox.designer.cs">
+      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\Extentions\XboxEnums.cs" />
-    <Compile Include="Core\Extentions\XboxExtention.cs" />
-    <Compile Include="Core\Extentions\XboxMemoryStream.cs" />
+    <Compile Include="Core\Extentions\XDCKIT++.cs" />
     <Compile Include="Core\Features\Tray.cs" />
     <Compile Include="Core\Features\XboxFeatures.cs" />
     <Compile Include="Core\Features\XboxMemory.cs" />
     <Compile Include="Core\Features\XboxTypes.cs" />
+    <Compile Include="Core\FileSystem\XboxFileSystem.cs" />
     <Compile Include="Core\Notification System\XNotify.cs" />
+    <Compile Include="Core\XboxClient.cs" />
+    <Compile Include="Core\XboxConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,10 +86,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Core\About XDevkit.txt" />
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+    <EmbeddedResource Include="Core\Dialogs\WizardAddNewXbox.resx">
+      <DependentUpon>WizardAddNewXbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Core\About XDCKIT.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

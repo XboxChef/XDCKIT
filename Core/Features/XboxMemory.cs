@@ -25,12 +25,6 @@ namespace XDCKIT
 
         private uint _startDumpOffset { set; get; }
         private bool _stopSearch { set; get; }
-        private RwStream _readWriter { set; get; }
-        private static StreamReader sreader;
-        public XboxMemoryStream ReturnXboxMemoryStream()
-        {
-            return new XboxMemoryStream();
-        }
         /// <summary>
         /// Set or Get the start dump offset
         /// </summary>
@@ -45,8 +39,97 @@ namespace XDCKIT
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public uint DumpLength { set; get; }
+        public byte[] ReadMemory(uint Address, uint Length)
+        {
+            List<byte> ReturnData = new List<byte>();
+            byte[] Packet = new byte[1026];
+            byte[] PacketData = new byte[1024];
+            int ProgressPercentage = 0;
+
+            // Send getmemex command.
+            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n", Address.ToString("X2"), Length.ToString("X2"))));
+
+            // Receieve the 203 response to verify we are going to receive raw data in packets
+            XboxClient.XboxName.Client.Receive(Packet);
+
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 3) != "203")
+                throw new Exception("GETMEMEX 203 response not recieved. Cannot read memory.");
+
+            // It will return with data in 1026 byte size packets, first two bytes I think are flags and the rest is the data
+            // Length / 1024 will get how many packets there are to receive
+            for (uint i = 0; i < Length / 1024; i++)
+            {
+               XboxClient.XboxName.Client.Receive(Packet);
+
+                // Store the data minus the first two bytes
+                // This was a cheap way of removing the 2 byte header
+                Array.Copy(Packet, 2, PacketData, 0, 1024);
+                ReturnData.AddRange(PacketData);
+
+               
+            }
+
+            // Get the remainder of Length / 1024 to see if we are receiving extra.
+            uint Remainder = (Length % 1024);
+
+            // If there is a remainder, read it
+            if (Remainder > 0)
+            {
+                XboxClient.XboxName.Client.Receive(Packet);
+
+                // Store the data minus the first two bytes
+                // This was a cheap way of removing the 2 byte header
+                Array.Copy(Packet, 2, PacketData, 0, 1024);
+                ReturnData.AddRange(PacketData);
+            }
+
+            return ReturnData.ToArray();
+        }
+        public void DumpMemory(uint Address, uint Length, string FileName)
+        {
+            byte[] Packet = new byte[1026];
+            int ProgressPercentage = 0;
+
+            // Send getmemex command.
+            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n", Address.ToString("X2"), Length.ToString("X2"))));
+
+            // Receieve the 203 response to verify we are going to recieve raw data in packets
+            XboxClient.XboxName.Client.Receive(Packet);
+
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 3) != "203")
+                throw new Exception("GETMEMEX 203 response not recieved. Cannot read memory.");
+
+            FileStream outfile = new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+            // It will return with data in 1026 byte size packets, first two bytes I think are flags and the rest is the data
+            // Length / 1024 will get how many packets there are to recieve
+            for (uint i = 0; i < Length / 1024; i++)
+            {
+                XboxClient.XboxName.Client.Receive(Packet);
+
+                // Write the data minus the first two bytes
+                outfile.Write(Packet, 2, 1024);
 
 
+            }
+
+            // Get the remainder of Length / 1024 to see if we are recieving extra.
+            uint Remainder = (Length % 1024);
+
+            // If there is a remainder, read it
+            if (Remainder > 0)
+            {
+                XboxClient.XboxName.Client.Receive(Packet);
+
+                // Write the data minus the first two bytes
+                outfile.Write(Packet, 2, 1024);
+            }
+
+
+            // Flush and close the file
+            outfile.Flush();
+            outfile.Close();
+        }
 
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -106,16 +189,32 @@ namespace XDCKIT
         /// <returns></returns>
         public static string SendTextCommand(string Command)
         {
-            if (!Connected)
+            byte[] Packet = new byte[1026];
+            if (XboxClient.XboxName != null)
             {
-                return "";
+
+                try
+                {
+                    XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + "\r\n"));
+                    Thread.Sleep(1000);
+                    XboxClient.XboxName.Client.Receive(Packet);
+                    return Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r\n", string.Empty).Replace("\"", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n", string.Empty.Replace("200-", string.Empty));//
+
+
+                }
+                catch
+                {
+                    throw;
+                }
             }
-            else
-            {
-                new BinaryWriter(XboxClient.XboxName.GetStream()).Write(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
-                return string.Join("", sreader.ReadToEnd().Split("\n".ToCharArray()));
-            }
+            else throw new Exception("No Connection Detected");
         }
+
+        internal void Close()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Sends Commands Based On User's Input
         /// </summary>
@@ -128,7 +227,6 @@ namespace XDCKIT
 
                 try
                 {
-                    Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format(command, args) + Environment.NewLine));
                 }
                 catch
@@ -173,14 +271,37 @@ namespace XDCKIT
             }
         }
 
+        public void PokeMemory(uint Address, string Value)
+        {
+            byte[] Data = Encoding.ASCII.GetBytes(Value);
+            // Send the setmem command
+            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", Address.ToString("X2"), BitConverter.ToString(Data).Replace("-", ""))));
 
+            // Check to see our response
+            byte[] Packet = new byte[1026];
+            XboxClient.XboxName.Client.Receive(Packet);
 
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 11) == "0 bytes set")
+                throw new Exception("A problem occurred while writing bytes. 0 bytes set");
+        }
+        public void PokeMemory(uint Address, byte[] Data)
+        {
+            // Send the setmem command
+            XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("SETMEM ADDR=0x{0} DATA={1}\r\n", Address.ToString("X2"), BitConverter.ToString(Data).Replace("-", ""))));
+
+            // Check to see our response
+            byte[] Packet = new byte[1026];
+            XboxClient.XboxName.Client.Receive(Packet);
+
+            if (Encoding.ASCII.GetString(Packet).Replace("\0", "").Substring(0, 11) == "0 bytes set")
+                throw new Exception("A problem occurred while writing bytes. 0 bytes set");
+        }
         /// <summary>
         /// Poke the Memory
         /// </summary>
         /// <param name="memoryAddress">The memory address to Poke Example:0xCEADEADE - Uses *.FindOffset</param>
         /// <param name="value">The value to poke Example:000032FF (hex string)</param>
-        public void Poke(string memoryAddress, string value) { Poke(Functions.Convert(memoryAddress), value); }
+        public void Poke(string memoryAddress, string value) { Poke(XboxExtention.Convert(memoryAddress), value); }
 
         /// <summary>
         /// Poke the Memory
@@ -189,7 +310,7 @@ namespace XDCKIT
         /// <param name="value">The value to poke Example:000032FF (hex string)</param>
         public void Poke(uint memoryAddress, string value)
         {
-            if (!Functions.IsHex(value))
+            if (!XboxExtention.IsHex(value))
                 throw new Exception("Not a valid Hex String!");
             if (!Connected)
                 return; //Call function - If not connected return
@@ -202,59 +323,64 @@ namespace XDCKIT
                 throw new Exception(ex.Message);
             }
         }
-        public void PokeXbox(Offset offsetData)
+        public void PokeMemory(uint offset, string poketype, string amount)
         {
-            uint offset = Convert.ToUInt32(offsetData.Address, 0x10);
-            string poketype = offsetData.Type;
-            string amount = offsetData.Value;
-
-                    XboxMemoryStream xbms = ReturnXboxMemoryStream();
-                    EndianIO IO = new EndianIO(xbms, EndianType.BigEndian);
-                    IO.Open();
-                    IO.Out.BaseStream.Position = offset;
+            if (Connected)
+            {
+                try
+                {
                     if (poketype == "Unicode String")
                     {
-                        IO.Out.WriteUnicodeString(amount, amount.Length);
+                       //IO.Out.WriteUnicodeString(amount, amount.Length);
                     }
                     if (poketype == "ASCII String")
                     {
-                        IO.Out.WriteUnicodeString(amount, amount.Length);
+                        //IO.Out.WriteUnicodeString(amount, amount.Length);
                     }
                     if ((poketype == "String") | (poketype == "string"))
                     {
-                        IO.Out.Write(amount);
+                        SetMemory(offset,amount);
                     }
-                    if ((poketype == "Float") | (poketype == "float"))
+                    if (poketype.ToLower() == "float")
                     {
-                        IO.Out.Write(float.Parse(amount));
+                        SetMemory(offset, float.Parse(amount).ToString());
                     }
-                    if ((poketype == "Double") | (poketype == "double"))
+                    if (poketype.ToLower() == "double")
                     {
-                        IO.Out.Write(double.Parse(amount));
+                         //SetMemory(offset, double.Parse(amount));
                     }
-                    if ((poketype == "Short") | (poketype == "short"))
+                    if (poketype.ToLower() == "short")
                     {
-                        IO.Out.Write((short)Convert.ToUInt32(amount, 0x10));
+                         //SetMemory((short)Convert.ToUInt32(amount, 0x10));
                     }
-                    if ((poketype == "Byte") | (poketype == "byte"))
+                    if (poketype.ToLower() == "byte")
                     {
-                        IO.Out.Write((byte)Convert.ToUInt32(amount, 0x10));
+                        byte[] bytes = Encoding.ASCII.GetBytes(amount);
+                        PokeMemory(offset, bytes);
                     }
-                    if ((poketype == "Long") | (poketype == "long"))
+                    if (poketype.ToLower() == "long")
                     {
-                        IO.Out.Write((long)Convert.ToUInt32(amount, 0x10));
+                         //SetMemory(offset, (long)Convert.ToUInt32(amount, 0x10));
                     }
-                    if ((poketype == "Quad") | (poketype == "quad"))
+                    if (poketype.ToLower() == "quad")
                     {
-                        IO.Out.Write((long)Convert.ToUInt64(amount, 0x10));
+                       // SetMemory(offset, (long)Convert.ToUInt64(amount, 0x10));
                     }
-                    if ((poketype == "Int") | (poketype == "int"))
+                    if (poketype.ToLower() == "int")
                     {
-                        IO.Out.Write(Convert.ToUInt32(amount, 0x10));
+                        SetMemory(offset, Convert.ToUInt32(amount, 0x10).ToString());
                     }
-                    IO.Close();
-                    xbms.Close();
-                    MessageBox.Show("Poked", "Poked " + amount + " to 0x" + offset.ToString("X"));
+                    Console.WriteLine("Poked", "Successfully poked the " + poketype + " " + amount + " to the offset 0x" + offset.ToString("X"));
+                }
+                catch
+                {
+                    Console.WriteLine("Error", "Couldn't poke XDK. ");//SetMemory(offset, amount);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error", "You are not connected to your XDK. ");
+            }
         }
 
         public string PeekXbox(uint offset, string type)
@@ -262,178 +388,42 @@ namespace XDCKIT
            
                 string hex = "X";
                 object rn = null;
-                    XboxMemoryStream xbms = ReturnXboxMemoryStream();
-                    EndianIO IO = new EndianIO(xbms, EndianType.BigEndian);
-                    IO.Open();
-                    IO.In.BaseStream.Position = offset;
                     if ((type == "String") | (type == "string"))
                     {
-                        rn = IO.In.ReadString();
+
+                    //    rn = IO.In.ReadString();
                     }
                     if ((type == "Float") | (type == "float"))
                     {
-                        rn = IO.In.ReadSingle();
+                        GetMemory(offset, 10);
                     }
                     if ((type == "Double") | (type == "double"))
                     {
-                        rn = IO.In.ReadDouble();
+                     //   rn = IO.In.ReadDouble();
                     }
                     if ((type == "Short") | (type == "short"))
                     {
-                        rn = IO.In.ReadInt16().ToString(hex);
+                    //    rn = IO.In.ReadInt16().ToString(hex);
                     }
                     if ((type == "Byte") | (type == "byte"))
                     {
-                        rn = IO.In.ReadByte().ToString(hex);
+                      //  rn = IO.In.ReadByte().ToString(hex);
                     }
                     if ((type == "Long") | (type == "long"))
                     {
-                        rn = IO.In.ReadInt32().ToString(hex);
+                      //  rn = IO.In.ReadInt32().ToString(hex);
                     }
                     if ((type == "Quad") | (type == "quad"))
                     {
-                        rn = IO.In.ReadInt64().ToString(hex);
+                     //   rn = IO.In.ReadInt64().ToString(hex);
                     }
-                    IO.Close();
-                    xbms.Close();
                     return rn.ToString();
                 
         }
-        /// <summary>
-        /// Peek into the Memory
-        /// </summary>
-        /// <param name="startDumpAddress">The Hex offset to start dump Example:0xC0000000</param>
-        /// <param name="dumpLength">The Length or size of dump Example:0xFFFFFF</param>
-        /// <param name="memoryAddress">The memory address to peek Example:0xC5352525</param>
-        /// <param name="peekSize">The byte size to peek Example: "0x4" or "4"</param>
-        /// <returns>Return the hex string of the value</returns>
-        public string Peek(string startDumpAddress, string dumpLength, string memoryAddress, string peekSize)
-        {
-            return Peek(Functions.Convert(startDumpAddress), Functions.Convert(dumpLength), Functions.Convert(memoryAddress), Functions.ConvertSigned(peekSize));
-        }
-
-        /// <summary>
-        /// Peek into the Memory
-        /// </summary>
-        /// <param name="startDumpAddress">The Hex offset to start dump Example:0xC0000000</param>
-        /// <param name="dumpLength">The Length or size of dump Example:0xFFFFFF</param>
-        /// <param name="memoryAddress">The memory address to peek Example:0xC5352525</param>
-        /// <param name="peekSize">The byte size to peek Example: "0x4" or "4"</param>
-        /// <returns>Return the hex string of the value</returns>
-        private string Peek(uint startDumpAddress, uint dumpLength, uint memoryAddress, int peekSize)
-        {
-            uint total = (memoryAddress - startDumpAddress);
-            if (memoryAddress > (startDumpAddress + dumpLength) || memoryAddress < startDumpAddress)
-                throw new Exception("Memory Address Out of Bounds");
-
-            if (!Connected)
-                return null; //Call function - If not connected return
-
-            var readWriter = new RwStream();
-            try
-            {
-                var data = new byte[1026]; //byte chuncks
-
-                //Writing each byte chuncks========
-                for (int i = 0; i < dumpLength / 1024; i++)
-                {
-                    XboxClient.XboxName.Client.Receive(data);
-                    readWriter.WriteBytes(data, 2, 1024);
-                }
-                //Write whatever is left
-                var extra = (int)(dumpLength % 1024);
-                if (extra > 0)
-                {
-                    XboxClient.XboxName.Client.Receive(data);
-                    readWriter.WriteBytes(data, 2, extra);
-                }
-                readWriter.Flush();
-                readWriter.Position = total;
-                byte[] value = readWriter.ReadBytes(peekSize);
-                return Functions.ToHexString(value);
-            }
-            catch (SocketException se)
-            {
-                readWriter.Flush();
-                readWriter.Position = total;
-                byte[] value = readWriter.ReadBytes(peekSize);
-                return Functions.ToHexString(value);
-                throw new Exception(se.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
 
 
-        /// <summary>
-        /// Find pointer offset
-        /// </summary>
-        /// <param name="pointer"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public BindingList<SearchResults> FindHexOffset(string pointer)
-        {
-            _stopSearch = false;
-            if (pointer == null)
-                throw new Exception("Empty Search string!");
-            if (!Functions.IsHex(pointer))
-                throw new Exception(string.Format("{0} is not a valid Hex string.", pointer));
-            if (!Connected)
-                return null; //Call function - If not connected return
-            BindingList<SearchResults> values;
-            try
-            {
-                //LENGTH or Size = Length of the dump
-                uint size = DumpLength;
-                _readWriter = new RwStream();
-                var data = new byte[1026]; //byte chuncks
 
-                //Writing each byte chuncks========
-                //No need to mess with it :D
-                for (int i = 0; i < size / 1024; i++)
-                {
-                    if (_stopSearch)
-                        return new BindingList<SearchResults>();
-                    XboxClient.XboxName.Client.Receive(data);
-                    _readWriter.WriteBytes(data, 2, 1024);
-                }
-                //Write whatever is left
-                var extra = (int)(size % 1024);
-                if (extra > 0)
-                {
-                    if (_stopSearch)
-                        return new BindingList<SearchResults>();
-                    XboxClient.XboxName.Client.Receive(data);
-                    _readWriter.WriteBytes(data, 2, extra);
-                }
-                _readWriter.Flush();
-                //===================================
-                //===================================
-                if (_stopSearch)
-                    return new BindingList<SearchResults>();
-                _readWriter.Position = 0;
-                values = _readWriter.SearchHexString(Functions.StringToByteArray(pointer), _startDumpOffset);
-                return values;
-            }
-            catch (SocketException)
-            {
-                _readWriter.Flush();
-                //===================================
-                //===================================
-                if (_stopSearch)
-                    return new BindingList<SearchResults>();
-                _readWriter.Position = 0;
-                values = _readWriter.SearchHexString(Functions.StringToByteArray(pointer), _startDumpOffset);
 
-                return values;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
 
 
         public void constantMemorySet(uint Address, uint Value)
@@ -456,7 +446,7 @@ namespace XDCKIT
                 "\\A\\5\\",
                 1,
                 "\\",
-                Functions.UIntToInt(Value),
+                XboxExtention.UIntToInt(Value),
                 "\\",
                 1,
                 "\\",
@@ -472,7 +462,7 @@ namespace XDCKIT
                 "\\",
                 1,
                 "\\",
-                Functions.UIntToInt(TitleID),
+                XboxExtention.UIntToInt(TitleID),
                 "\\\""
             };
             SendTextCommand(string.Concat(Version));
@@ -550,7 +540,7 @@ namespace XDCKIT
             XboxClient.XboxName.Client.Receive(Packet);
 
             if (Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Substring(0, 3) != "203")
-                throw new Exception("GETMEMEX 203 response not recieved. Cannot read memory.");
+                Console.WriteLine("GETMEMEX 203 response not recieved. Cannot read memory.");
 
             // It will return with data in 1026 byte size packets, first two bytes I think are flags and the rest is the data
             // Length / 1024 will get how many packets there are to recieve
@@ -666,7 +656,7 @@ namespace XDCKIT
         /// <param name="startDumpAddress">The start dump address</param>
         /// <param name="dumpLength">The dump length</param>
         public void Dump(string filename, string startDumpAddress, string dumpLength)
-        { Dump(filename, Functions.Convert(startDumpAddress), Functions.Convert(dumpLength)); }
+        { Dump(filename, XboxExtention.Convert(startDumpAddress), XboxExtention.Convert(dumpLength)); }
 
         /// <summary>
         /// Dump the memory
@@ -677,36 +667,36 @@ namespace XDCKIT
         public void Dump(string filename, uint startDumpAddress, uint dumpLength)
         {
 
-            if (!Connected)
-                return; //Call function - If not connected return
+            //if (!Connected)
+            //    return; //Call function - If not connected return
 
-            var readWriter = new RwStream(filename);
-            try
-            {
-                var data = new byte[1026]; //byte chuncks
-                //Writing each byte chuncks========
-                for (int i = 0; i < dumpLength / 1024; i++)
-                {
-                    XboxClient.XboxName.Client.Receive(data);
-                    readWriter.WriteBytes(data, 2, 1024);
-                }
-                //Write whatever is left
-                var extra = (int)(dumpLength % 1024);
-                if (extra > 0)
-                {
-                    XboxClient.XboxName.Client.Receive(data);
-                    readWriter.WriteBytes(data, 2, extra);
-                }
-                readWriter.Flush();
-            }
-            catch (SocketException)
-            {
-                readWriter.Flush();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //var readWriter = new RwStream(filename);
+            //try
+            //{
+            //    var data = new byte[1026]; //byte chuncks
+            //    //Writing each byte chuncks========
+            //    for (int i = 0; i < dumpLength / 1024; i++)
+            //    {
+            //        XboxClient.XboxName.Client.Receive(data);
+            //        readWriter.WriteBytes(data, 2, 1024);
+            //    }
+            //    //Write whatever is left
+            //    var extra = (int)(dumpLength % 1024);
+            //    if (extra > 0)
+            //    {
+            //        XboxClient.XboxName.Client.Receive(data);
+            //        readWriter.WriteBytes(data, 2, extra);
+            //    }
+            //    readWriter.Flush();
+            //}
+            //catch (SocketException)
+            //{
+            //    readWriter.Flush();
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
         }
         public void WriteHook(uint Offset, uint Destination, bool Linked)
         {
@@ -801,7 +791,15 @@ namespace XDCKIT
             SendTextCommand(Command);
             string String = SendTextCommand(Command);
 
-            return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
+            try
+            {
+                return uint.Parse(String.Substring(String.find(" ") + 1), NumberStyles.HexNumber);
+            }
+            catch
+            {
+                Console.WriteLine("SendCommand Return String.Empty");
+                return 0;
+            }
         }
 
         /// <summary>

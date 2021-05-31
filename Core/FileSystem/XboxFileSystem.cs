@@ -11,13 +11,8 @@ namespace XDCKIT
 {
     public class XboxFileSystem
     {
-        private static string Directory = string.Empty;
-        // Full file name   
-        private static string fileName = string.Empty;
-        FileInfo fi = new FileInfo(fileName);
-        // get the file attributes for file or directory
-        FileAttributes Path = File.GetAttributes(Directory);
-        XboxConsole Xbox = new XboxConsole();
+        private static string FileLocation = string.Empty;
+
 
         public XboxFileSystem()
         {
@@ -28,8 +23,8 @@ namespace XDCKIT
         /// </summary>
         public string ChangeTime(string directory)
         {
-            
-            fileName = directory;
+            FileInfo fi = new FileInfo(FileLocation);
+            FileLocation = directory;
             return fi.LastWriteTime.ToString();
         }
         /// <summary>
@@ -37,7 +32,8 @@ namespace XDCKIT
         /// </summary>
         public string CreationTime(string directory)
         {
-            fileName = directory;
+            FileInfo fi = new FileInfo(FileLocation);
+            FileLocation = directory;
             DateTime creationTime = fi.CreationTime;
             return creationTime.ToString();
         }
@@ -58,7 +54,10 @@ namespace XDCKIT
         /// </summary>
         public bool IsDirectory(string directory)
         {
-            Directory = directory;
+
+            // get the file attributes for file or directory
+            FileAttributes Path = File.GetAttributes(FileLocation);
+            FileLocation = directory;
             //detect whether its a directory or file
             if ((Path & FileAttributes.Directory) == FileAttributes.Directory)
             {
@@ -74,7 +73,8 @@ namespace XDCKIT
         /// </summary>
         public bool IsReadOnly(string directory)
         {
-            fileName = directory;
+            FileInfo fi = new FileInfo(FileLocation);
+            FileLocation = directory;
             // File ReadOnly ?  
             return fi.IsReadOnly;
         }
@@ -85,14 +85,15 @@ namespace XDCKIT
         public void MakeDirectory(string path)
         {
             string sdr = string.Concat("mkdir name=\"{0}\"", path);
-            XboxConsole.SendTextCommand(sdr, out XboxConsole.Response);
+            XboxConsole.SendTextCommand(sdr, out _);
         }
         /// <summary>
         /// 
         /// </summary>
         public string Name(string directory)
         {
-            fileName = directory;
+            FileInfo fi = new FileInfo(FileLocation);
+            FileLocation = directory;
             return fi.Name;
         }
 
@@ -140,6 +141,7 @@ namespace XDCKIT
         /// <param name="remoteName">Xbox file name.</param>
         public void ReceiveFile(string localName, string remoteName)
         {
+            XboxConsole Xbox = new XboxConsole();
             XboxConsole.SendTextCommand("getfile name=\"{0}\"" + remoteName);
             int fileSize = BitConverter.ToInt32(Xbox.ReceiveBinaryData(4), 0);
             using (var lfs = new System.IO.FileStream(localName, FileMode.Create))
@@ -159,14 +161,64 @@ namespace XDCKIT
             }
         }
         /// <summary>
+        /// Sets the size of a specified file on the xbox.  This method will not zero out any extra bytes that may have been created.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="size"></param>
+        public void SetFileSize(string fileName, int size)
+        {
+            XboxConsole Xbox = new XboxConsole();
+            Xbox.SendTextCommand("fileeof name=\"{0}\" size={1}", fileName, size);
+        }
+        //public /*unsafe*/ DateTime SystemTime
+        //{
+        //    get
+        //    {
+        //        string response = SendCommand("systime");
+        //        if (response.Type == ResponseType.SingleResponse)
+        //        {
+        //            string ticks = string.Format("0x{0}{1}",
+        //                response.Message.Substring(7, 7),
+        //                response.Message.Substring(21).PadLeft(8, '0')
+        //                );
+        //            return DateTime.FromFileTime(Convert.ToInt64(ticks, 16));
+        //        }
+        //        //else throw new ApiException("Failed to get xbox system time.");
+        //    }
+        //    set
+        //    {
+        //        long fileTime = value.ToFileTimeUtc();
+        //        int lo = (int)(fileTime & 0xFFFFFFFF); // *(int*)&fileTime;
+        //        int hi = (int)(((ulong)fileTime & 0xFFFFFFFF00000000UL) >> 32);// *((int*)&fileTime + 1);
+
+        //        StatusResponse response = SendCommand(string.Format("setsystime clockhi=0x{0} clocklo=0x{1} tz=1", Convert.ToString(hi, 16), Convert.ToString(lo, 16)));
+        //        if (response.Type != ResponseType.SingleResponse)
+        //            throw new ApiException("Failed to set xbox system time.");
+        //    }
+        //}
+        /// <summary>
+        /// Creates a file on the xbox.
+        /// </summary>
+        /// <param name="fileName">File to create.</param>
+        /// <param name="createDisposition">Creation options.</param>
+        public void CreateFile(string fileName, FileMode createDisposition)
+        {
+            XboxConsole Xbox = new XboxConsole();
+            if (createDisposition == FileMode.Open) { if (!File.Exists(fileName)) throw new FileNotFoundException("File does not exist."); }
+            else if (createDisposition == FileMode.Create) Xbox.SendTextCommand("fileeof name=\"" + fileName + "\" size=0 cancreate");
+            else if (createDisposition == FileMode.CreateNew) Xbox.SendTextCommand("fileeof name=\"" + fileName + "\" size=0 mustcreate");
+           // else throw "Unsupported FileMode.";
+        }
+        /// <summary>
         /// Delete the specified folder path from the console.
         /// </summary>
         /// <param name="path"></param>
         public void RemoveDirectory(string path)
         {
             string sdr = string.Concat("delete name=\"{0}\"", path);
-            XboxConsole.SendTextCommand(sdr, out XboxConsole.Response);
+            XboxConsole.SendTextCommand(sdr, out _);
         }
+
         /// <summary>
         /// Renames or moves a file on the xbox.
         /// </summary>
@@ -201,6 +253,7 @@ namespace XDCKIT
         /// <param name="remoteName">Xbox file name.</param>
         public void SendFile(string localName, string remoteName)
         {
+            XboxConsole Xbox = new XboxConsole();
             FileStream lfs = new FileStream(localName, FileMode.Open);
             byte[] fileData = new byte[XboxClient.XboxName.Client.SendBufferSize];
             XboxConsole.SendTextCommand("sendfile name=\"{0}\" length={1}" + remoteName + lfs.Length);
@@ -224,7 +277,8 @@ namespace XDCKIT
         /// </summary>
         public long Size(string directory)
         {
-            fileName = directory;
+            FileInfo fi = new FileInfo(FileLocation);
+            FileLocation = directory;
             return fi.Length;
         }
 

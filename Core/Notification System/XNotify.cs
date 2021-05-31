@@ -92,7 +92,7 @@ namespace XDCKIT
         /// <param name="Logo"></param>
         public static void Show(string message, XNotiyLogo Logo)
         {
-            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + 2 + "/" + message.Length + "\\" + Functions.ConvertStringToHex(message, Encoding.ASCII) + "\\" + 1 + "\\";
+            string command = "consolefeatures ver=2" + " type=12 params=\"A\\0\\A\\2\\" + 2 + "/" + message.Length + "\\" + XboxExtention.ConvertStringToHex(message, Encoding.ASCII) + "\\" + 1 + "\\";
             switch (Logo)
             {
                 case XNotiyLogo.XBOX_LOGO:

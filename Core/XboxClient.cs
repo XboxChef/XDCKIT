@@ -21,30 +21,11 @@ namespace XDCKIT
         #region Property's
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static TcpClient XboxName { get; set; }
+        public static TcpClient XboxName;
         /// <summary>
         /// Checks For Connection, Defaults To False.
         /// </summary>
-        public static bool Connected
-        {
-            get
-            {
-                XboxName = new TcpClient();
-                if (XboxName.Connected)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-
-            }
-            set
-            {
-                Connected = value;
-            }
-        }
+        public static bool Connected = false;
         public static int Port
         {
             get => 730;
@@ -66,6 +47,25 @@ namespace XDCKIT
         #endregion
 
         #region Networking
+        public static string DefaultConsole
+        {
+            get
+            {
+                if (Connected)
+                {
+                    return IPAddress;
+                }
+                else
+                {
+                    return "Error";
+                }
+            }
+            set
+            {
+                DefaultConsole = value;
+            }
+        }
+        #region Connection Types
         /// <summary>
         /// 
         /// </summary>
@@ -74,19 +74,26 @@ namespace XDCKIT
         /// <param name="ConsoleNameOrIP"></param>
         /// <param name="Port"></param>
         /// <returns></returns>
-        public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730)
+        public static bool Connect(this XboxConsole Source, out XboxConsole Client)
         {
+            string ConsoleNameOrIP = "jtag";
             Client = Source;
             Client = new XboxConsole();//sets Class For Client
 
             // If user specifies to find their console IP address
-            if (ConsoleNameOrIP.Equals("default") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
             {
                 if (FindConsole())//if true then continue
                 {
-                    XboxName = new TcpClient(IPAddress, 730);
-                    Reader = new StreamReader(XboxName.GetStream());
-                    IPAddress = ConsoleNameOrIP;
+                    try
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        Reader = new StreamReader(XboxName.GetStream());
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
                 }
             }
@@ -108,16 +115,121 @@ namespace XDCKIT
 
             return Connected;
         }
-        public static bool Connect(string ConsoleNameOrIP = "default", int Port = 730)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Source"></param>
+        /// <param name="Client"></param>
+        /// <param name="ConsoleNameOrIP"></param>
+        /// <param name="Port"></param>
+        /// <returns></returns>
+        public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "jtag")
         {
+            Client = Source;
+            Client = new XboxConsole();//sets Class For Client
+
             // If user specifies to find their console IP address
-            if (ConsoleNameOrIP.Equals("default") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
             {
                 if (FindConsole())//if true then continue
                 {
-                    XboxName = new TcpClient(IPAddress, 730);
-                    Reader = new StreamReader(XboxName.GetStream());
+                    try
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        Reader = new StreamReader(XboxName.GetStream());
+                        IPAddress = ConsoleNameOrIP;
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+            // If User Supply's IP To US.
+            else if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
+            {
+                try
+                {
                     IPAddress = ConsoleNameOrIP;
+                    XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            return Connected;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Source"></param>
+        /// <param name="Client"></param>
+        /// <param name="ConsoleNameOrIP"></param>
+        /// <param name="Port"></param>
+        /// <returns></returns>
+        public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "jtag", int Port = 730)
+        {
+            Client = Source;
+            Client = new XboxConsole();//sets Class For Client
+
+            // If user specifies to find their console IP address
+            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            {
+                if (FindConsole())//if true then continue
+                {
+                    try
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        Reader = new StreamReader(XboxName.GetStream());
+                        IPAddress = ConsoleNameOrIP;
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+            // If User Supply's IP To US.
+            else if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
+            {
+                try
+                {
+                    IPAddress = ConsoleNameOrIP;
+                    XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            return Connected;
+        }
+        public static bool Connect(string ConsoleNameOrIP = "jtag", int Port = 730)
+        {
+            // If user specifies to find their console IP address
+            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            {
+                if (FindConsole())//if true then continue
+                {
+                    try
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        Reader = new StreamReader(XboxName.GetStream());
+                        IPAddress = ConsoleNameOrIP;
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
                 }
             }
@@ -132,29 +244,98 @@ namespace XDCKIT
                 }
                 catch (SocketException ex)
                 {
-                    
+                    Console.WriteLine(ex.Message);
                 }
             }
 
             return Connected;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Source"></param>
+        /// <param name="Client"></param>
+        /// <param name="ConsoleNameOrIP"></param>
+        /// <param name="Port"></param>
+        /// <returns></returns>
+        public static bool Connect(this XboxConsole Source, string ConsoleNameOrIP = "jtag")
+        {
+            Source = new XboxConsole();
+            // If user specifies to find their console IP address
+            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
+            {
+                if (FindConsole())//if true then continue
+                {
+                    try
+                    {
+                        XboxName = new TcpClient(IPAddress, 730);
+                        Reader = new StreamReader(XboxName.GetStream());
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+            }
+            // If User Supply's IP To US.
+            else if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
+            {
+                try
+                {
+                    IPAddress = ConsoleNameOrIP;
+                    XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                    Reader = new StreamReader(XboxName.GetStream());
+
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            return Connected;
+        }
+        #endregion
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        static DoWorkEventHandler BackgroundSlave()
+        static DoWorkEventHandler FindConsoleFunction()//TODO: Add a Second Search with a bool if connection is true then it will stop both for a faster search
         {
             string ips = "192.168.0.";
 
-            for (int i = 0; i <= 255; i += 1)
+            for (int i = 1; i <= 100; i += 1)
             {
                 XboxName = new TcpClient();
 
                 try
                 {
-                    if (XboxName.ConnectAsync(ips + i, 730).Wait(12))//keep calm just code..
+                    if (i == 100)
                     {
-                        IPAddress = ips + i;
+                        if (!XboxName.Connected)
+                        {
+                            Console.WriteLine("Slave1 Reached 100 With No IPS Found");
+                            Console.WriteLine("Slave1 Is Console Even ON!");
+                        }
+                        else
+                        {
+                            return null;
+                        }
 
-                        return null;
+                    }
+                    else
+                    {
+                        //if connection is false then it will continue 
+                        if (!Connected)
+                        {
+                            if (XboxName.ConnectAsync(ips + i, 730).Wait(20))//keep calm just code..
+                            {
+                                //if Connection was A Success then it will set the found IP and it will signal the connection was true
+                                IPAddress = ips + i;
+                                Connected = true;
+                                Console.WriteLine("Connected");
+                                return null;
+                            }
+                        }
                     }
                 }
                 catch
@@ -166,37 +347,6 @@ namespace XDCKIT
 
             Connected = false;
             return null;
-        }
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static bool Ping (string host, int attempts, int timeout)
-        {
-            System.Net.NetworkInformation.Ping ping =
-                                             new System.Net.NetworkInformation.Ping();
-
-            System.Net.NetworkInformation.PingReply pingReply;
-
-            for (int i = 0; i < attempts; i++)
-            {
-                try
-                {
-                    pingReply = ping.Send(host, timeout);
-
-                    // If there is a successful ping then return true.
-                    if (pingReply != null &&
-                        pingReply.Status == System.Net.NetworkInformation.IPStatus.Success)
-                        return true;
-                }
-                catch
-                {
-                    // Do nothing and let it try again until the attempts are exausted.
-                    // Exceptions are thrown for normal ping failurs like address lookup
-                    // failed.  For this reason we are supressing errors.
-                }
-            }
-
-            // Return false if we can't successfully ping the server after several attempts.
-            return false;
         }
         public static void FindConsole(uint Retries, uint RetryDelay)
         {
@@ -213,11 +363,9 @@ namespace XDCKIT
             else
             {
                 FindConsoleBc.RunWorkerAsync();
+                FindConsoleFunction();
             }
-
-            BackgroundSlave();
-
-            if (Connected == true)
+            if (XboxName.Connected)
             {
                 return true;
             }
@@ -227,7 +375,7 @@ namespace XDCKIT
 
                 if (noOfRetries < 3)
                 {
-                    BackgroundSlave();
+                    FindConsoleFunction();
                     noOfRetries++;
                 }
                 if (noOfRetries < 6)
@@ -237,6 +385,8 @@ namespace XDCKIT
             }
             return false;
         }
+
+
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static void Disconnect()
@@ -257,44 +407,8 @@ namespace XDCKIT
 
             }
         }
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        internal static bool FindConsole(int retryAttepts)
-        {
-            return DoWithRetry(FindConsole(), TimeSpan.FromSeconds(5), retryAttepts);
-        }
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        internal static bool DoWithRetry(bool action, TimeSpan sleepPeriod, int tryCount = 3)
-        {
-            if (tryCount <= 0)
-                throw new ArgumentOutOfRangeException(nameof(tryCount));
 
-            while (action == false)
-            {
-                try
-                {
-                    if (action)
-                    {
-                        return true;
-                    }
-                    break; // success!
-                    //else retrun false fixes issue
-
-                }
-                catch
-                {
-                    if (--tryCount == 0)
-                        throw;
-                    Thread.Sleep(sleepPeriod);
-
-                }
-
-            }
-            return false;
-        }
-
-        private static bool Delay(int millisecond)
+        public static bool Delay(int millisecond)
         {
 
             Stopwatch sw = new Stopwatch();
