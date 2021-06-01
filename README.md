@@ -117,7 +117,7 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 
 ## Code Example
 
-```markdown
+```C#
 # Connecting
 using XDCKIT;
 
