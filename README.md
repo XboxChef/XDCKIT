@@ -27,18 +27,18 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 12. CloseConnection `(Allows For The Connection From The Device To Be severed From Each Other)`
 13. Reconnect `(Allows The User To Add A Delay So when The Console Is Ready The User Can Connect To It)`
 14. OpenConnection `(Find's Console And Connects To the IP Found and does not set class meaning you would have to set ConsoleX TO XDCKIT)`
-15. Get CPU Key
-16. Get Kernal Version
-17. Get Temperature
-18. Set LED State
-19. Get Module Handle
-20. Launch System DLL Thread
-21. Unload Image
-22. Xex Pc To File Header
-23. Xam Get Current Title Id
-24. ShutDown
+15. Get CPU Key `(Finds The Console's CPU Information)`
+16. Get Kernal Version `(Kernal Version Information)`
+17. Get Temperature `(Console's Temperature Information)`
+18. Set LED State `(Console's LED State)`
+19. Get Module Handle `(Unkown Describtion)`
+20. Launch System DLL Thread `(Unkown Describtion)`
+21. Unload Image `(Unkown Describtion)`
+22. Xex Pc To File Header `(Unkown Describtion)`
+23. GetTitleID `(Get's the Game identification)` 
+24. ShutDown `(Console's LED State)`
 25. Quick Sign In  `(In Beta Testing Phase)`
-26. Fan Speed Control
+26. Fan Speed Control`(Allows The User To Set The Value Of The Fan Speed)`
 27. Get Sign in State `(In Beta Testing Phase)`
 28. Trainer Features `(witch allows The ability To Share Modified Files For Any Game To Be modded)`
 ```
@@ -52,54 +52,53 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 6.   SetDataBreakpoint `(In Development)`
 7.   IsBreakpoint `(In Development)`
 8.   Invalidate MemoryCache `(In Development)`
-9.   Poke
-10.  peek
-11.  Find Hex Offset
-12.  constant Memory Setting
-13.  constant Memory Set
-14.  Get Memory / Set Memory
-15.  Dump Memory
-16.  ResolveFunction
-17.  ReverseBytes
-18.  Bool {Get; Set;}
-19.  String {Get; Set;}
-20.  Float {Get; Set;}
-21.  BinaryData {Get; Set;}
-22.  Byte {Get; Set;}
-23.  SByte {Get; Set;}
-24.  All Int {Get; Set;}
-25.  All Uint {Get; Set;}
-26.  Double {Get; Set;}
-27.  Long {Get; Set;}
-28.  All XOR int / AND Int / OR Int {Get; Set;}
-29.  WriteVector's
-30.  WriteHook
-31.  SendTextCommand
+9.   Poke `(Describtion Coming Soon)`
+10.  peek `(Describtion Coming Soon)`
+11.  Find Hex Offset`(Describtion Coming Soon)`
+12.  constant Memory Setting `(Describtion Coming Soon)`
+13.  constant Memory Set `(Describtion Coming Soon)`
+14.  Get Memory / Set Memory `(Describtion Coming Soon)`
+15.  Dump Memory `(Describtion Coming Soon)`
+16.  ResolveFunction `(Describtion Coming Soon)`
+17.  ReverseBytes `(Describtion Coming Soon)`
+18.  Bool {Get; Set;} `(Describtion Coming Soon)`
+19.  String {Get; Set;} `(Describtion Coming Soon)`
+20.  Float {Get; Set;} `(Describtion Coming Soon)`
+21.  BinaryData {Get; Set;} `(Describtion Coming Soon)`
+22.  Byte {Get; Set;} `(Describtion Coming Soon)`
+23.  SByte {Get; Set;} `(Describtion Coming Soon)`
+24.  All Int {Get; Set;} `(Describtion Coming Soon)`
+25.  All Uint {Get; Set;} `(Describtion Coming Soon)`
+26.  Double {Get; Set;} `(Describtion Coming Soon)`
+27.  Long {Get; Set;} `(Describtion Coming Soon)`
+28.  All XOR int / AND Int / OR Int {Get; Set;} `(Describtion Coming Soon)`
+29.  WriteVector's `(Describtion Coming Soon)`
+30.  WriteHook `(Describtion Coming Soon)`
+31.  SendTextCommand `(Describtion Coming Soon)`
 ```
 ### Current FileSystem Features
 ```markdown
-1.   ChangeTime
-2.   CreationTime
-3.   bool IsDirectory
-4.   bool IsReadOnly
-5.   GetFile Size(string directory)
-6.   MakeDirectory
-7.   RemoveDirectory(string path)
-8.   DirectoryFiles
-9.   Get FileName
-10.  ReceiveBinaryData
-11.  ReceiveBinaryData(int size)
-12.  ReceiveBinaryData(byte[] data)
-13.  ReceiveFile(string localName, string remoteName)
-14.  SendBinaryData(byte[] data)
-15.  SendBinaryData(byte[] data, int length)
-16.  SendFile(string localName, string remoteName)
-17.  RenameFile(string OldFileName, string NewFileName)
+1.   ChangeTime `(Describtion Coming Soon)`
+2.   CreationTime `(Describtion Coming Soon)`
+3.   bool IsDirectory `(Describtion Coming Soon)`
+4.   bool IsReadOnly `(Describtion Coming Soon)`
+5.   GetFile Size(string directory) `(Describtion Coming Soon)`
+6.   MakeDirectory `(Describtion Coming Soon)`
+7.   RemoveDirectory(string path) `(Describtion Coming Soon)`
+8.   DirectoryFiles `(Describtion Coming Soon)`
+9.   Get FileName `(Describtion Coming Soon)`
+10.  ReceiveBinaryData `(Describtion Coming Soon)`
+11.  ReceiveBinaryData(int size) `(Describtion Coming Soon)`
+12.  ReceiveBinaryData(byte[] data) `(Describtion Coming Soon)`
+13.  ReceiveFile(string localName, string remoteName) `(Describtion Coming Soon)`
+14.  SendBinaryData(byte[] data) `(Describtion Coming Soon)`
+15.  SendBinaryData(byte[] data, int length) `(Describtion Coming Soon)`
+16.  SendFile(string localName, string remoteName) `(Describtion Coming Soon)`
+17.  RenameFile(string OldFileName, string NewFileName) `(Describtion Coming Soon)`
 ```
 ### XNOTIFY Features
 ```markdown
-1.   Show()
-2.    `(Allows The Pgrammer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
+1.   Show(message)`(Allows The Programmer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
 3.   Show (Message , Logo , Switch)
 4.   Show (Message , Switch)
 5.   Show (Message , Logo)
@@ -143,19 +142,19 @@ namespace Custom_namespace
    }
 }
 ```
-[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://xbm360.github.io/XDCKIT/) For More Example's
+[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://XboxVillain.github.io/XDCKIT/) For More Example's
 ## Quick Guide
 
 ### Getting Started
 
-You can Either Build Yourself By Downloading the Source Or Just Grabbing The Latest Dll Extention.
+You can Either Build Yourself By Downloading the Source Or Just Grabbing [The Latest Dll Extention](https://github.com/XBM360/XDCKIT/releases).
 
 ### Connection
 
 Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
 
 ### Xbox 360 Plugin Requirements
-xbdm.xex
+xbdm.xex , 
 
 ### Computer Requirements
 A Working Tool Using this Extention Properly
