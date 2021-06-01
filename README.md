@@ -52,11 +52,11 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 6.   SetDataBreakpoint `(In Development)`
 7.   IsBreakpoint `(In Development)`
 8.   Invalidate MemoryCache `(In Development)`
-9.   Poke `(Describtion Coming Soon)`
-10.  peek `(Describtion Coming Soon)`
+9.   Poke `(Allows User To Change The Value An Address)`
+10.  peek `(Allows User To Look Up Current Value Via Address)`
 11.  Find Hex Offset`(Describtion Coming Soon)`
-12.  constant Memory Setting `(Describtion Coming Soon)`
-13.  constant Memory Set `(Describtion Coming Soon)`
+12.  constant Memory Setting `(Allows user to set value and make that value never change)`
+13.  constant Memory Set `(Allows user to set value and make that value never change)`
 14.  Get Memory / Set Memory `(Describtion Coming Soon)`
 15.  Dump Memory `(Describtion Coming Soon)`
 16.  ResolveFunction `(Describtion Coming Soon)`
@@ -79,26 +79,24 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ### Current FileSystem Features
 ```markdown
 1.   ChangeTime `(Describtion Coming Soon)`
-2.   CreationTime `(Describtion Coming Soon)`
-3.   bool IsDirectory `(Describtion Coming Soon)`
-4.   bool IsReadOnly `(Describtion Coming Soon)`
-5.   GetFile Size(string directory) `(Describtion Coming Soon)`
-6.   MakeDirectory `(Describtion Coming Soon)`
-7.   RemoveDirectory(string path) `(Describtion Coming Soon)`
-8.   DirectoryFiles `(Describtion Coming Soon)`
-9.   Get FileName `(Describtion Coming Soon)`
-10.  ReceiveBinaryData `(Describtion Coming Soon)`
-11.  ReceiveBinaryData(int size) `(Describtion Coming Soon)`
-12.  ReceiveBinaryData(byte[] data) `(Describtion Coming Soon)`
-13.  ReceiveFile(string localName, string remoteName) `(Describtion Coming Soon)`
-14.  SendBinaryData(byte[] data) `(Describtion Coming Soon)`
-15.  SendBinaryData(byte[] data, int length) `(Describtion Coming Soon)`
-16.  SendFile(string localName, string remoteName) `(Describtion Coming Soon)`
-17.  RenameFile(string OldFileName, string NewFileName) `(Describtion Coming Soon)`
+2.   CreationTime `(Checks For The Date And Time Of Creation Of The FIle)`
+3.   bool IsDirectory `(Checks If its A File Or a Directory)`
+4.   bool IsReadOnly `(Checks If FIle Is At Read Only State)`
+5.   GetFile Size(string directory) `(File Size Information)`
+6.   MakeDirectory `(Creates A New Directory)`
+7.   RemoveDirectory(string path) `(Removes  Directory From Path)`
+8.   DirectoryFiles `(Display's The Directory Files)`
+9.   Get FileName `(Get's The FIle Name From Path)`
+10.  ReceiveBinaryData `(Retrieves Binary Data)`
+13.  ReceiveFile`(Retrieves Files From The Console)`
+14.  SendBinaryData`(Sends Binary Data)`
+16.  SendFile`(Sends Files From Or To the Console)`
+17.  RenameFile `(Renames Desired File or File's)`
 ```
 ### XNOTIFY Features
 ```markdown
-1.   Show(message)`(Allows The Programmer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
+`(Allows The Programmer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
+1.   Show(message)
 3.   Show (Message , Logo , Switch)
 4.   Show (Message , Switch)
 5.   Show (Message , Logo)
