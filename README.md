@@ -15,7 +15,7 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ```markdown
 1.  Get SMC Version
 2.  Reboot Console Or Game Title
-3.  XboxShortcuts (witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc)
+3.  XboxShortcuts `witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc`
 4.  Get Box ID (Get's The Xbox's identification number)
 5.  Set Console Color (Allows User to Turns The Console's Default Neighborhood Icon to any of the following... (black , blue , bluegray , nosidecar) 
 6.  Get Console ID (Gets The Console's identification number)
