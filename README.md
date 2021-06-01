@@ -159,7 +159,7 @@ xbdm.xex
 ### Computer Requirements
 A Working Tool Using this Extention Properly
 ## Contributors
-* [ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
+* [@ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
 ## Disclaimer
 I have no liability for any damages done to your system by using this extention.
 ## License
