@@ -98,11 +98,12 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ```
 ### XNOTIFY Features
 ```markdown
-1.   Show `(Allows The Pgrammer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)
-2.   Show `(Message , Logo , Switch)`
-3.   Show `(Message , Switch)`
-4.   Show `(Message , Logo)`
-5.   XMessage (Allow The Console To Display A MessageBox `(In Development)) `
+1.   Show()
+2.    `(Allows The Pgrammer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
+3.   Show (Message , Logo , Switch)
+4.   Show (Message , Switch)
+5.   Show (Message , Logo)
+6.   XMessage (Allow The Console To Display A MessageBox `(In Development)) `
 ```
 # So Many More Features!
 
