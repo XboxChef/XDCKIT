@@ -15,18 +15,18 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ```markdown
 1.  Get SMC Version
 2.  Reboot Console Or Game Title
-3.  XboxShortcuts `(witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc)
-4.  Get Box ID `(Get's The Xbox's identification number)
-5.  Set Console Color `(Allows User to Turns The Console's Default Neighborhood Icon to any of the following... (black , blue , bluegray , nosidecar) 
-6.  Get Console ID `(Gets The Console's identification number)
-7.  Get DM Version `(Allows User To See The Debug Monitor Version)
-8.  Get System Info `(allows user see Various Console Information)
-9.  Reboot Cold Or Warm `(Allows user to Perform A Warm In A Very Fast Manner Or A Cold Reboot WItch Attempts To Reboot Slowly)
-10. Freeze Console `(Allows User Perform A Stop Or Go Witch Tempory Freezes The Console Until A Go Command Is Sent)
-11. Get Console Type `(Allows The User The See Witch Console Type They Own)
-12. CloseConnection `(Allows For The Connection From The Device To Be severed From Each Other)
-13. Reconnect `(Allows The User To Add A Delay So when The Console Is Ready The User Can Connect To It)
-14. OpenConnection `(Find's Console And Connects To the IP Found and does not set class meaning you would have to set ConsoleX TO XDCKIT)
+3.  XboxShortcuts `(witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc)`
+4.  Get Box ID `(Get's The Xbox's identification number)`
+5.  Set Console Color `(Allows User to Turns The Console's Default Neighborhood Icon to any of the following... (black , blue , bluegray , nosidecar)`
+6.  Get Console ID `(Gets The Console's identification number)`
+7.  Get DM Version `(Allows User To See The Debug Monitor Version)`
+8.  Get System Info `(allows user see Various Console Information)`
+9.  Reboot Cold Or Warm `(Allows user to Perform A Warm In A Very Fast Manner Or A Cold Reboot WItch Attempts To Reboot Slowly)`
+10. Freeze Console `(Allows User Perform A Stop Or Go Witch Tempory Freezes The Console Until A Go Command Is Sent)`
+11. Get Console Type `(Allows The User The See Witch Console Type They Own)`
+12. CloseConnection `(Allows For The Connection From The Device To Be severed From Each Other)`
+13. Reconnect `(Allows The User To Add A Delay So when The Console Is Ready The User Can Connect To It)`
+14. OpenConnection `(Find's Console And Connects To the IP Found and does not set class meaning you would have to set ConsoleX TO XDCKIT)`
 15. Get CPU Key
 16. Get Kernal Version
 17. Get Temperature
@@ -37,21 +37,21 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 22. Xex Pc To File Header
 23. Xam Get Current Title Id
 24. ShutDown
-25. Quick Sign In  `(In Beta Testing Phase)
+25. Quick Sign In  `(In Beta Testing Phase)`
 26. Fan Speed Control
-27. Get Sign in State `(In Beta Testing Phase)
-28. Trainer Features `(witch allows The ability To Share Modified Files For Any Game To Be modded)
+27. Get Sign in State `(In Beta Testing Phase)`
+28. Trainer Features `(witch allows The ability To Share Modified Files For Any Game To Be modded)`
 ```
 ### Debugging Features
 ```markdown
-1.   NULL_Address `(Allows The User To Add An Adress witch sets The Value To 6000000 meaning that you are making a null value)
-2.   SetBreakpoint `(In Development)
-3.   RemoveBreakpoint `(In Development)
-4.   RemoveAllBreakpoints `(In Development)
-5.   SetInitialBreakpoint `(In Development)
-6.   SetDataBreakpoint `(In Development)
-7.   IsBreakpoint `(In Development)
-8.   Invalidate MemoryCache `(In Development)
+1.   NULL_Address `(Allows The User To Add An Adress witch sets The Value To 6000000 meaning that you are making a null value)`
+2.   SetBreakpoint `(In Development)`
+3.   RemoveBreakpoint `(In Development)`
+4.   RemoveAllBreakpoints `(In Development)`
+5.   SetInitialBreakpoint `(In Development)`
+6.   SetDataBreakpoint `(In Development)`
+7.   IsBreakpoint `(In Development)`
+8.   Invalidate MemoryCache `(In Development)`
 9.   Poke
 10.  peek
 11.  Find Hex Offset
@@ -99,10 +99,10 @@ Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/Qv
 ### XNOTIFY Features
 ```markdown
 1.   Show `(Allows The Pgrammer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)
-2.   Show `(Message , Logo , Switch)
-3.   Show `(Message , Switch)
-4.   Show `(Message , Logo)
-5.   XMessage `(Allow The Console To Display A MessageBox (In Development)) 
+2.   Show `(Message , Logo , Switch)`
+3.   Show `(Message , Switch)`
+4.   Show `(Message , Logo)`
+5.   XMessage (Allow The Console To Display A MessageBox `(In Development)) `
 ```
 # So Many More Features!
 
