@@ -1,7 +1,7 @@
 #  Xbox Direct Connect Kit (XDCKIT)
 Give A ⭐ To Support This Project.
 
-[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/QvdmNnfQ86)
+[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/6cEdez7cge)
 
 
 An open source library designed to Emulate or Imitate The XDevkit library extention to work exactly like the original with New added features
