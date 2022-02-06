@@ -7,7 +7,7 @@ Give A ⭐ To Support This Project.
 An open source library designed to Emulate or Imitate The XDevkit library extention to work exactly like the original with New added features
 
 I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
-Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/QvdmNnfQ86)!
+Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/6cEdez7cge)!
 
 # Features
 
