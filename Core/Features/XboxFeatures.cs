@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
@@ -8,17 +8,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
-    /// Made By TeddyHammer
+    /// Made By Serenity
     /// </summary>
     public partial class XboxConsole //XboxFeatures
     {
@@ -29,8 +27,7 @@ namespace XDCKIT
         public string GetSMCVersion()
         {
             byte[] byte_0 = GetMemory(0x81AC7C50, 4);
-            object[] objArray1 = new object[] { " ", byte_0[2], ".", byte_0[3] };
-            return string.Concat(objArray1);
+            return string.Concat(new object[] { " ", byte_0[2], ".", byte_0[3] });
         }
 
 
@@ -47,9 +44,10 @@ namespace XDCKIT
 
             string[] lines = Name.Split("\\".ToCharArray());
             for (int i = 0; i < lines.Length - 1; i++)
-                MediaDirectory += lines[i] + "\\";
-            object[] Reboot = new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" };//TODO:
-            SendTextCommand(string.Concat(Reboot));
+            {
+              MediaDirectory += lines[i] + "\\";
+            }
+            SendTextCommand(string.Concat(new object[] { $"magicboot title=\"{Name}\" directory=\"{MediaDirectory}\"" }));
         }
 
         /// <summary>
@@ -238,7 +236,7 @@ namespace XDCKIT
         /// </summary>
         /// <param name="Type"></param>
         /// <returns>Type Is The System Type Of Information you Want To Retrieve</returns>
-        public string GetSystemInfo(Info Type)
+        public string GetSystemInfo(SystemInfo Type)
         {
             if (XboxClient.XboxName == null)
             {
@@ -249,7 +247,7 @@ namespace XDCKIT
                 Console.WriteLine("System Info Came Threw.. (Command Executed == " + Type + " )");
                 switch (Type)
                 {
-                    case Info.HDD:
+                    case SystemInfo.HDD:
                         #region HDD
                         try
                         {
@@ -264,10 +262,11 @@ namespace XDCKIT
                         }
                         catch
                         {
+                            throw new Exception("Failed To Grab System Info.");
                         }
                         #endregion
                         break;
-                    case Info.Type:
+                    case SystemInfo.Type:
                         #region Console Type
                         try
                         {
@@ -278,7 +277,7 @@ namespace XDCKIT
                         }
                         #endregion
                         break;
-                    case Info.Platform:
+                    case SystemInfo.Platform:
                         #region Platform
                         try
                         {
@@ -296,7 +295,7 @@ namespace XDCKIT
                         }
                         #endregion
                         break;
-                    case Info.System:
+                    case SystemInfo.System:
                         #region System
                         try
                         {
@@ -314,7 +313,7 @@ namespace XDCKIT
                         }
                         #endregion
                         break;
-                    case Info.BaseKrnlVersion:
+                    case SystemInfo.BaseKrnlVersion:
                         #region BaseKrnlVersion
                         try
                         {
@@ -332,7 +331,7 @@ namespace XDCKIT
                         }
                         #endregion
                         break;
-                    case Info.KrnlVersion:
+                    case SystemInfo.KrnlVersion:
                         #region Kernal Version
                         try
                         {
@@ -350,7 +349,7 @@ namespace XDCKIT
                         }
                         #endregion
                         break;
-                    case Info.XDKVersion:
+                    case SystemInfo.XDKVersion:
                         #region XDK Version
                         try
                         {
@@ -374,14 +373,14 @@ namespace XDCKIT
         /// <summary>
         /// Reboot Method flag types cold or warm reboot.
         /// </summary>
-        public void Reboot(XboxReboot Warm_or_Cold)
+        public void Reboot(XboxReboot RebootType)
         {
 
-            if (Warm_or_Cold == XboxReboot.Cold)
+            if (RebootType == XboxReboot.Cold)
             {
                 SendTextCommand("magicboot cold");
             }
-            if (Warm_or_Cold == XboxReboot.Warm)
+            if (RebootType == XboxReboot.Warm)
             {
                 SendTextCommand("magicboot warm");
             }
@@ -390,14 +389,14 @@ namespace XDCKIT
         /// <summary>
         /// Freezes/Stops Console.
         /// </summary>
-        public void FreezeConsole(XboxSwitch Freeze)
+        public void FreezeConsole(bool Freeze)
         {
 
-            if (Freeze == XboxSwitch.True)
+            if (Freeze == true)
             {
                 SendTextCommand("stop");
             }
-            else if (Freeze == XboxSwitch.False)
+            else
             {
                 SendTextCommand("go");
             }
@@ -428,7 +427,7 @@ namespace XDCKIT
 
             XboxClient.Disconnect();
         }
-        
+
         /// <summary>
         /// Reconnect Feature.
         /// </summary>
@@ -442,12 +441,11 @@ namespace XDCKIT
         /// </summary>
         private void OpenConnection(string port)
         {
-
             XboxClient.Connect("default", XboxClient.Port);
         }
 
 
-        public void Get_GameTitle()
+        public void GrabGameTitle()
         {
 
         }
@@ -457,9 +455,7 @@ namespace XDCKIT
         /// </summary>
         public string GetCPUKey()
         {
-
-            string str = string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"");
-            return SendTextCommand(str).Replace("200- ", string.Empty);
+            return SendTextCommand(string.Concat("consolefeatures ver=", 2, " type=10 params=\"A\\0\\A\\0\\\"")).Replace("200- ", string.Empty);
         }
 
 
@@ -470,9 +466,8 @@ namespace XDCKIT
         public uint GetKernalVersion()
         {
 
-            string str = string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\"");
-            string str1 = SendTextCommand(str);
-            return uint.Parse(str1.Substring(str1.find(" ") + 1));
+            string str = SendTextCommand(string.Concat("consolefeatures ver=", 2, " type=13 params=\"A\\0\\A\\0\\\""));
+            return uint.Parse(str.Substring(str.find(" ") + 1));
         }
 
         /// <summary>
@@ -482,9 +477,7 @@ namespace XDCKIT
         /// <returns></returns>
         public uint GetTemperature(TemperatureFlag TemperatureType)//TODO: Rework this...
         {
-
-            string Command = "consolefeatures ver=" + (uint)2 + " type=15 params=\"A\\0\\A\\1\\" + (uint)1 + "\\" + (int)TemperatureType + "\\\"";
-            string String = SendTextCommand(Command);
+            string String = SendTextCommand("consolefeatures ver=" + (uint)2 + " type=15 params=\"A\\0\\A\\1\\" + (uint)1 + "\\" + (int)TemperatureType + "\\\"");
             return uint.Parse(String.Substring(String.find(" ")), NumberStyles.HexNumber);
         }
 
@@ -524,13 +517,11 @@ namespace XDCKIT
         }
         private uint GetModuleHandle(string ModuleName)
         {
-            object[] arguments = new object[] { ModuleName };
-            return XboxExtention.Call<uint>(ModuleName, 0x44e, arguments);
+            return XboxExtention.Call<uint>(ModuleName, 0x44e, new object[] { ModuleName });
         }
         private uint LaunchSystemDLLThread(string ThreadPath)
         {
-            object[] arguments = new object[] { ThreadPath, 8, 0, 0 };
-            return XboxExtention.Call<uint>(krnlModule, 0x199, arguments);
+            return XboxExtention.Call<uint>(krnlModule, 0x199, new object[] { ThreadPath, 8, 0, 0 });
         }
         private void UnloadImage(string ModuleName, bool isSysDll)
         {

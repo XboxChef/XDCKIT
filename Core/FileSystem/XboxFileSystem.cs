@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 04/22/21
+//Made By Serenity on 04/22/21
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
@@ -9,12 +9,10 @@ using System.Net.Sockets;
 
 namespace XDCKIT
 {
-    public class XboxFileSystem
+    public class XboxFile
     {
-        private static string FileLocation = string.Empty;
 
-
-        public XboxFileSystem()
+        public XboxFile()
         {
         }
 
@@ -23,19 +21,15 @@ namespace XDCKIT
         /// </summary>
         public string ChangeTime(string directory)
         {
-            FileInfo fi = new FileInfo(FileLocation);
-            FileLocation = directory;
-            return fi.LastWriteTime.ToString();
+            return new FileInfo(directory).LastWriteTime.ToString();
         }
+
         /// <summary>
         /// 
         /// </summary>
         public string CreationTime(string directory)
         {
-            FileInfo fi = new FileInfo(FileLocation);
-            FileLocation = directory;
-            DateTime creationTime = fi.CreationTime;
-            return creationTime.ToString();
+            return new FileInfo(directory).CreationTime.ToString();
         }
 
         /// <summary>
@@ -45,8 +39,7 @@ namespace XDCKIT
         /// <returns></returns>
         public string[] DirectoryFiles(string path)
         {
-            string sdr = string.Concat("dir name=\"{0}\"", path);
-            return new[] { XboxConsole.SendTextCommand(sdr) };
+            return new[] { XboxConsole.SendTextCommand(string.Concat("dir name=\"{0}\"", path)) };
 
         }
         /// <summary>
@@ -54,12 +47,8 @@ namespace XDCKIT
         /// </summary>
         public bool IsDirectory(string directory)
         {
-
-            // get the file attributes for file or directory
-            FileAttributes Path = File.GetAttributes(FileLocation);
-            FileLocation = directory;
-            //detect whether its a directory or file
-            if ((Path & FileAttributes.Directory) == FileAttributes.Directory)
+            //get the file attributes for file or directory and detect whether its a directory or file
+            if ((File.GetAttributes(directory) & FileAttributes.Directory) == FileAttributes.Directory)
             {
                 return true;
             }
@@ -69,14 +58,11 @@ namespace XDCKIT
             }
         }
         /// <summary>
-        /// 
+        ///  Gets value that determines if the current file is read only.
         /// </summary>
         public bool IsReadOnly(string directory)
         {
-            FileInfo fi = new FileInfo(FileLocation);
-            FileLocation = directory;
-            // File ReadOnly ?  
-            return fi.IsReadOnly;
+            return new FileInfo(directory).IsReadOnly;
         }
         /// <summary>
         /// Create the specified directory on the console.
@@ -92,9 +78,7 @@ namespace XDCKIT
         /// </summary>
         public string Name(string directory)
         {
-            FileInfo fi = new FileInfo(FileLocation);
-            FileLocation = directory;
-            return fi.Name;
+            return new FileInfo(directory).Name;
         }
 
         /// <summary>
@@ -170,32 +154,49 @@ namespace XDCKIT
             XboxConsole Xbox = new XboxConsole();
             Xbox.SendTextCommand("fileeof name=\"{0}\" size={1}", fileName, size);
         }
-        //public /*unsafe*/ DateTime SystemTime
-        //{
-        //    get
-        //    {
-        //        string response = SendCommand("systime");
-        //        if (response.Type == ResponseType.SingleResponse)
-        //        {
-        //            string ticks = string.Format("0x{0}{1}",
-        //                response.Message.Substring(7, 7),
-        //                response.Message.Substring(21).PadLeft(8, '0')
-        //                );
-        //            return DateTime.FromFileTime(Convert.ToInt64(ticks, 16));
-        //        }
-        //        //else throw new ApiException("Failed to get xbox system time.");
-        //    }
-        //    set
-        //    {
-        //        long fileTime = value.ToFileTimeUtc();
-        //        int lo = (int)(fileTime & 0xFFFFFFFF); // *(int*)&fileTime;
-        //        int hi = (int)(((ulong)fileTime & 0xFFFFFFFF00000000UL) >> 32);// *((int*)&fileTime + 1);
+        public DateTime SystemTime
+        {
 
-        //        StatusResponse response = SendCommand(string.Format("setsystime clockhi=0x{0} clocklo=0x{1} tz=1", Convert.ToString(hi, 16), Convert.ToString(lo, 16)));
-        //        if (response.Type != ResponseType.SingleResponse)
-        //            throw new ApiException("Failed to set xbox system time.");
-        //    }
-        //}
+            get
+            {
+                string response = SendCommand("systime");
+                if (response == ResponseType.SingleResponse.ToString())
+                {
+                    string ticks = string.Format("0x{0}{1}",
+                        response.Substring(7, 7),
+                        response.Substring(21).PadLeft(8, '0')
+                        );
+                    return DateTime.FromFileTime(Convert.ToInt64(ticks, 16));
+                }
+                else
+                {
+                    throw new Exception("Failed to get xbox system time.");
+                }
+            }
+            set
+            {
+                
+                long fileTime = value.ToFileTimeUtc();
+                int lo = (int)(fileTime & 0xFFFFFFFF); // *(int*)&fileTime;
+                int hi = (int)(((ulong)fileTime & 0xFFFFFFFF00000000UL) >> 32);// *((int*)&fileTime + 1);
+                string response = SendCommand(string.Format("setsystime clockhi=0x{0} clocklo=0x{1} tz=1", Convert.ToString(hi, 16), Convert.ToString(lo, 16)));
+                if (response != ResponseType.SingleResponse.ToString())
+                {
+
+                }
+                else
+                {
+                    throw new Exception("Failed to set xbox system time.");
+                }
+                    //throw new ApiException("Failed to set xbox system time.");
+            }
+        }
+
+        private string SendCommand(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates a file on the xbox.
         /// </summary>
@@ -207,7 +208,7 @@ namespace XDCKIT
             if (createDisposition == FileMode.Open) { if (!File.Exists(fileName)) throw new FileNotFoundException("File does not exist."); }
             else if (createDisposition == FileMode.Create) Xbox.SendTextCommand("fileeof name=\"" + fileName + "\" size=0 cancreate");
             else if (createDisposition == FileMode.CreateNew) Xbox.SendTextCommand("fileeof name=\"" + fileName + "\" size=0 mustcreate");
-           // else throw "Unsupported FileMode.";
+            // else throw "Unsupported FileMode.";
         }
         /// <summary>
         /// Delete the specified folder path from the console.
@@ -277,9 +278,7 @@ namespace XDCKIT
         /// </summary>
         public long Size(string directory)
         {
-            FileInfo fi = new FileInfo(FileLocation);
-            FileLocation = directory;
-            return fi.Length;
+            return new FileInfo(directory).Length;
         }
 
         /// <summary>

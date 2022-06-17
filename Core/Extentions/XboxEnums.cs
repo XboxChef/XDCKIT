@@ -1,11 +1,30 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
 namespace XDCKIT
 {
-
+    public enum PeekType
+    {
+        String,
+        Float,
+        Double,
+        Short,
+        Byte,
+        Long,
+        Quad
+    }
+    public enum PokeType
+    {
+        String,
+        Float,
+        Double,
+        Short,
+        Byte,
+        Long,
+        Quad
+    }
     public enum EndianType
     {
         BigEndian,
@@ -139,7 +158,7 @@ namespace XDCKIT
     /// <summary>
     /// Used to Get Version Information And Console Type
     /// </summary>
-    public enum Info
+    public enum SystemInfo
     {
         HDD,
         Type,

@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace XDCKIT
 {
@@ -77,8 +76,7 @@ namespace XDCKIT
         public static bool Connect(this XboxConsole Source, out XboxConsole Client)
         {
             string ConsoleNameOrIP = "jtag";
-            Client = Source;
-            Client = new XboxConsole();//sets Class For Client
+            Client = Source = new XboxConsole();//sets Class For Client
 
             // If user specifies to find their console IP address
             if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
@@ -125,8 +123,7 @@ namespace XDCKIT
         /// <returns></returns>
         public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "jtag")
         {
-            Client = Source;
-            Client = new XboxConsole();//sets Class For Client
+            Client = Source = new XboxConsole();//sets Class For Client
 
             // If user specifies to find their console IP address
             if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
@@ -174,8 +171,7 @@ namespace XDCKIT
         /// <returns></returns>
         public static bool Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "jtag", int Port = 730)
         {
-            Client = Source;
-            Client = new XboxConsole();//sets Class For Client
+            Client = Source = new XboxConsole();
 
             // If user specifies to find their console IP address
             if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(string.Empty) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))

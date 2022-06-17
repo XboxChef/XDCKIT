@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
@@ -9,7 +9,7 @@ using System.Text;
 namespace XDCKIT
 {
     /// <summary>
-    /// Made By TeddyHammer If Copied You Must Give Credit... Do Not Delete This Comment..
+    /// Made By Serenity If Copied You Must Give Credit... Do Not Delete This Comment..
     /// </summary>
     public class XNotify
     {
@@ -41,7 +41,7 @@ namespace XDCKIT
         /// <param name="int_7"></param>
         public static void XMessage(int IconType, string Title, string Button1_Text, int int_5, string[] Body, int int_6, int int_7)
         {
-           //TODO:
+            //TODO:
         }
         /// <summary>
         /// Sends A Costume Message Via Xbox Notification System.

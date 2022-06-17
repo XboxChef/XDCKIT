@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 using System;
@@ -12,7 +12,7 @@ namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
-    /// Made By TeddyHammer
+    /// Made By Serenity
     /// </summary>
     public partial class XboxConsole //XboxTypes
     {
@@ -431,7 +431,7 @@ namespace XDCKIT
         #endregion
 
         #region Int64 {Get; Set;}
-        public long ReadInt64(uint Offset)
+        public static long ReadInt64(uint Offset)
         {
             GetMemory(Offset, 8, myBuff, out outInt);
             Array.Reverse(myBuff, 0, 8);
@@ -647,7 +647,7 @@ namespace XDCKIT
         #endregion
 
         #region Double {get; Set;}
-        public double GetDouble(uint Address)
+        public double ReadDouble(uint Address)
         {
             byte[] memory = GetMemory(Address, 4);
             ReverseBytes(memory, 4);
@@ -683,7 +683,7 @@ namespace XDCKIT
             {
                 if (ProgressCallback != null)
                 {
-                    ProgressCallback((int)Math.Round(((double)i / (double)InputBuffer.Length) * 100));
+                    ProgressCallback((int)Math.Round((i / (double)InputBuffer.Length) * 100));
                 }
 
                 if (BComp(InputBuffer, i, ToSearch))

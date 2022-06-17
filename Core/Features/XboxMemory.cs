@@ -1,5 +1,5 @@
 ﻿//Do Not Delete This Comment... 
-//Made By TeddyHammer on 08/20/16
+//Made By Serenity on 08/20/16
 //Any Code Copied Must Source This Project (its the law (:P)) Please.. i work hard on it since 2016.
 //Thank You for looking love you guys...
 
@@ -12,13 +12,12 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace XDCKIT
 {
     /// <summary>
     /// Xbox Emulation Class
-    /// Made By TeddyHammer
+    /// Made By Serenity
     /// </summary>
     public partial class XboxConsole //XboxMemory Commands
     {
@@ -44,7 +43,6 @@ namespace XDCKIT
             List<byte> ReturnData = new List<byte>();
             byte[] Packet = new byte[1026];
             byte[] PacketData = new byte[1024];
-            int ProgressPercentage = 0;
 
             // Send getmemex command.
             XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n", Address.ToString("X2"), Length.ToString("X2"))));
@@ -59,14 +57,14 @@ namespace XDCKIT
             // Length / 1024 will get how many packets there are to receive
             for (uint i = 0; i < Length / 1024; i++)
             {
-               XboxClient.XboxName.Client.Receive(Packet);
+                XboxClient.XboxName.Client.Receive(Packet);
 
                 // Store the data minus the first two bytes
                 // This was a cheap way of removing the 2 byte header
                 Array.Copy(Packet, 2, PacketData, 0, 1024);
                 ReturnData.AddRange(PacketData);
 
-               
+
             }
 
             // Get the remainder of Length / 1024 to see if we are receiving extra.
@@ -88,7 +86,6 @@ namespace XDCKIT
         public void DumpMemory(uint Address, uint Length, string FileName)
         {
             byte[] Packet = new byte[1026];
-            int ProgressPercentage = 0;
 
             // Send getmemex command.
             XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(string.Format("GETMEMEX ADDR=0x{0} LENGTH=0x{1}\r\n", Address.ToString("X2"), Length.ToString("X2"))));
@@ -182,6 +179,10 @@ namespace XDCKIT
             byte[] data = buffer1;
             SetMemory(address, data);
         }
+        public void Responses(string type)
+        {
+
+        }
         /// <summary>
         /// Sends Commands Based On User's Input
         /// </summary>
@@ -198,6 +199,7 @@ namespace XDCKIT
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + "\r\n"));
                     Thread.Sleep(1000);
                     XboxClient.XboxName.Client.Receive(Packet);
+                    
                     return Encoding.ASCII.GetString(Packet).Replace("\0", string.Empty).Replace("\r\n", string.Empty).Replace("\"", string.Empty).Replace("202- multiline response follows\n", string.Empty).Replace("201- connected\n", string.Empty.Replace("200-", string.Empty));//
 
 
@@ -248,7 +250,7 @@ namespace XDCKIT
             {
                 // Max packet size is 1026
                 byte[] Packet = new byte[1026];
-                if (Connected == true)
+                if (XboxClient.Connected == true)
                 {
                     Console.WriteLine("SendTextCommand " + Command + " ==> Sending Command... <==");
                     XboxClient.XboxName.Client.Send(Encoding.ASCII.GetBytes(Command + Environment.NewLine));
@@ -331,7 +333,7 @@ namespace XDCKIT
                 {
                     if (poketype == "Unicode String")
                     {
-                       //IO.Out.WriteUnicodeString(amount, amount.Length);
+                        //IO.Out.WriteUnicodeString(amount, amount.Length);
                     }
                     if (poketype == "ASCII String")
                     {
@@ -339,7 +341,7 @@ namespace XDCKIT
                     }
                     if ((poketype == "String") | (poketype == "string"))
                     {
-                        SetMemory(offset,amount);
+                        SetMemory(offset, amount);
                     }
                     if (poketype.ToLower() == "float")
                     {
@@ -347,11 +349,11 @@ namespace XDCKIT
                     }
                     if (poketype.ToLower() == "double")
                     {
-                         //SetMemory(offset, double.Parse(amount));
+                        //SetMemory(offset, double.Parse(amount));
                     }
                     if (poketype.ToLower() == "short")
                     {
-                         //SetMemory((short)Convert.ToUInt32(amount, 0x10));
+                        //SetMemory((short)Convert.ToUInt32(amount, 0x10));
                     }
                     if (poketype.ToLower() == "byte")
                     {
@@ -360,11 +362,11 @@ namespace XDCKIT
                     }
                     if (poketype.ToLower() == "long")
                     {
-                         //SetMemory(offset, (long)Convert.ToUInt32(amount, 0x10));
+                        //SetMemory(offset, (long)Convert.ToUInt32(amount, 0x10));
                     }
                     if (poketype.ToLower() == "quad")
                     {
-                       // SetMemory(offset, (long)Convert.ToUInt64(amount, 0x10));
+                        // SetMemory(offset, (long)Convert.ToUInt64(amount, 0x10));
                     }
                     if (poketype.ToLower() == "int")
                     {
@@ -383,42 +385,30 @@ namespace XDCKIT
             }
         }
 
-        public string PeekXbox(uint offset, string type)
+        public string PeekXbox(uint offset, PeekType type)
         {
-           
-                string hex = "X";
-                object rn = null;
-                    if ((type == "String") | (type == "string"))
-                    {
+            switch(type)
+            {
+                case PeekType.String:
+                    return ReadString(offset);
+                case PeekType.Float:
+                    return GetMemory(offset, 10).ToString();
+                case PeekType.Double:
+                    return ReadDouble(offset).ToString("X");
+                case PeekType.Short:
+                    return ReadInt16(offset).ToString("X");
+                case PeekType.Byte:
+                    return ReadByte(offset).ToString("X");
+                case PeekType.Long:
+                    return ReadInt32(offset).ToString("X");
+                case PeekType.Quad:
+                    return ReadInt64(offset).ToString("X");
+                default:
+                    return null;
 
-                    //    rn = IO.In.ReadString();
-                    }
-                    if ((type == "Float") | (type == "float"))
-                    {
-                        GetMemory(offset, 10);
-                    }
-                    if ((type == "Double") | (type == "double"))
-                    {
-                     //   rn = IO.In.ReadDouble();
-                    }
-                    if ((type == "Short") | (type == "short"))
-                    {
-                    //    rn = IO.In.ReadInt16().ToString(hex);
-                    }
-                    if ((type == "Byte") | (type == "byte"))
-                    {
-                      //  rn = IO.In.ReadByte().ToString(hex);
-                    }
-                    if ((type == "Long") | (type == "long"))
-                    {
-                      //  rn = IO.In.ReadInt32().ToString(hex);
-                    }
-                    if ((type == "Quad") | (type == "quad"))
-                    {
-                     //   rn = IO.In.ReadInt64().ToString(hex);
-                    }
-                    return rn.ToString();
-                
+
+            }
+
         }
 
 
