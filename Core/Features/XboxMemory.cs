@@ -879,7 +879,18 @@ namespace XDCKIT
                 XboxClient.XboxName.SendTimeout = oldTimeOut;   // make sure to restore old timeout
             }
         }
-
+        public string memstat()
+        {
+            return SendTextCommand("consolemem");
+        }
+        public void CMDLine(string Command)
+        {
+            SendTextCommand("cmdline=\""+Command);
+        }
+        public void NOTIFYAT(string port)
+        {
+            SendTextCommand("NOTIFYAT PORT=" + port);
+        }
         /// <summary>
         /// Waits for a specified amount and then flushes it from the socket buffer.
         /// </summary>

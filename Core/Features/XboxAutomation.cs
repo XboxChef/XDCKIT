@@ -1,73 +1,61 @@
-﻿//// Decompiled with JetBrains decompiler
-//// Type: XDevkit.IXboxAutomation
-//// Assembly: XDevkit, Version=2.0.21256.0, Culture=neutral, PublicKeyToken=null
-//// MVID: 228FB035-F174-45DE-A3EC-F1520A3BE524
-//// Assembly location: C:\Program Files (x86)\Microsoft Xbox 360 SDK\bin\win32\xdevkit.dll
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-//using System.Runtime.CompilerServices;
-//using System.Runtime.InteropServices;
-
-//namespace XDCKIT
-//{
-//    public class XboxAutomation
-//    {
-//        public struct XBOX_AUTOMATION_GAMEPAD
-//        {
-//            public XboxAutomationButtonFlags Buttons;
-//            public uint LeftTrigger;
-//            public uint RightTrigger;
-//            public int LeftThumbX;
-//            public int LeftThumbY;
-//            public int RightThumbX;
-//            public int RightThumbY;
-//        }
-
-//        [DllImport("xinput1_4.dll")]
-//        static extern void GetInputProcess()
-//        {
-//           uint UserIndex, out bool SystemProcess
-//        }
-//        void BindController([In] uint UserIndex, [In] uint QueueLength)
-//        {
-
-//        }
-//        void UnbindController([In] uint UserIndex)
-//        {
-
-//        }
-//        void ConnectController([In] uint UserIndex)
-//        {
-
-//        }
-//        void DisconnectController([In] uint UserIndex)
-//        {
-
-//        }
-//        void SetGamepadState([In] uint UserIndex, [In] ref XBOX_AUTOMATION_GAMEPAD Gamepad)
-//        {
-
-//        }
-//        void QueueGamepadState_cpp(
-//          [In] uint UserIndex,
-//          [In] ref XBOX_AUTOMATION_GAMEPAD GamepadArray,
-//          [In] ref uint TimedDurationArray,
-//          [In] ref uint CountDurationArray,
-//          [In] uint ItemCount,
-//          out uint ItemsAddedToQueue);
-//        bool QueueGamepadState(
-//          [In] uint UserIndex,
-//          [In] ref XBOX_AUTOMATION_GAMEPAD Gamepad,
-//          [In] uint TimedDuration,
-//          [In] uint CountDuration);
-//        void ClearGamepadQueue([In] uint UserIndex);
-//        void QueryGamepadQueue(uint UserIndex,out uint QueueLength, out uint ItemsInQueue,out uint TimedDurationRemaining,out uint CountDurationRemaining);
-//        void GetUserDefaultProfile(out long Xuid)
-//        {
-
-//        }
-//        void SetUserDefaultProfile([In] long Xuid)
-//        {
-
-//        }
-//    }
-//}
+namespace XDCKIT
+{
+    public class XboxAutomation
+    {
+        static  void GetInputProcess(UserIndex Index, out bool SystemProcess)
+        {
+            SystemProcess = false;
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " process");
+        }
+        void BindController(UserIndex Index, uint QueueLength)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " bind queuelen="+ QueueLength);
+        }
+        void UnbindController(UserIndex Index)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " unbind");
+        }
+        void ConnectController(UserIndex Index)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " connect");
+        }
+        void DisconnectController(UserIndex Index) 
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " disconnect");
+        }
+        void SetGamepadState(UserIndex Index, ref XBOX_AUTOMATION_GAMEPAD Gamepad)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " setpacket");
+        }
+        bool QueueGamepadState(UserIndex Index, ref XBOX_AUTOMATION_GAMEPAD Gamepad,uint TimedDuration,uint CountDuration)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " queuepackets count="+ CountDuration);
+            return true;
+            
+        }
+        void ClearGamepadQueue(UserIndex Index)
+        {
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " clearqueue");
+        }
+        public void QueryGamepadQueue(UserIndex Index, out uint QueueLength, out uint ItemsInQueue, out uint TimedDurationRemaining, out uint CountDurationRemaining)
+        {
+            QueueLength = 0; 
+            ItemsInQueue = 0; 
+            TimedDurationRemaining = 0;
+            CountDurationRemaining = 0;
+            XboxConsole.SendTextCommand("autoinput user=" + Index + " queryqueue");
+        }
+        void GetUserDefaultProfile(out long Xuid)
+        {
+            XboxConsole.SendTextCommand("autoprof");
+            Xuid = 0;
+        }
+        void SetUserDefaultProfile(long Xuid)
+        {
+            XboxConsole.SendTextCommand("autoprof xuid="+ Xuid);
+        }
+    }
+}
