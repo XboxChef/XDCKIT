@@ -41,24 +41,6 @@ namespace XDCKIT
         #endregion
 
         #region Networking
-        public static string DefaultConsole
-        {
-            get
-            {
-                if (Connected)
-                {
-                    return IPAddress;
-                }
-                else
-                {
-                    return "Error";
-                }
-            }
-            set
-            {
-                DefaultConsole = value;
-            }
-        }
 
         public static int Port { get => port; set => port = value; }
 
@@ -91,22 +73,51 @@ namespace XDCKIT
                 XboxConsole.DefaultConsole = table["IPConfig"]["Default"];
             }
         }
+        public static void WriteToConfig(string DefaultConsole = "",string IPRange = "", string Port = "")
+        {
+            // Generate a TOML file programmatically
+            TomlTable toml = new TomlTable
+            {
+                ["title"] = "XDCKIT Config",
+                ["IPConfig"] = new TomlTable
+                {
+                    ["IP_Range"] = IPRange,
+                    ["Default"] = DefaultConsole,
+                    ["Port"] = Port
+                }
+            };
+            // Write to a file (or any TextWriter)
+            // You can forcefully escape ALL Unicode characters by uncommenting the following line:
+            // TOML.ForceASCII = true;
+            using (StreamWriter writer = File.CreateText(@"XDCKIT/config.toml"))
+            {
+                toml.WriteTo(writer);
+                // Remember to flush the data if needed!
+                writer.Flush();
+            }
+        }
         private static bool ConfigExistance()
         {
-            return !Directory.Exists(@"XDCKIT") | !File.Exists(@"XDCKIT/config.toml");
+            return !File.Exists(@"XDCKIT/config.toml");
         }
         #region Connection Types
-        public static bool Connect(this XboxConsole Source,out XboxConsole Console,string ConsoleNameOrIP = "jtag")
+        public static bool Connect(this XboxConsole Source, out XboxConsole Console, string ConsoleNameOrIP = "jtag", bool DefaultConsole = false)
         {
             Source = Console = new XboxConsole();
-            if(XboxConsole.DefaultConsole != string.Empty)
+            if (DefaultConsole == true)
             {
-                return Connect(XboxConsole.DefaultConsole);
+                return Connect(XboxConsole.DefaultConsole, true);
             }
-           else
+            else
             {
                 return Connect(ConsoleNameOrIP);
             }
+
+        }
+        public static bool Connect(this XboxConsole Source, out XboxConsole Console, string ConsoleNameOrIP = "jtag")
+        {
+            Source = Console = new XboxConsole();
+            return Connect(ConsoleNameOrIP);
         }
         /// <summary>
         /// 
@@ -116,7 +127,7 @@ namespace XDCKIT
         /// <param name="ConsoleNameOrIP"></param>
         /// <param name="Port"></param>
         /// <returns></returns>
-        public static bool Connect(string ConsoleNameOrIP = "jtag")
+        public static bool Connect(string ConsoleNameOrIP = "jtag", bool UseDefaultConsole = false)
         {
             if (string.IsNullOrEmpty(ConsoleNameOrIP))
             {
@@ -130,36 +141,16 @@ namespace XDCKIT
             {
                 ReadConfig();
             }
-
-            // If user specifies to find their console IP address
-            if (ConsoleNameOrIP.Equals("jtag") | ConsoleNameOrIP.Equals(null) | ConsoleNameOrIP.ToCharArray().Any(char.IsLetter))
-            {
-                if (FindConsole())//if true then continue
-                {
-                    try
-                    {
-                        XboxName = new TcpClient(IPAddress, 730);
-                        Reader = new StreamReader(XboxName.GetStream());
-                        IPAddress = ConsoleNameOrIP;
-
-                    }
-                    catch (SocketException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-
-                }
-            }
-            // If User Supply's IP To US.
-            else if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
+            if (UseDefaultConsole == true)
             {
                 try
                 {
-                    IPAddress = ConsoleNameOrIP;
-                    XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                    IPAddress = XboxConsole.DefaultConsole;
+                    XboxName = new TcpClient(XboxConsole.DefaultConsole, Port);
+                    XboxName.Client.Dispose();
                     XboxName.SendTimeout = 100;
-
                     Reader = new StreamReader(XboxName.GetStream());
+                    return true;
 
                 }
                 catch (SocketException ex)
@@ -167,8 +158,49 @@ namespace XDCKIT
                     throw new Exception(ex.Message);
                 }
             }
+            else
+            {
+                // If User Supply's IP To US.
+                if (ConsoleNameOrIP.ToCharArray().Any(char.IsDigit))
+                {
+                    try
+                    {
+                        IPAddress = ConsoleNameOrIP;
+                        XboxName = new TcpClient(ConsoleNameOrIP, Port);
+                        XboxName.Client.Dispose();
+                        XboxName.SendTimeout = 100;
+                        Reader = new StreamReader(XboxName.GetStream());
+                        return true;
 
-            return XboxName.Connected;
+                    }
+                    catch (SocketException ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                }
+                else
+                {
+                    if (FindConsole())//if true then continue
+                    {
+                        try
+                        {
+                            XboxName = new TcpClient(IPAddress, 730);
+                            XboxName.Client.Dispose();
+                            Reader = new StreamReader(XboxName.GetStream());
+                            IPAddress = ConsoleNameOrIP;
+                            return true;
+
+                        }
+                        catch (SocketException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            return false;
+                        }
+
+                    }
+                }
+            }
+            return false;
         }
         #endregion
         [Browsable(false)]

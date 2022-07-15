@@ -217,12 +217,6 @@ namespace XDCKIT
             }
             else throw new Exception("No Connection Detected");
         }
-
-        internal void Close()
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Sends Commands Based On User's Input
         /// </summary>
