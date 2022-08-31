@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 using Tommy;
 
 namespace XDCKIT
@@ -140,6 +141,10 @@ namespace XDCKIT
             else
             {
                 ReadConfig();
+                if (XboxConsole.DefaultConsole != null)
+                {
+                    UseDefaultConsole = true;
+                }
             }
             if (UseDefaultConsole == true)
             {
@@ -147,7 +152,6 @@ namespace XDCKIT
                 {
                     IPAddress = XboxConsole.DefaultConsole;
                     XboxName = new TcpClient(XboxConsole.DefaultConsole, Port);
-                    XboxName.Client.Dispose();
                     XboxName.SendTimeout = 100;
                     Reader = new StreamReader(XboxName.GetStream());
                     return true;
@@ -167,7 +171,6 @@ namespace XDCKIT
                     {
                         IPAddress = ConsoleNameOrIP;
                         XboxName = new TcpClient(ConsoleNameOrIP, Port);
-                        XboxName.Client.Dispose();
                         XboxName.SendTimeout = 100;
                         Reader = new StreamReader(XboxName.GetStream());
                         return true;
@@ -180,117 +183,57 @@ namespace XDCKIT
                 }
                 else
                 {
-                    if (FindConsole())//if true then continue
-                    {
-                        try
-                        {
-                            XboxName = new TcpClient(IPAddress, 730);
-                            XboxName.Client.Dispose();
-                            Reader = new StreamReader(XboxName.GetStream());
-                            IPAddress = ConsoleNameOrIP;
-                            return true;
+                    //if (FindConsole(0,100))//if true then continue
+                    //{
+                    //    try
+                    //    {
+                    //        XboxName = new TcpClient(IPAddress, 730);
+                    //        Reader = new StreamReader(XboxName.GetStream());
+                    //        IPAddress = ConsoleNameOrIP;
+                    //        return true;
 
-                        }
-                        catch (SocketException ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            return false;
-                        }
+                    //    }
+                    //    catch (SocketException ex)
+                    //    {
+                    //        Console.WriteLine(ex.Message);
+                    //        return false;
+                    //    }
 
-                    }
+                    //}
                 }
             }
             return false;
         }
         #endregion
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        static DoWorkEventHandler FindConsoleFunction()//TODO: Add a Second Search with a bool if connection is true then it will stop both for a faster search
+        public static void FindConsole(TimeSpan RetryDelay)
         {
-            for (int i = 1; i <= 100; i += 1)
+
+            XboxName = new TcpClient();
+            //if connection is false then it will continue 
+            if (!Connected)
             {
-                XboxName = new TcpClient();
-
-                try
+                for (int i = 1; i <= 255; i += 1)
                 {
-                    if (i == 100)
+                    if (System.Net.IPAddress.Parse(IP_Range + i).AddressFamily == AddressFamily.InterNetwork)
                     {
-                        if (!XboxName.Connected)
+                        if (XboxName.ConnectAsync(IP_Range + i, 730).Wait(RetryDelay))//keep calm just code..
                         {
-                            Console.WriteLine("Slave1 Reached 100 With No IPS Found");
-                            Console.WriteLine("Slave1 Is Console Even ON!");
-                        }
-                        else
-                        {
-                            return null;
-                        }
 
-                    }
-                    else
-                    {
-                        //if connection is false then it will continue 
-                        if (!Connected)
-                        {
-                            if (XboxName.ConnectAsync(IP_Range + i, 730).Wait(20))//keep calm just code..
-                            {
-                                //if Connection was A Success then it will set the found IP and it will signal the connection was true
-                                IPAddress = IP_Range + i;
-                                Connected = true;
-                                Console.WriteLine("Connected");
-                                return null;
-                            }
+                            //if Connection was A Success then it will set the found IP and it will signal the connection was true
+                            IPAddress = IP_Range + i;
+                            Connected = true;
+                            Console.WriteLine("Connected");
                         }
                     }
                 }
-                catch
-                {
-
-                    return null;
-                }
+                    
             }
-
-            Connected = false;
-            return null;
         }
-        public static void FindConsole(uint Retries, uint RetryDelay)
+
+        private static int DmSendCommand()
         {
-
+            throw new NotImplementedException();
         }
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        static bool FindConsole()
-        {
-            if (FindConsoleBc.IsBusy == true)
-            {
-                FindConsolegc.RunWorkerAsync();
-            }
-            else
-            {
-
-                FindConsoleBc.RunWorkerAsync();
-                FindConsoleFunction();
-            }
-            if (XboxName.Connected)
-            {
-                return true;
-            }
-            else
-            {
-                int noOfRetries = 0;
-
-                if (noOfRetries < 3)
-                {
-                    FindConsoleFunction();
-                    noOfRetries++;
-                }
-                if (noOfRetries < 6)
-                {
-                    return false;
-                }
-            }
-            return false;
-        }
-
 
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
