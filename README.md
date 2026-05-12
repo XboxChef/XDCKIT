@@ -251,4 +251,3 @@ Managed **xbdm** client and **XDevkit**-style helpers for Xbox 360 development k
 **Documentation (status, use cases, banner):** see the repository [README.md](../../README.md) and the [docs/](../../docs/) folder at the solution root.
 
 Build: reference `XDCKIT.csproj` from your app (net48, LangVersion 9).
->>>>>>> Stashed changes
