@@ -1,165 +1,244 @@
-<img width="1536" height="1024" alt="download" src="https://github.com/user-attachments/assets/284cf087-4ea6-428a-9a5f-2f687324b677" />
+<p align="center">
+  <img src="./docs/images/xdckit-banner.png" alt="XDCKIT banner" width="100%" />
+</p>
+
 #  Xbox Direct Connect Kit (XDCKIT)
 Give A ⭐ To Support This Project.
 
-[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/6cEdez7cge)
+[![GitHub Latest Release](https://img.shields.io/badge/Latest-Release-red)](https://github.com/XBM360/XDCKIT/releases)
+[![Join our Discord](https://img.shields.io/badge/join%20Us-discord-7289DA)](https://discord.gg/6cEdez7cge)
+[![.NET Framework 4.8](https://img.shields.io/badge/.NET%20Framework-4.8-512BD4)](https://dotnet.microsoft.com/)
+[![Xenia Patches](https://img.shields.io/badge/Xenia-game--patches-brightgreen)](https://github.com/xenia-canary/game-patches)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](#license)
 
+An open source library designed to **emulate / imitate the XDevkit library extension** so it works just like the original — plus a stack of new features (live xbdm discovery, screenshots, RPC, Xenia game-patches, async surface, and more).
 
-An open source library designed to Emulate or Imitate The XDevkit library extention to work exactly like the original with New added features
+I am known as **Serenity** (also **TeddyHammer**). If you want to reach me, join the server.
+Have ideas or suggestions? Join us on the [Discord Server](https://discord.gg/6cEdez7cge)!
 
-I Am Known As Serenity And Also TeddyHammer So If You wanna reach me Join Me On This Server
-Have Any Ideas Or Suggestions? Join Us On [Discord Server](https://discord.gg/6cEdez7cge)!
+| Quick link | What's there |
+|:-----------|:-------------|
+| 📋 [`docs/STATUS.md`](./docs/STATUS.md) | ASCII status banner, timeline, credits, change log |
+| 📘 [`docs/USE_CASES.md`](./docs/USE_CASES.md) | Copy-paste recipes (connect / memory / files / screenshot / patches) + mermaid diagram |
+| 🧩 [xenia-canary/game-patches](https://github.com/xenia-canary/game-patches) | Upstream `.patch.toml` format that `console.Patches` can load |
+
+---
 
 # Features
 
+> Legend: `✅` shipped · `🧪` beta / experimental · `🚧` in development
+
 ### General Features
 ```markdown
-1.  Get SMC Version
-2.  Reboot Console Or Game Title
-3.  XboxShortcuts `(witch include Guide Button Press And Takes You Various Places On The Xbox Such As Friends List Etc)`
-4.  Get Box ID `(Get's The Xbox's identification number)`
-5.  Set Console Color `(Allows User to Turns The Console's Default Neighborhood Icon to any of the following... (black , blue , bluegray , nosidecar)`
-6.  Get Console ID `(Gets The Console's identification number)`
-7.  Get DM Version `(Allows User To See The Debug Monitor Version)`
-8.  Get System Info `(allows user see Various Console Information)`
-9.  Reboot Cold Or Warm `(Allows user to Perform A Warm In A Very Fast Manner Or A Cold Reboot WItch Attempts To Reboot Slowly)`
-10. Freeze Console `(Allows User Perform A Stop Or Go Witch Tempory Freezes The Console Until A Go Command Is Sent)`
-11. Get Console Type `(Allows The User The See Witch Console Type They Own)`
-12. CloseConnection `(Allows For The Connection From The Device To Be severed From Each Other)`
-13. Reconnect `(Allows The User To Add A Delay So when The Console Is Ready The User Can Connect To It)`
-14. OpenConnection `(Find's Console And Connects To the IP Found and does not set class meaning you would have to set ConsoleX TO XDCKIT)`
-15. Get CPU Key `(Finds The Console's CPU Information)`
-16. Get Kernal Version `(Kernal Version Information)`
-17. Get Temperature `(Console's Temperature Information)`
-18. Set LED State `(Console's LED State)`
-19. Get Module Handle `(Unkown Describtion)`
-20. Launch System DLL Thread `(Unkown Describtion)`
-21. Unload Image `(Unkown Describtion)`
-22. Xex Pc To File Header `(Unkown Describtion)`
-23. GetTitleID `(Get's the Game identification)` 
-24. ShutDown `(Console's LED State)`
-25. Quick Sign In  `(In Beta Testing Phase)`
-26. Fan Speed Control`(Allows The User To Set The Value Of The Fan Speed)`
-27. Get Sign in State `(In Beta Testing Phase)`
-28. Trainer Features `(witch allows The ability To Share Modified Files For Any Game To Be modded)`
+1.  ✅ Get SMC Version
+2.  ✅ Reboot console or game title (Cold / Warm, magicboot with title/dir/cmdline)
+3.  ✅ XboxShortcuts            (Guide Button + Friends List, Achievements, Avatar Editor, ...)
+4.  ✅ Get Box ID               (Xbox identification number, BOXID)
+5.  ✅ Set Console Color        (black, blue, bluegray, nosidecar, white — Neighborhood tag)
+6.  ✅ Get Console ID           (getconsoleid)
+7.  ✅ Get DM Version           (dmversion)
+8.  ✅ Get System Info          (HDD / Type / Platform / System / Krnl / XDK)
+9.  ✅ Reboot Cold or Warm      (magicboot cold | warm)
+10. ✅ Freeze Console           (Stop / Go)
+11. ✅ Get Console Type         (Devkit / Testkit / Reviewerkit)
+12. ✅ CloseConnection / Disconnect
+13. ✅ Reconnect (configurable reconnect delay)
+14. ✅ OpenConnection           (also auto-discovery on the LAN — see Connect())
+15. ✅ Get CPU Key
+16. ✅ Get Kernel Version       (via consolefeatures RPC type=13)
+17. ✅ Get Temperature          (CPU / GPU / EDRAM / MotherBoard)
+18. ✅ Set LED State            (per-quadrant: OFF / RED / GREEN / ORANGE)
+19. ✅ Module handle / module sections / walk loaded modules
+20. 🧪 Launch System DLL thread (via RPC)
+21. 🧪 Unload Image
+22. ✅ XEX field reader         (xexfield → title id, header fields)
+23. ✅ GetTitleID
+24. ✅ ShutDown
+25. 🧪 Quick Sign In
+26. ✅ Fan Speed message builder
+27. 🧪 Get Sign In State        (returns uint via xboxkrnl ordinal)
+28. ✅ Trainer-style features   (constant memory writes for share-able mods)
+29. ✅ DmScreenShot             (full status + metadata + binary read in one helper)
+30. ✅ LAN discovery            (FindFirstConsoleOnLan / FindAllConsolesOnLan / xbdm UDP name service)
+31. ✅ Secure / shared connection (OpenSecureConnection, MakeSharedConnection)
 ```
+
 ### Debugging Features
 ```markdown
-1.   NULL_Address `(Allows The User To Add An Adress witch sets The Value To 6000000 meaning that you are making a null value)`
-2.   SetBreakpoint `(In Development)`
-3.   RemoveBreakpoint `(In Development)`
-4.   RemoveAllBreakpoints `(In Development)`
-5.   SetInitialBreakpoint `(In Development)`
-6.   SetDataBreakpoint `(In Development)`
-7.   IsBreakpoint `(In Development)`
-8.   Invalidate MemoryCache `(In Development)`
-9.   Poke `(Allows User To Change The Value An Address)`
-10.  peek `(Allows User To Look Up Current Value Via Address)`
-11.  Find Hex Offset`(Describtion Coming Soon)`
-12.  constant Memory Setting `(Allows user to set value and make that value never change)`
-13.  constant Memory Set `(Allows user to set value and make that value never change)`
-14.  Get Memory / Set Memory `(Describtion Coming Soon)`
-15.  Dump Memory `(Describtion Coming Soon)`
-16.  ResolveFunction `(Describtion Coming Soon)`
-17.  ReverseBytes `(Describtion Coming Soon)`
-18.  Bool {Get; Set;} `(Describtion Coming Soon)`
-19.  String {Get; Set;} `(Describtion Coming Soon)`
-20.  Float {Get; Set;} `(Describtion Coming Soon)`
-21.  BinaryData {Get; Set;} `(Describtion Coming Soon)`
-22.  Byte {Get; Set;} `(Describtion Coming Soon)`
-23.  SByte {Get; Set;} `(Describtion Coming Soon)`
-24.  All Int {Get; Set;} `(Describtion Coming Soon)`
-25.  All Uint {Get; Set;} `(Describtion Coming Soon)`
-26.  Double {Get; Set;} `(Describtion Coming Soon)`
-27.  Long {Get; Set;} `(Describtion Coming Soon)`
-28.  All XOR int / AND Int / OR Int {Get; Set;} `(Describtion Coming Soon)`
-29.  WriteVector's `(Describtion Coming Soon)`
-30.  WriteHook `(Describtion Coming Soon)`
-31.  SendTextCommand `(Describtion Coming Soon)`
+1.  ✅ NULL_Address          (zero a region — uses SetMemory)
+2.  ✅ SetBreakpoint
+3.  ✅ ClearBreakpoint        (formerly RemoveBreakpoint)
+4.  ✅ ClearAllBreakpoints
+5.  ✅ SetInitialBreakpoint
+6.  ✅ SetDataBreakpoint      (OnRead / OnWrite / OnReadWrite / OnExecute)
+7.  ✅ IsBreak                (is address breakpointed?)
+8.  ✅ InvalidateMemoryCache
+9.  ✅ Poke                   (Write* family — typed writes)
+10. ✅ Peek                   (Read* family — typed reads, PowerPC BE aware)
+11. ✅ Find Hex Offset        (memory scan via GetMemory)
+12. ✅ Constant Memory Setting (consolefeatures type=18, with titleId / ifValue overloads)
+13. ✅ Constant Memory Set
+14. ✅ GetMemory / SetMemory
+15. ✅ Dump Memory            (file streaming, configurable chunk size)
+16. ✅ ResolveFunction        (module + ordinal → runtime address)
+17. ✅ ReverseBytes           (block byte swap; PPC BE marshalling)
+18. ✅ Bool {Get; Set;}
+19. ✅ String {Get; Set;}     (ASCII + Wide UTF-16)
+20. ✅ Float / Double {Get; Set;}
+21. ✅ BinaryData {Get; Set;} (GetMemory / SetMemory)
+22. ✅ Byte / SByte {Get; Set;}
+23. ✅ Int16 / Int32 / Int64 {Get; Set;}
+24. ✅ UInt16 / UInt32 / UInt64 {Get; Set;}
+25. ✅ XOR / AND / OR helpers for every int width
+26. ✅ WriteVector1 / 2 / 3
+27. ✅ WriteHook               (PowerPC 4-instruction absolute branch, optional bctrl)
+28. ✅ SendTextCommand         (raw xbdm — for anything not yet wrapped)
+29. ✅ AttachDebugger / DetachDebugger / IsDebuggerPresent
+30. ✅ Thread context get/set  (control / int / fp / vector registers)
+31. ✅ StopOn / NoStopOn       (fce / debugstr / createthread / stacktrace / modload)
 ```
+
 ### Current FileSystem Features
 ```markdown
-1.   ChangeTime `(Describtion Coming Soon)`
-2.   CreationTime `(Checks For The Date And Time Of Creation Of The FIle)`
-3.   bool IsDirectory `(Checks If its A File Or a Directory)`
-4.   bool IsReadOnly `(Checks If FIle Is At Read Only State)`
-5.   GetFile Size(string directory) `(File Size Information)`
-6.   MakeDirectory `(Creates A New Directory)`
-7.   RemoveDirectory(string path) `(Removes  Directory From Path)`
-8.   DirectoryFiles `(Display's The Directory Files)`
-9.   Get FileName `(Get's The FIle Name From Path)`
-10.  ReceiveBinaryData `(Retrieves Binary Data)`
-13.  ReceiveFile`(Retrieves Files From The Console)`
-14.  SendBinaryData`(Sends Binary Data)`
-16.  SendFile`(Sends Files From Or To the Console)`
-17.  RenameFile `(Renames Desired File or File's)`
+1.   ✅ ChangeTime
+2.   ✅ CreationTime
+3.   ✅ bool IsDirectory
+4.   ✅ bool IsReadOnly        (via GetFileAttributes)
+5.   ✅ GetFile size           (via DirList / GetFileAttributes)
+6.   ✅ MakeDirectory
+7.   ✅ RemoveDirectory        (Delete with isDirectory:true)
+8.   ✅ DirectoryFiles         (DirList → XboxDirEntry[])
+9.   ✅ Get FileName           (helper on entries)
+10.  ✅ ReceiveBinaryData      (Client.ReadExact / ReceiveSocketLine / ReceiveStatusResponse)
+11.  ✅ ReceiveFile / GetFile  (203-binary path, big-endian uint length)
+12.  ✅ SendBinaryData         (SendBinary + atomic SendBinaryAndReceiveStatus)
+13.  ✅ SendFile               (parses full trailing status — failures surface)
+14.  ✅ RenameFile
+15.  ✅ ReadFilePartial / WriteFilePartial
+16.  ✅ DmSendVolumeFile       (batch upload to a write-locked volume)
+17.  ✅ WalkDir                (recursive enumeration)
 ```
-### XNOTIFY Features
+
+### XNotify Features
 ```markdown
-`(Allows The Programmer To Use It as A Messagebox.Show and Contains The Ability To Turn Off Notifications at Any Moment If A Programmer Added a switch Example's Below)`
-1.   Show(message)
-3.   Show (Message , Logo , Switch)
-4.   Show (Message , Switch)
-5.   Show (Message , Logo)
-6.   XMessage (Allow The Console To Display A MessageBox `(In Development)) `
+🔔 Pops a console notification (consolefeatures type=12 fast path, then XAM ordinal 0x282 fallback).
+   Returns bool so callers know whether either path succeeded.
+
+1.  ✅ console.Notify(message)
+2.  ✅ console.Notify(message, XNotiyLogo)
+3.  ✅ XMessageBoxUI           (multi-box stacking via Xam — Helpers/XMessageBoxUI.cs)
 ```
+
+> **API note:** in this revision `Notify` is a **method on `XboxConsole`** — call it directly as
+> `console.Notify("hi")`. The legacy `console.Notify.Show(...)` helper has been folded in.
+
+### Xenia Game-Patches  🆕
+```markdown
+✅ Load `.patch.toml` from the Xenia Canary game-patches repo
+✅ Parse [[patch]] + [[patch.be8/be16/be32/be64/array/f32/f64/string/u16string]]
+✅ Apply only `is_enabled = true` rows (respects upstream convention)
+✅ Per-console facade: console.Patches.LoadFile / LoadDirectory / ApplyEnabled
+```
+
 # So Many More Features!
 
 # Requirements
-**1. An Internet Connection**
 
-**2. A know How Of C# Programing language Development**
+**1.** A working network connection between PC and console.
+**2.** Working knowledge of **C#** (.NET Framework 4.8 / LangVersion 9).
+**3.** Familiarity with how Xbox **XDevkit / xbdm** works.
+**4.** A modded / dev Xbox console with **xbdm** reachable on TCP/730.
 
-**3. An Understand How The Xbox XDevkit Works**
+---
 
-**4. An Understanding On How To Work A Modified Xbox Console**
+## Code example
 
-## Code Example
+```csharp
+using System;
 
-```C#
-# Connecting
-using XDCKIT;
-
-namespace Custom_namespace
+namespace MyXboxApp
 {
-    public partial class Classnamehere : Form
+    public partial class Form1 : Form
     {
-        public static XboxConsole ConsoleX;
-    
-        public Classnamehere()
+        // Per-console instance.  Multiple consoles in one process are now safe
+        // (timeouts are per-instance, not static).
+        public static XboxConsole ConsoleX = new XboxConsole();
+
+        public Form1() => InitializeComponent();
+
+        private void ConnectButton_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
+            // 1. Auto-discover on the LAN (UDP name probe + TCP banner scan):
+            ConsoleX.Connect();
+
+            // 2. Connect by IP:
+            //    ConsoleX.Connect("192.168.0.71");
+
+            // 3. Connect by IP + port (xbdm is almost always 730):
+            //    ConsoleX.Connect("192.168.0.71", 730);
+
+            // 4. Or by friendly name (xbdm UDP name service):
+            //    string ip = XboxClient.ResolveXboxName("MyDevKit");
+            //    ConsoleX.Connect(ip);
+
+            if (!ConsoleX.Connected) return;
+
+            ConsoleX.Notify("XDCKIT online", XNotiyLogo.FLASHING_XBOX_LOGO);
+
+            // Typed BE reads/writes:
+            uint title = ConsoleX.GetTitleId();
+            ConsoleX.WriteUInt32(0x82001234, 0xDEADBEEF);
+
+            // Screenshot:
+            var info = ConsoleX.Screenshot(out byte[] pixels);
+
+            // Xenia patches:
+            ConsoleX.Patches.LoadDirectory(@"C:\game-patches\patches");
+            int writes = ConsoleX.Patches.ApplyEnabled();
+
+            ConsoleX.Disconnect();
         }
-        
-        private void Button_Click(object sender, ItemClickEventArgs e)
-        {
-            Console.Connect() //Attemps to Find Console 192.168.0.X Attempts compensate for X aka finds last digit.
-            Console.Connect(Provide_IP) //User Provides Costume IP Address
-            Console.Connect(Provide_IP,provide_CostumePort) //User Provides The IP Address and Port Number "Port Number Is Always 730" Regardless was added for more flexibility.
-            Connect(this XboxConsole Source, out XboxConsole Client, string ConsoleNameOrIP = "default", int Port = 730) //sets the (ConsoleX) to XDCKIT class so everythin can be called like so example: ConsoleX.Screenshot() , then if IP Address is Provide then it proceeds to Connect also you can provide Port Number Witch By Again Defualt Is 730.
-        }
-   }
+    }
 }
 ```
-[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](https://XboxVillain.github.io/XDCKIT/) For More Example's
+
+[![Click Me!](https://img.shields.io/badge/Click-Me!-blue)](./docs/USE_CASES.md) For more examples (memory, files, screenshots, automation, Xenia patches, wire tracing, mermaid flow diagram).
+
 ## Quick Guide
 
-### Getting Started
+### Getting started
 
-You can Either Build Yourself By Downloading the Source Or Just Grabbing [The Latest Dll Extention](https://github.com/XBM360/XDCKIT/releases).
+Build from source (open **`XCE Tools.sln`** in Visual Studio 2019+ and reference `XDCKIT.csproj`), or grab the latest release from [Releases](https://github.com/XBM360/XDCKIT/releases).
 
 ### Connection
 
-Have To Be under The Same Local Network and Make Sure both Devices Are Connected To Same Wifi Name Or If Wired make sure to be under the same Router.
+Both devices must be on the **same LAN** (same Wi-Fi SSID or wired into the same router/switch). Make sure **xbdm** is running on the console and reachable on **TCP/730**.
 
-### Xbox 360 Plugin Requirements
-xbdm.xex , 
+### Xbox 360 plugin requirements
 
-### Computer Requirements
-A Working Tool Using this Extention Properly
+`xbdm.xex` running on the console. For the **consolefeatures** RPC fast paths (XNotify, CPU key, temperature, LEDs, kernel version, constant memory), an xbdm plugin that implements `consolefeatures` must be loaded. The xbdm-native commands (memory, files, screenshot, breakpoints, etc.) work without any extra plugin.
+
+### Computer requirements
+
+A working tool / host application that references **`XDCKIT.dll`** (built against .NET Framework 4.8).
+
+---
 ## Contributors
-* [@ohhsodead](https://github.com/ohhsodead) - Help Provided Code Enhancements And Help Performance Issues
+
+* [@ohhsodead](https://github.com/ohhsodead) — code enhancements and performance help
+* **Serenity / TeddyHammer** — project lead
+* **Vodka Doc** — credits
+
+See [`docs/STATUS.md`](./docs/STATUS.md) for full inspiration / source credits (Yelo, PeekPoker, Ascension Tool, community consolefeatures RPC plugins).
+
 ## Disclaimer
-I have no liability for any damages done to your system by using this extention.
+
+I have no liability for any damages done to your system by using this extension. Use at your own risk.
+
 ## License
-This project is released under the GNU General Public License v3.
+
+This project is released under the **GNU General Public License v3**.
+
+---
+
+*README last updated: May 2026*
