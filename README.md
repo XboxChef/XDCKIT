@@ -1,6 +1,6 @@
-<<<<<<< Updated upstream
+
 <p align="center">
-  <img src="./docs/images/xdckit-banner.png" alt="XDCKIT banner" width="100%" />
+<img width="1536" height="1024" alt="download" src="https://github.com/user-attachments/assets/4904c259-cf2f-4775-9d15-e7f98980f73f" />
 </p>
 
 #  Xbox Direct Connect Kit (XDCKIT)
