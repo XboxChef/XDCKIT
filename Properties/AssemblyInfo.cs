@@ -1,35 +1,24 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
 [assembly: AssemblyTitle("XDCKIT")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Xbox Direct Connect Kit - managed xbdm client library for Xbox 360 development kits.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Serenit's Lab")]
-[assembly: AssemblyProduct("XDCKIT Lib")]
-[assembly: AssemblyCopyright("Serenit's Lab")]
-[assembly: AssemblyTrademark("Serenit's Lab")]
+[assembly: AssemblyCompany("XCETools")]
+[assembly: AssemblyProduct("XDCKIT - Xbox Direct Connect Kit")]
+[assembly: AssemblyCopyright("Copyright (c) XCETools 2024-2026")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(true)]
+[assembly: ComVisible(false)]
+[assembly: Guid("c1b198b6-acdd-4861-86dd-b96befdec50e")]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ee2b6ead-7d2e-4723-ab63-6cd539a3666c")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.3.0.0")]
-[assembly: AssemblyFileVersion("3.3.0.0")]
+// Semantic versioning:
+//   MAJOR.MINOR.PATCH.BUILD
+//   * MAJOR -> bump on API-breaking changes
+//   * MINOR -> bump on additive features / new wire commands
+//   * PATCH -> bump on correctness fixes (no API or behavioural changes)
+//   * BUILD -> reserved for CI build counter (0 in source).
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyInformationalVersion("1.1.0")]

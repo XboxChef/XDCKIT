@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <p align="center">
   <img src="./docs/images/xdckit-banner.png" alt="XDCKIT banner" width="100%" />
 </p>
@@ -242,3 +243,12 @@ This project is released under the **GNU General Public License v3**.
 ---
 
 *README last updated: May 2026*
+=======
+# XDCKIT (library)
+
+Managed **xbdm** client and **XDevkit**-style helpers for Xbox 360 development kits.
+
+**Documentation (status, use cases, banner):** see the repository [README.md](../../README.md) and the [docs/](../../docs/) folder at the solution root.
+
+Build: reference `XDCKIT.csproj` from your app (net48, LangVersion 9).
+>>>>>>> Stashed changes
