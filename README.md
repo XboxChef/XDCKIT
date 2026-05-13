@@ -1,6 +1,6 @@
-<<<<<<< Updated upstream
+
 <p align="center">
-  <img src="./docs/images/xdckit-banner.png" alt="XDCKIT banner" width="100%" />
+<img width="1536" height="1024" alt="download" src="https://github.com/user-attachments/assets/4904c259-cf2f-4775-9d15-e7f98980f73f" />
 </p>
 
 #  Xbox Direct Connect Kit (XDCKIT)
@@ -251,4 +251,3 @@ Managed **xbdm** client and **XDevkit**-style helpers for Xbox 360 development k
 **Documentation (status, use cases, banner):** see the repository [README.md](../../README.md) and the [docs/](../../docs/) folder at the solution root.
 
 Build: reference `XDCKIT.csproj` from your app (net48, LangVersion 9).
->>>>>>> Stashed changes
