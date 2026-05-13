@@ -107,6 +107,26 @@ using System.Collections.Generic;
     /// Microsoft <c>DmScreenShot</c> reads: pitch, width, height, format, offsetx/y,
     /// framebuffersize, sw/sh, colorspace).
     /// </summary>
+    /// <remarks>
+    /// Typical TCP payload (ASCII metadata before the binary blob) looks like:
+    /// <c>pitch=0xd80 width=0x360 height=0x1e0 format=0x18280186 offsetx=0 offsety=0,
+    /// framebuffersize=0x1c0000 sw=0x500 sh=0x2d0 colorspace=0</c>.
+    /// <list type="bullet">
+    /// <item><description><see cref="Pitch"/> is the byte stride per row. When capturing a 32bpp surface,
+    /// <c>pitch == width * 4</c> for a linearised row (e.g. 0xD80 = 864×4).</description></item>
+    /// <item><description><see cref="Width"/> / <see cref="Height"/> describe the **surface** size used for
+    /// linear ARGB decode (here 864×480), not necessarily the same as the TV resolution.</description></item>
+    /// <item><description><see cref="SubWidth"/> / <see cref="SubHeight"/> (<c>sw</c> / <c>sh</c>) are often the
+    /// **logical** front-buffer size (e.g. 1280×720). Building a full-resolution PNG from <c>sw</c>×<c>sh</c>
+    /// requires GPU tile detiling — XDCKIT only guarantees correct linear decode for <c>width</c>×<c>height</c>
+    /// when <c>pitch == width*4</c>.</description></item>
+    /// <item><description><see cref="Format"/> is usually a packed Xenon <b>XGFormat</b> word (e.g.
+    /// <c>0x18280186</c> — low byte <c>0x86</c> = <c>GPUTEXTUREFORMAT_8_8_8_8</c>), not a plain
+    /// <c>D3DFORMAT</c> enum.</description></item>
+    /// <item><description><see cref="FrameBufferSize"/> is the byte count of the following binary read;
+    /// it may be larger than <c>pitch * height</c> (padding / tail after the last row).</description></item>
+    /// </list>
+    /// </remarks>
     public struct ScreenshotInfo
     {
         public uint Pitch;
@@ -116,9 +136,9 @@ using System.Collections.Generic;
         public uint FrameBufferSize;
         public uint OffsetX;
         public uint OffsetY;
-        /// <summary>Sub-rectangle width (xbdm key <c>sw</c>).</summary>
+        /// <summary>Logical / sub-rectangle width (xbdm key <c>sw</c>), often full HD width.</summary>
         public uint SubWidth;
-        /// <summary>Sub-rectangle height (xbdm key <c>sh</c>).</summary>
+        /// <summary>Logical / sub-rectangle height (xbdm key <c>sh</c>), often full HD height.</summary>
         public uint SubHeight;
         public uint ColorSpace;
     }

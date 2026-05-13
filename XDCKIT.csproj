@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
@@ -64,6 +65,7 @@
     <Compile Include="Console\XboxConsole.Threads.cs" />
     <Compile Include="Console\XboxConsole.Debugger.cs" />
     <Compile Include="Console\XboxConsole.Features.cs" />
+    <Compile Include="Console\XboxConsole.Screenshot.cs" />
     <Compile Include="Console\XboxConsole.Network.cs" />
     <Compile Include="Console\XboxConsole.Notification.cs" />
     <Compile Include="Console\XboxConsole.Profiling.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Helpers\XboxFile.cs" />
     <Compile Include="Helpers\XboxRpc.cs" />
     <Compile Include="Helpers\XMessageBoxUI.cs" />
+    <Compile Include="Helpers\XboxScreenshot.cs" />
     <Compile Include="Helpers\MiniToml.cs" />
     <Compile Include="Helpers\XeniaPatch.cs" />
     <!-- XDevkit API compatibility (managed; replace Microsoft XDevkit.dll reference) -->
